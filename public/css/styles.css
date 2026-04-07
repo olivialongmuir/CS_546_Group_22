@@ -31,6 +31,8 @@ html, body {
   height: 100%;
   font-family: "Arial";
   margin: 0.2%;
+  background-color: #0a0a0a;
+  color: white
 }
 
 footer {
@@ -41,4 +43,48 @@ footer {
 
 main {
   flex: 1; 
+}
+
+#homeSection {
+  width: min(1100px, 92vw);
+  margin: 0 auto;
+}
+
+#homeHeader {
+    text-align: center;
+}
+
+.homeP{
+    text-align: center;
+}
+#homepageDesc{
+    text-align: center;
+}
+
+#homeButtons{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.homeH2{
+    text-align: center;
+}
+
+.card-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap; 
+
+}
+
+.card {
+  flex: 1;
+  min-width: 200px;
+  border: 1px solid;
+  border-color: #27272a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #525252;
 }
