@@ -1,1 +1,33 @@
 {{!-- HERE IS THE MAIN HANDLEBAR TEMPLATE FILE --}}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    {{!-- <title>Our First Document</title> --}}
+    <title>{{title}}</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="/public/css/styles.css">
+</head>
+
+<body>
+    <header>
+        <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/heatmap">RatMap</a></li>
+            <li><a href="/ratreports">Restaurant</a></li>
+            <li><a href="/restaurants">Rat Reports</a></li>
+        </ul>
+    </header>
+    <main>
+        {{{ body }}}
+    </main>
+    <footer>
+        <p>CS546 - Group 22 Project</p>
+    </footer>
+</body>
+
+</html>

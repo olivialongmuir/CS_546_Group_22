@@ -3,7 +3,9 @@
 
 **DIRECTORY STRUCTURE**
 data
-    *put our database functions here*
+    restaurants.js
+    rodentReports.js
+    users.js
 public
     |-css
         styles.css
@@ -11,7 +13,9 @@ public
         *store images here*
 routes
     index.js
-    *store all api routes here*
+    restaurants.js
+    rodentReports.js
+    users.js
 tasks
     seed.js
     *store task files here*
