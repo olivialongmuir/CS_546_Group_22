@@ -1,5 +1,7 @@
 import { dbConnection, closeConnection } from './config/mongoConnection.js';
 import { restaurants, rodentReports, users } from './config/mongoCollections.js';
+import restaurantData from './database/restaurants.json' with { type: 'json' }
+import rodentReportData from './database/rodents.json' with { type: 'json' }
 
 /*
 Seed file for SquakPeek
@@ -18,9 +20,6 @@ const main = async () => {
   const restaurantCollection = await restaurants();
   const rodentReportCollection = await rodentReports();
   const userCollection = await users();
-
-  const restaurantData = require('./database/restaurants.json');
-  const rodentReportData = require('./database/rodents.json');
 
   //creating one example of each user type
   const userData = [
