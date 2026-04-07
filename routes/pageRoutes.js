@@ -3,7 +3,8 @@
 import { Router } from 'express';
 const router = Router();
 
-router.route('/home').get(async (req, res) => {
+
+router.route(['/', '/home']).get(async (req, res) => { //Both of these routes will go to the homepage. Not sure if this is correct design or if should redirect - peter
     return res.render("home");
 });
 
