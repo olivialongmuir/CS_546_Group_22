@@ -32,7 +32,7 @@ html, body {
   font-family: "Arial";
   margin: 0.2%;
   background-color: #0a0a0a;
-  color: white
+  color: white;
 }
 
 footer {
@@ -87,4 +87,20 @@ main {
   align-items: center;
   justify-content: center;
   background-color: #525252;
+}
+
+#heatmap {
+  width: 100vw;
+  height: 100vh;
+}
+
+#heatmapSection {
+  width: min(1100px, 92vw);
+  margin: 0 auto;
+  place-items: center;
+}
+
+/* css map dark mode override */
+.leaflet-tile-pane {
+    filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
 }
