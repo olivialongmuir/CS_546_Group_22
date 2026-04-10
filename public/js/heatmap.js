@@ -31,7 +31,7 @@ window.addEventListener('load', () => {
     restaurants.forEach(restaurant => {
         L.marker([restaurant.lat, restaurant.lng]).addTo(map)
             .bindPopup(restaurant.name)
-            .openPopup();
+            // TODO - can have href link to restaurant page with more info
     });
 
     // example heatmap data: [latitude, longitude, intensity]
