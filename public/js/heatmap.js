@@ -23,9 +23,9 @@ window.addEventListener('load', () => {
 
 
     // restaurant markers
-    if (typeof heatMapData !== 'undefined') {
-        console.log(heatMapData);
-        heatMapData.forEach(restaurant => {
+    if (typeof restaurantMapData !== 'undefined') {
+        console.log(restaurantMapData);
+        restaurantMapData.forEach(restaurant => {
             console.log(restaurant);
             L.marker([restaurant.lat, restaurant.lng])
                 .addTo(map)
@@ -39,7 +39,7 @@ window.addEventListener('load', () => {
     L.heatLayer([
         // sample points
         // leaflet expects data in format [lat, lng, intensity]
-        [40.7128, -74.0060, 1],
+        [40.7128, -74.0060, 1], // TODO - replace with actual rodent data
         [40.7138, -74.0050, 0.5],
         [40.7148, -74.0040, 0.1]
     ], {

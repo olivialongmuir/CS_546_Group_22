@@ -1,6 +1,6 @@
 // INDEX FOR ROUTES
 import {static as staticDir} from 'express';
-import pageRoutes from './pageRoutes.js'
+import pageRoutes from './pageRoutes.js';
 
 const constructorMethod = (app) => {
     app.use('/', pageRoutes);

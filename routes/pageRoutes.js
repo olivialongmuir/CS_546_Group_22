@@ -19,10 +19,11 @@ router.route('/heatmap').get(async (req, res) => {
             lng: Number(r.longitude)
         }));
 
-        const heatMapData = JSON.stringify(restaurantData);
+        const restaurantMapData = JSON.stringify(restaurantData);
 
         return res.render("heatmap", {
-            heatMapData
+            restaurantMapData: restaurantMapData
+            // TODO - pass in rodent data
         });
 
     } catch (error) {
