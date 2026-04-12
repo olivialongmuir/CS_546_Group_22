@@ -1,27 +1,42 @@
- //import { userData } from "../config/mongoCollections";
-    // TODO - import validation
-    
-    export const getAllUsers = async() => {
-        //const userCollection = await userData();
+import { users } from "../config/mongoCollections.js";
 
-    };
+/**
+ * Gets all users from database as a list of objects
+ * @returns usersList
+ */
+export const getAllUsers = async() => {
+    //Get users collection from database
+    const usersCollection = await users();
+    let userList = await usersCollection.find({}).toArray();
 
-    export const getUserById = async() => {
+    //Check if database returned anything
+    if (!userList) throw "Error {getAllUsers}: No user accounts in database";
 
-    };
+    //Convert all object ids to string ids
+    userList = userList.map(user => {
+        user.__id = user.__id.toString();
+        return user
+    })
 
-    export const createUser = async() => {
+    return userList
+};
 
-    };
+export const getUserById = async() => {
 
-    export const updateUser = async() => {
+};
 
-    };
+export const createUser = async() => {
 
-    export const deleteUser = async() => {
+};
 
-    };
+export const updateUser = async() => {
 
-    export const getUserComments = async() => {
+};
 
-    };
+export const deleteUser = async() => {
+
+};
+
+export const getUserComments = async() => {
+
+};

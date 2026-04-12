@@ -1,72 +1,128 @@
-export const checkId = (id) => {
-    if (!id) throw 'Error: You must provide an ID';
-    if (typeof id !== 'string') throw 'Error: ID must be a string';
-    id = id.trim();
-    if (id.length === 0) throw 'Error: ID cannot be an empty string';
-    if (!ObjectId.isValid(id)) throw 'Error: ID is not a valid ObjectId';
-    return id;
-};
+import { ObjectId } from "mongodb";
 
+//General parsing and validation
 export const checkString = (str, fieldName) => {
     if (!str) throw `Error: You must provide a value for ${fieldName}`;
+    if (str == null) throw `Error: ${fieldName} is null or undefined`
     if (typeof str !== 'string') throw `Error: ${fieldName} must be a string`;
     str = str.trim();
     if (str.length === 0) throw `Error: ${fieldName} cannot be an empty string`;
     return str;
 };
 
-export const checkComment = (comment) => {
-    if (!comment) throw 'Error: You must provide a comment';
-    if (typeof comment !== 'string') throw 'Error: Comment must be a string';
-    comment = comment.trim();
-    if (comment.length === 0) throw 'Error: Comment cannot be an empty string';
-    if (comment.length > 500) throw 'Error: Comment cannot exceed 500 characters';
-    return comment;
+export const checkNumber = (num, fieldName) => {
+    if (!num) throw `Error: You must provide a value for ${fieldName}`;
+    if (num == null) `Error: ${fieldName} is null or undefined`;
+    const conv_num = Number(num);
+    if (isNaN(conv_num)) throw `Error: ${fieldName} must be a number`;
+    if (!Number.isFinite(conv_num)) throw `${fieldName} must be finite`
+    return conv_num;
+}
+
+//Specific parsing and validation
+export const checkId = (id) => {
+    const parsed_id = checkString(id, "id");
+    if (!ObjectId.isValid(parsed_id)) throw 'Error: ID is not a valid ObjectId';
+    return parsed_id;
 };
 
+export const checkJobId = (jobId) => {
+    const parsed_jobId = checkString(jobId, "jobId");
+    if (/^[A-Z]{2}\d{7}$/.test(parsed_jobId)) throw 'Error: jobId must be 2 capital letters followed by 7 numbers'
+    return parsed_jobId;
+}
+
+export const checkDate = (date) => {
+    const parsed_date = checkString(date, "date");
+    if (!/^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4} (0[1-9]|1[0-2]):[0-5][0-9]:[0-5][0-9] (AM|PM)$/.test(parsed_date)) throw 'Error: Date format must match MM/DD/YYYY HH:MM:SS AM|PM'
+    return parsed_date;
+}
+
+export const checkComment = (comment) => {
+    const parsed_comment = checkString(comment, "comment");
+    if (parsed_comment.length > 500) throw 'Error: Comment cannot exceed 500 characters';
+    return parsed_comment;
+};
+
+export const checkDescription = (description) => {
+    const parsed_description = checkString(description, "description");
+    if (parsed_description.length > 500) throw 'Error: Description cannot exeed 500 characters';
+    return parsed_description;
+}
+
+export const checkNote = (note) => {
+    const parsed_note = checkString(note, "note");
+    if (parsed_note.length > 500) throw 'Error: Note cannot exeed 500 characters';
+    return parsed_note;
+}
+
 export const checkUsername = (username) => {
-    if (!username) throw 'Error: You must provide a username';
-    if (typeof username !== 'string') throw 'Error: Username must be a string';
-    username = username.trim();
-    if (username.length === 0) throw 'Error: Username cannot be an empty string';
-    if (username.length < 3) throw 'Error: Username must be at least 3 characters';
-    if (username.length > 20) throw 'Error: Username cannot exceed 20 characters';
-    if (!/^[a-zA-Z0-9_]+$/.test(username)) throw 'Error: Username can only contain letters, numbers, and underscores';
-    return username;
+    const parsed_username = checkString(username, "username");
+    if (parsed_username.length < 3) throw 'Error: Username must be at least 3 characters';
+    if (parsed_username.length > 20) throw 'Error: Username cannot exceed 20 characters';
+    if (!/^[a-zA-Z0-9_]+$/.test(parsed_username)) throw 'Error: Username can only contain letters, numbers, and underscores';
+    return parsed_username;
 };
 
 export const checkEmail = (email) => {
-    if (!email) throw 'Error: You must provide an email address';
-    if (typeof email !== 'string') throw 'Error: Email must be a string';
-    email = email.trim();
-    if (email.length === 0) throw 'Error: Email cannot be an empty string';
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw 'Error: Email address is not valid';
-    return email;
+    const parsed_email = checkString(email, "email");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(parsed_email)) throw 'Error: Email address is not valid';
+    return parsed_email;
+};
+
+export const checkPhotoUrl = (photoUrl) => {
+    const parsed_url = checkString(photoUrl, "photoUrl");
+    if (!/^https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp)$/i.test(parsed_url)) throw 'Error: Photo URL is not valid';
+    return parsed_url;
 };
 
 export const checkPassword = (password) => {
-    if (!password) throw 'Error: You must provide a password';
-    if (typeof password !== 'string') throw 'Error: Password must be a string';
-    if (password.length < 8) throw 'Error: Password must be at least 8 characters';
-    if (!/[A-Z]/.test(password)) throw 'Error: Password must contain at least one uppercase letter';
-    if (!/[0-9]/.test(password)) throw 'Error: Password must contain at least one number';
-    if (!/[!@#$%^&*]/.test(password)) throw 'Error: Password must contain at least one special character (!@#$%^&*)';
-    return password;
+    const parsed_password = checkString(password);
+    if (parsed_password.length < 8) throw 'Error: Password must be at least 8 characters';
+    if (parsed_password.length > 16) throw 'Error: Password can at most be 15 characters';
+    if (!/[A-Z]/.test(parsed_password)) throw 'Error: Password must contain at least one uppercase letter';
+    if (!/[0-9]/.test(parsed_password)) throw 'Error: Password must contain at least one number';
+    if (!/[!@#$%^&*]/.test(parsed_password)) throw 'Error: Password must contain at least one special character (!@#$%^&*)';
+    return parsed_password;
+};
+
+export const checkZipcode = (zipcode) => {
+    const parsed_zipcode = checkString(zipcode); //zipcode can be 00502
+    if (/^\d{5}$/.test(parsed_zipcode)) throw 'Error: Zipcode must contain exactly 5 integers';
+    return parsed_zipcode;
 };
 
 export const checkRatSizeRating = (rating) => {
-    if (rating === undefined || rating === null) throw 'Error: You must provide a rat size rating';
-    if (typeof rating !== 'number') throw 'Error: Rat size rating must be a number';
-    if (!Number.isInteger(rating)) throw 'Error: Rat size rating must be a whole number';
-    if (rating < 1 || rating > 5) throw 'Error: Rat size rating must be between 1 and 5';
-    return rating;
+    const parsed_rating = checkNumber(rating);
+    if (!Number.isInteger(parsed_rating)) throw 'Error: Rat size rating must be an integer';
+    if (parsed_rating < 1 || parsed_rating > 5) throw 'Error: Rat size rating must be between 1 and 5';
+    return parsed_rating;
 };
 
 export const checkReactionType = (reactionType) => {
-    if (!reactionType) throw 'Error: You must provide a reaction type';
-    if (typeof reactionType !== 'string') throw 'Error: Reaction type must be a string';
-    reactionType = reactionType.trim().toLowerCase();
+    const parsed_reaction = checkString(reactionType, "reactionType").toLowerCase();
     const validReactions = ['like', 'dislike', 'confirm', 'dispute', 'flag'];
-    if (!validReactions.includes(reactionType)) throw `Error: Reaction type must be one of the following: ${validReactions.join(', ')}`;
-    return reactionType;
+    if (!validReactions.includes(parsed_reaction)) throw `Error: Reaction type must be one of the following: ${validReactions.join(', ')}`;
+    return parsed_reaction;
+};
+
+export const checkReportStatus = (reportStatus) => {
+    const parsed_reportStatus = checkString(reportStatus, "reportStatus").toLowerCase();
+    const validStatus = ['sanitary', 'unsanitary', 'inspecting'];
+    if (!validStatus.includes(parsed_reportStatus)) throw `Error: Report status must be one of the following: ${validStatus.join(', ')}`;
+    return parsed_reportStatus;
+};
+
+export const checkVerifiedBy = (user) => {
+    const parsed_user = checkString(user, "verifiedBy").toLowerCase();
+    const validUser = ['exterminator', 'inspector', 'admin'];
+    if (!validUser.includes(parsed_user)) throw `Error: User must be one of the following: ${validStatus.join(', ')}`;
+    return parsed_user;
+};
+
+export const checkRatType = (ratType) => {
+    const parsed_type = checkString(ratType, "ratType").toLowerCase();
+    const validTypes = [];
+    if (!validTypes.includes(parsed_type)) throw `Error: Rat type must be one of the following: ${validStatus.join(', ')}`;
+    return parsed_type;
 };
