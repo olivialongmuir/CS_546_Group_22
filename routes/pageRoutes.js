@@ -4,9 +4,15 @@ import { Router } from 'express';
 const router = Router();
 import { getAllRestaurants } from '../data/restaurants.js';
 
-
 router.route(['/', '/home']).get(async (req, res) => { //Both of these routes will go to the homepage. Not sure if this is correct design or if should redirect - peter
-    return res.render("home");
+    try {
+        res.render("home", {
+            title: 'Homepage'
+        });
+    } catch(error) {
+        console.error(error);
+        res.status(500).send("Error loading Homepage");
+    }
 });
 
 router.route('/heatmap').get(async (req, res) => {
@@ -21,23 +27,38 @@ router.route('/heatmap').get(async (req, res) => {
 
         const restaurantMapData = JSON.stringify(restaurantData);
 
-        return res.render("heatmap", {
+        res.render("heatmap", {
+            title: 'Heatmap',
             restaurantMapData: restaurantMapData
             // TODO - pass in rodent data
         });
 
     } catch (error) {
         console.error(error);
-        return res.status(500).send("Error loading heatmap");
+        res.status(500).send("Error loading Heatmap");
     }
 });
 
 router.route('/ratreports').get(async (req, res) => {
-    return res.render("ratreports");
+    try {
+        res.render("ratreports", {
+            title: 'Rat Reports'
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Error loading Rat Reports");
+    }
 });
 
 router.route('/restaurants').get(async (req, res) => {
-    return res.render("restaurants");
+    try {
+        res.render("restaurants", {
+            title: 'Restaurants'
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Error loading Restaurants");
+    }
 });
 
 export default router;
