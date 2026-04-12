@@ -1,9 +1,11 @@
- //import { restaurantData } from "../config/mongoCollections";
+ import { restaurants } from '../config/mongoCollections.js';
   // TODO - import validation
 
     export const getAllRestaurants = async() => {
-        //const restaurantCollection = await restaurantData();
+        const restaurantCollection = await restaurants();
+        const restaurantList = await restaurantCollection.find({}).toArray();
 
+        return restaurantList;
     };
 
     export const getRestaurantById = async() => {

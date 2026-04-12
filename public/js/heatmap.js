@@ -2,9 +2,9 @@ window.addEventListener('load', () => {
     // set the initial center of the map to New York City
     const nycLatLng = [40.7128, -74.0060];
     // create the boundaries for the map to be in NYC
-    var sourthWest = L.latLng(40.4774, -74.2591);
+    var southWest = L.latLng(40.4774, -74.2591);
     var northEast = L.latLng(40.9176, -73.7004);
-    var bounds = L.latLngBounds(sourthWest, northEast);
+    var bounds = L.latLngBounds(southWest, northEast);
     
     // initialize the map with the given boundaries and set the view to NYC
     const map = L.map('heatmap', {
@@ -21,18 +21,17 @@ window.addEventListener('load', () => {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // restaurant marker examples
-    // TODO - replace with actual restaurant data from database
-    var restaurants = [
-        { name: 'Restaurant A', lat: 40.7128, lng: -74.0060 },
-        { name: 'Restaurant B', lat: 40.7138, lng: -74.0050 },
-        { name: 'Restaurant C', lat: 40.7148, lng: -74.0040 }
-    ];
-    restaurants.forEach(restaurant => {
-        L.marker([restaurant.lat, restaurant.lng]).addTo(map)
-            .bindPopup(restaurant.name)
-            // TODO - can have href link to restaurant page with more info
-    });
+
+    // restaurant markers
+    if (typeof restaurantMapData !== 'undefined') {
+        console.log(restaurantMapData);
+        restaurantMapData.forEach(restaurant => {
+            console.log(restaurant);
+            L.marker([restaurant.lat, restaurant.lng])
+                .addTo(map)
+                .bindPopup(restaurant.name);
+        });
+    }
 
     // example heatmap data: [latitude, longitude, intensity]
     // TODO have intensity increase based on number of reports in vicinity
@@ -40,7 +39,7 @@ window.addEventListener('load', () => {
     L.heatLayer([
         // sample points
         // leaflet expects data in format [lat, lng, intensity]
-        [40.7128, -74.0060, 1],
+        [40.7128, -74.0060, 1], // TODO - replace with actual rodent data
         [40.7138, -74.0050, 0.5],
         [40.7148, -74.0040, 0.1]
     ], {
