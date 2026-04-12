@@ -1,7 +1,6 @@
-import { ObjectId, ReturnDocument } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import { rodentReports } from "../config/mongoCollections.js";
-import { checkDate, checkDescription, checkId, checkJobId, checkNote, checkNumber, checkPhotoUrl, checkRatSizeRating, checkRatType, checkReportStatus, checkVerifiedBy, checkZipcode } from "../helpers";
-import { checkName } from '../../../Lab 6/helpers.js';
+import { checkDate, checkDescription, checkId, checkJobId, checkNote, checkNumber, checkPhotoUrl, checkRatSizeRating, checkRatType, checkReportStatus, checkVerifiedBy, checkZipcode } from "../helpers.js";
 
 /**
  * Gets all rodent reports from database as a list of objects
