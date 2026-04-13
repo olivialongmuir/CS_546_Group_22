@@ -4,6 +4,8 @@ import { Router } from 'express';
 const router = Router();
 import { getAllRestaurants } from '../data/restaurants.js';
 
+import { getAllReports} from '../data/rodentReports.js'
+
 router.route(['/', '/home']).get(async (req, res) => { //Both of these routes will go to the homepage. Not sure if this is correct design or if should redirect - peter
     try {
         res.render("home", {
@@ -41,8 +43,12 @@ router.route('/heatmap').get(async (req, res) => {
 
 router.route('/ratreports').get(async (req, res) => {
     try {
+
+        let reports = await getAllReports();
+
         res.render("ratreports", {
-            title: 'Rat Reports'
+            title: 'Rat Reports',
+            reports:reports
         });
     } catch (error) {
         console.error(error);

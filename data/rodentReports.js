@@ -16,7 +16,7 @@ export const getAllReports = async() => {
 
     //Convert all object ids to string ids
     reportsList = reportsList.map(report => {
-        report.__id = report.__id.toString();
+        report._id = report._id.toString();
         return report
     })
 

@@ -134,7 +134,7 @@ main {
 
 
 
-/* bill grapic to store text */
+/* pill grapic to store text */
 .pill {
   display: inline-block;
   padding: 0.35rem 0.8rem;
@@ -144,4 +144,38 @@ main {
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1;
+}
+
+
+
+
+/* Styles used for the rodent reports page */
+.leftPane {
+  padding: 1rem;
+  overflow-y: auto; /* scroll if many cards */
+}
+.rightPane {
+  padding: 1rem;
+  border-left: 1px solid #333;
+}
+.ratCard {
+  background: #181819;
+  border: 1px solid rgb(74, 161, 17);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  width: 100%;
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
+}
+.ratCard:hover {
+  transform: scale(1.02);
+  border-color: #a3e635;
+  transition: 0.2s;
+}
+.container {
+  display: grid;
+  grid-template-columns: 30% 70%;
+  height: 100vh;
 }
