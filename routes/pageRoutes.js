@@ -20,4 +20,8 @@ router.route('/restaurants').get(async (req, res) => {
     return res.render("restaurants");
 });
 
+router.route('/profile').get(async (req, res) => {
+  return res.render('profile', { title: 'SqueakPeek - Profile' });
+});
+
 export default router;
