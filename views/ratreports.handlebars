@@ -3,24 +3,26 @@
     <div class="leftPane">
         <!-- Cards list -->
         {{#each reports}}
-            <div class="ratCard">
-                <li>{{this._id}}</li>
-                <li>{{this.latitude}}</li>
-                <li>{{this.longitude}}</li>
-                <li>{{this.timestamp}}</li>
+            <div class="ratCard" data-id="{{this._id}}">
+                <p>{{this._id}}</p>
+                {{!-- <p>{{this.latitude}}</p>
+                <p>{{this.longitude}}</p> --}}
+                <p>{{this.timestamp}}</p>
             </div>
         {{/each}}
     </div>
 
     <div class="rightPane">
         <!-- this part will be edited by client side js -->
-        <h2>Rodent Report</h2>
+        <h2 class="homeH2">Rodent Report</h2>
         <div id="ratReportDetail">
-            edit the data here
+            Select Report to View Detail
         </div>
     </div>
     </div>
 </section>
+
+<script src="/js/rodentReports.js"></script>
 
     {{!-- "_id": "69dcc7b4cc0c22fba23864b1",
     "jobId": "PC7002932",

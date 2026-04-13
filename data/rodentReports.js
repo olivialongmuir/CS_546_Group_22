@@ -34,13 +34,14 @@ export const getReportById = async(id) => {
 
     //Get rodentReports collection from database
     const reportsCollection = await rodentReports();
-    const reportItem = await reportsCollection.findOne({__id: new ObjectId(parsed_id)});
+    const reportItem = await reportsCollection.findOne({_id: new ObjectId(parsed_id)});
+
 
     //Check if database returned anything
     if (reportItem == null) throw `Error {getReportById}: No report associated with this id ${parsed_id}`;
 
     //Convert object id to regular string id
-    reportItem.__id = reportItem.__id.toString();
+    reportItem._id = reportItem._id.toString();
     return reportItem;
 };
 
@@ -167,7 +168,7 @@ export const updateReport = async(
     //Find report matching Id and update it
     const reportCollection = await rodentReports();
     const foundReport = await reportCollection.findOneAndUpdate(
-        {__id: new ObjectId(parsed_id)},
+        {_id: new ObjectId(parsed_id)},
         {$set: {...updateReport}},
         {ReturnDocument: "after"}
     );
@@ -213,7 +214,7 @@ export const createRodent = async(
     //Insert new rodent into database
     const reportCollection = await rodentReports();
     const insertInfo = await reportCollection.findOneAndUpdate(
-        {__id: new ObjectId(parsed_id)},
+        {_id: new ObjectId(parsed_id)},
         {$push: {rodent: newRodent}},
         {ReturnDocument: "after"}
     );
@@ -234,8 +235,11 @@ export const deleteReport = async(id) => {
 
     //Delete report from database
     const reportCollection = await rodentReports();
-    const deletionInfo = await reportCollection.findOneAndDelete({__id: new ObjectId(parsed_id)});
+    const deletionInfo = await reportCollection.findOneAndDelete({_id: new ObjectId(parsed_id)});
     if (!deletionInfo) throw `Error {deleteReport}: Could not delete id ${parsed_id}`;
 
     return deletionInfo
 };
+
+
+
