@@ -19,9 +19,9 @@ import {
 router.route('/').get(async (req, res) => {
   try {
     // can filter the reports
-    const filters = req.query;
+    // const filters = req.query; -- I removed the filters var and am not passing it into getallReports. I think you were using it on accident here - peter
 
-    const reports = await getAllReports(filters);
+    const reports = await getAllReports();
 
     res.json(reports);
   } catch (error) {
