@@ -6,7 +6,7 @@ const constructorMethod = (app) => {
     app.use('/public', staticDir('public'));
     app.use('/', pageRoutes);
 
-    app.use(/(.*)/, (req, res) => {
+    app.use((req, res) => {
         res.status(404).render('error');
     });
 };
