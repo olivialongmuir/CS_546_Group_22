@@ -1,6 +1,5 @@
 // ROUTES FOR RESTAURANTS
 
-// TODO - update to res.render() when we have front end set up
 // TODO - import and use validation
 
 import { Router } from 'express';

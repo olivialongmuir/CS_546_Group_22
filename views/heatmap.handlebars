@@ -1,1 +1,24 @@
-This is the heatmap TODO
+{{!-- THIS FILE WILL BE WRAPPED BY MAIN.HANDLEBARS --}}
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+<section id="heatmapSection">
+    {{!-- map container --}}
+    <div id="heatmap"></div>
+
+    {{!-- server data --}}
+    <script>
+        {{!-- TODO - pass in rodent data --}}
+        const restaurantMapData = {{{restaurantMapData}}};
+    </script>
+
+    {{!-- leaflet scripts --}}
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    {{!-- leaflet heat plugin --}}
+    <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+    {{!-- custom heatmap script --}}
+    <script src="/public/js/heatmap.js"></script>
+
+</section>

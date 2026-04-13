@@ -1,7 +1,7 @@
-import { dbConnection, closeConnection } from './config/mongoConnection.js';
-import { restaurants, rodentReports, users } from './config/mongoCollections.js';
-import restaurantData from './database/restaurants.json' with { type: 'json' }
-import rodentReportData from './database/rodents.json' with { type: 'json' }
+import { dbConnection, closeConnection } from '../config/mongoConnection.js';
+import { restaurants, rodentReports, users } from '../config/mongoCollections.js';
+import restaurantData from '../database/restaurants.json' with { type: 'json' }
+import rodentReportData from '../database/rodents.json' with { type: 'json' }
 
 /*
 Seed file for SquakPeek

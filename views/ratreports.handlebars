@@ -1,1 +1,41 @@
-this is the rat report page TODO
+<section>
+    <div class="container">
+    <div class="leftPane">
+        <!-- Cards list -->
+        {{#each reports}}
+            <div class="ratCard" data-id="{{this._id}}">
+                <p>{{this._id}}</p>
+                {{!-- <p>{{this.latitude}}</p>
+                <p>{{this.longitude}}</p> --}}
+                <p>{{this.timestamp}}</p>
+            </div>
+        {{/each}}
+    </div>
+
+    <div class="rightPane">
+        <!-- this part will be edited by client side js -->
+        <h2 class="homeH2">Rodent Report</h2>
+        <div id="ratReportDetail">
+            Select Report to View Detail
+        </div>
+    </div>
+    </div>
+</section>
+
+<script src="/js/rodentReports.js"></script>
+
+    {{!-- "_id": "69dcc7b4cc0c22fba23864b1",
+    "jobId": "PC7002932",
+    "zipcode": 11222,
+    "latitude": 40.7303258958,
+    "longitude": -73.9527229773,
+    "inspectionDate": "05/01/2013 02:41:36 PM",
+    "status": "confirmed",
+    "approvedDate": "05/03/2013 11:38:39 AM",
+    "restaurantId": null,
+    "userId": null,
+    "description": null,
+    "rodent": null,
+    "timestamp": "2026-04-07T05:56:32.547Z",
+    "updatedAt": null,
+    "verifiedBy": "inspector" --}}
