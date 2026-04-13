@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="/public/css/profile.css">
 
 <div class="profile-page">
-  <div class="container">
+  <div class="page-container">
     <div class="profile-wrapper">
 
       <!-- Page Header -->
@@ -13,7 +13,7 @@
       <div class="profile-grid">
 
         <!-- Profile Card -->
-        <aside class="profile-card card">
+        <aside class="profile-card panel">
 
           <!-- Avatar -->
           <div class="profile-avatar-section">
@@ -66,7 +66,7 @@
         <div class="profile-main">
 
           <!-- Edit Profile Form -->
-          <section class="card" aria-labelledby="edit-profile-heading">
+          <section class="panel" aria-labelledby="edit-profile-heading">
             <div class="card-header">
               <span class="card-header-icon">✏</span>
               <h3 id="edit-profile-heading">Edit Profile</h3>
@@ -105,12 +105,16 @@
               </div>
 
               <!-- Account Type -->
-                <select id="userType" name="userType" class="form-select">
+                <div class="form-group">
+                  <label for="userType">Account Type</label>
+                  <select id="userType" name="userType" class="form-select">
                     <option value="Consumer" selected>Consumer</option>
                     <option value="Inspector">Health Inspector</option>
                     <option value="Owner">Restaurant Owner</option>
                     <option value="Exterminator">Exterminator</option>
-                </select>
+                  </select>
+                  <p class="form-hint">Your account type determines what actions you can perform</p>
+                </div>
 
               <!-- Notification Preferences -->
               <fieldset class="notification-fieldset">
@@ -145,7 +149,7 @@
           </section>
 
           <!-- Recent Activity -->
-          <section class="card activity-card" aria-labelledby="activity-heading">
+          <section class="panel activity-card" aria-labelledby="activity-heading">
             <h3 id="activity-heading">Recent Activity</h3>
 
             <ul class="activity-list" aria-label="Recent activity">

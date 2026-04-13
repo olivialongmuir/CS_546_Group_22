@@ -356,3 +356,48 @@
     grid-template-columns: 1fr 2fr;
   }
 }
+
+.page-container {
+  width: 100%;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.panel {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  backdrop-filter: blur(4px);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+.btn--primary {
+  background-color: var(--primary);
+  color: #000;
+}
+.btn--primary:hover { background-color: var(--primary-hover); }
+.btn--outline {
+  background-color: transparent;
+  color: #d4d4d8;
+  border-color: var(--input-border);
+}
+.btn--outline:hover { color: var(--fg); border-color: var(--muted); }
+.btn--full { width: 100%; }
+
+.form-input,
+.form-select {
+  max-width: 28rem;
+}

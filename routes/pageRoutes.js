@@ -68,7 +68,26 @@ router.route('/restaurants').get(async (req, res) => {
 });
 
 router.route('/profile').get(async (req, res) => {
-  return res.render('profile', { title: 'SqueakPeek - Profile' });
+  // TODO: remove hard-coded user
+  const user = {
+    avatar: '🐭',
+    name: 'Demo User',
+    email: 'demo@stevens.edu',
+    userType: 'Consumer',
+    reportsSubmitted: 7,
+    savedRestaurants: 12,
+    notifications: 3,
+    joinedDate: 'Jan 2026',
+    activity: [
+      { color: 'green',  text: 'Submitted a rodent report for Joe\'s Pizza',     time: '2 hours ago'  },
+      { color: 'blue',   text: 'Saved Halal Guys to your restaurant list',       time: 'Yesterday'    },
+      { color: 'orange', text: 'New hotspot alert near Washington Square Park',  time: '3 days ago'   },
+      { color: 'green',  text: 'Submitted a rodent report for Corner Deli',      time: '1 week ago'   },
+      { color: 'blue',   text: 'Updated notification preferences',               time: '2 weeks ago'  }
+    ]
+  };
+ 
+  return res.render('profile', { title: 'SqueakPeek - Profile', user });
 });
 
 export default router;
