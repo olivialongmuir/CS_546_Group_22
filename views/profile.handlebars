@@ -1,0 +1,174 @@
+<link rel="stylesheet" href="/public/css/profile.css">
+
+<div class="profile-page">
+  <div class="page-container">
+    <div class="profile-wrapper">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1 class="page-title">User Profile</h1>
+        <p class="page-subtitle">Manage your account and activity</p>
+      </div>
+
+      <div class="profile-grid">
+
+        <!-- Profile Card -->
+        <aside class="profile-card panel">
+
+          <!-- Avatar -->
+          <div class="profile-avatar-section">
+            <div class="profile-avatar">{{user.avatar}}</div>
+            <h2 class="profile-name">{{user.name}}</h2>
+            <p class="profile-email">{{user.email}}</p>
+          </div>
+
+          <!-- User Type Badge -->
+          <div class="profile-badge">
+            <span class="badge-icon">🛡</span>
+            <span>{{user.userType}}</span>
+          </div>
+
+          <!-- Stats -->
+          <ul class="profile-stats" aria-label="Profile statistics">
+            <li class="stat-row">
+              <div class="stat-label">
+                <span class="stat-icon">📄</span>
+                <span>Reports</span>
+              </div>
+              <span class="stat-value">{{user.reportsSubmitted}}</span>
+            </li>
+            <li class="stat-row">
+              <div class="stat-label">
+                <span class="stat-icon">🔖</span>
+                <span>Saved</span>
+              </div>
+              <span class="stat-value">{{user.savedRestaurants}}</span>
+            </li>
+            <li class="stat-row">
+              <div class="stat-label">
+                <span class="stat-icon">🔔</span>
+                <span>Notifications</span>
+              </div>
+              <span class="stat-value stat-value--badge">{{user.notifications}}</span>
+            </li>
+            <li class="stat-row">
+              <div class="stat-label">
+                <span class="stat-icon">📅</span>
+                <span>Member Since</span>
+              </div>
+              <span class="stat-value stat-value--small">{{user.joinedDate}}</span>
+            </li>
+          </ul>
+
+        </aside>
+
+        <!-- Right Column -->
+        <div class="profile-main">
+
+          <!-- Edit Profile Form -->
+          <section class="panel" aria-labelledby="edit-profile-heading">
+            <div class="card-header">
+              <span class="card-header-icon">✏</span>
+              <h3 id="edit-profile-heading">Edit Profile</h3>
+            </div>
+
+            <form id="profile-form" class="profile-form" novalidate>
+
+              <!-- Full Name -->
+              <div class="form-group">
+                <label for="name">Full Name</label>
+                <div class="input-wrapper">
+                  <span class="input-icon">👤</span>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value="{{user.name}}"
+                    class="form-input"
+                  />
+                </div>
+              </div>
+
+              <!-- Email -->
+              <div class="form-group">
+                <label for="email">Email Address</label>
+                <div class="input-wrapper">
+                  <span class="input-icon">✉</span>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value="{{user.email}}"
+                    class="form-input"
+                  />
+                </div>
+              </div>
+
+              <!-- Account Type -->
+                <div class="form-group">
+                  <label for="userType">Account Type</label>
+                  <select id="userType" name="userType" class="form-select">
+                    <option value="Consumer" selected>Consumer</option>
+                    <option value="Inspector">Health Inspector</option>
+                    <option value="Owner">Restaurant Owner</option>
+                    <option value="Exterminator">Exterminator</option>
+                  </select>
+                  <p class="form-hint">Your account type determines what actions you can perform</p>
+                </div>
+
+              <!-- Notification Preferences -->
+              <fieldset class="notification-fieldset">
+                <legend>Notification Preferences</legend>
+
+                <label class="checkbox-row">
+                  <span class="checkbox-label">Email notifications</span>
+                  <input type="checkbox" name="emailNotifications" checked />
+                </label>
+
+                <label class="checkbox-row">
+                  <span class="checkbox-label">Report updates</span>
+                  <input type="checkbox" name="reportUpdates" checked />
+                </label>
+
+                <label class="checkbox-row">
+                  <span class="checkbox-label">New hotspot alerts</span>
+                  <input type="checkbox" name="hotspotAlerts" />
+                </label>
+              </fieldset>
+
+              <!-- Error message area -->
+              <div id="form-error" class="form-error" hidden></div>
+
+              <!-- Action Buttons -->
+              <div class="form-actions">
+                <button type="submit" class="btn btn--primary btn--full">Save Changes</button>
+                <button type="reset" class="btn btn--outline btn--full">Cancel</button>
+              </div>
+
+            </form>
+          </section>
+
+          <!-- Recent Activity -->
+          <section class="panel activity-card" aria-labelledby="activity-heading">
+            <h3 id="activity-heading">Recent Activity</h3>
+
+            <ul class="activity-list" aria-label="Recent activity">
+              {{#each user.activity}}
+              <li class="activity-item">
+                <span class="activity-dot activity-dot--{{this.color}}"></span>
+                <div class="activity-content">
+                  <p class="activity-text">{{this.text}}</p>
+                  <p class="activity-time">{{this.time}}</p>
+                </div>
+              </li>
+              {{/each}}
+            </ul>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/public/js/profile.js"></script>

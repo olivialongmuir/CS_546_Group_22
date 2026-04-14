@@ -1,6 +1,21 @@
 /* CSS STYLESHEET */
+:root {
+  --background: #0a0a0a;
+  --fg: #fafafa;
+  --muted: #a1a1aa;
+  --primary: #a3e635;
+  --primary-darker: #65a30d;
+  --primary-hover: #8bc629;
+  --card-bg: rgba(24, 24, 27, 0.5);
+  --card-border: #27272a;
+  --black-overlay: rgba(0, 0, 0, 0.4);
+  --input-bg: #18181b;
+  --input-border: #3f3f46;
+  --input-placeholder: #71717a;
+  --radius: 0.75rem;
+}
 
-ul {
+header ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -8,11 +23,11 @@ ul {
   background-color: #333333;
 }
 
-ul li {
+header ul li {
   float: left;
 }
 
-ul li a {
+header ul li a {
   display: block;
   color: white;
   text-align: center;
@@ -20,7 +35,7 @@ ul li a {
   text-decoration: none;
 }
 
-ul li a:hover {
+header ul li a:hover {
   background-color: #111111;
 }
 
