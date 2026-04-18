@@ -113,6 +113,8 @@ export const checkReportStatus = (reportStatus) => {
     return parsed_reportStatus;
 };
 
+
+
 export const checkVerifiedBy = (user) => {
     const parsed_user = checkString(user, "verifiedBy").toLowerCase();
     const validUser = ['exterminator', 'inspector', 'admin'];
@@ -126,3 +128,15 @@ export const checkRatType = (ratType) => {
     if (!validTypes.includes(parsed_type)) throw `Error: Rat type must be one of the following: ${validStatus.join(', ')}`;
     return parsed_type;
 };
+
+export const checkWebsite = (website) => {
+    const parsed_website = checkString(website, "website");
+    if (!/^https?:\/\/[^\s$.?#].[^\s]*$/.test(parsed_website)) throw 'Error: Website URL is not valid';
+    return parsed_website;
+};
+
+export const checkPhone = (phone) => {
+    const parsed_phone = checkString(phone, "phone");
+    if (!/^\d{3}-\d{3}-\d{4}$/.test(parsed_phone)) throw 'Error: Phone number must be in the format XXX-XXX-XXXX';
+    return parsed_phone;
+}
