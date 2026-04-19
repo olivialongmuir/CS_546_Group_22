@@ -1,7 +1,5 @@
 // ROUTES FOR RESTAURANTS
 
-// TODO - import and use validation
-
 import { Router } from 'express';
 const router = Router();
 
@@ -16,6 +14,17 @@ import {
   getRestaurantRodentReports
 } from '../data/restaurants.js';
 
+// Error handling helper function
+const handleError = (res, error) => {
+  const message = error.toString();
+  // 404 error - not found
+  if (message.includes('No restaurant')) return res.status(404).json({ error: message });
+  // 400 error - bad request
+  if (message.includes('Error:')) return res.status(400).json({ error: message });
+  // 500 error - internal server error
+  return res.status(500).json({ error: error.message });
+};
+
 // GET /restaurants
 // Grabs all restaurants data
 router.route('/').get(async (req, res) => {
@@ -27,7 +36,7 @@ router.route('/').get(async (req, res) => {
 
     res.json(restaurants);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    handleError(res, error);
   }
 });
 
@@ -35,17 +44,41 @@ router.route('/').get(async (req, res) => {
 // Creates a restaurant
 router.route('/').post(async (req, res) => {
   try {
-    const data = req.body;
+    const {
+      name,
+      type,
+      latitude,
+      longitude,
+      website,
+      phone,
+      permit_number,
+      status
+    } = req.body;
 
-    if (!data.name) {
-      return res.status(400).json({ error: 'Name required' });
-    }
+    // Input validation
+    const validatedName = checkString(name, "name");
+    const validatedType = checkString(type, "type");
+    const validatedLatitude = checkNumber(latitude, "latitude");
+    const validatedLongitude = checkNumber(longitude, "longitude");
+    const validatedWebsite = checkWebsite(website, "website");
+    const validatedPhone = checkPhone(phone, "phone");
+    const validatedPermitNumber = checkString(permit_number, "permit_number");
+    const validatedStatus = checkReportStatus(status, "status");
 
-    const newRestaurant = await createRestaurant(data);
+    const newRestaurant = await createRestaurant(
+      validatedName,
+      validatedType,
+      validatedLatitude,
+      validatedLongitude,
+      validatedWebsite,
+      validatedPhone,
+      validatedPermitNumber,
+      validatedStatus
+    );
 
     res.status(201).json(newRestaurant);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    handleError(res, error);
   }
 });
 
@@ -54,8 +87,9 @@ router.route('/').post(async (req, res) => {
 router.route('/:id').get(async (req, res) => {
   try {
     const id = req.params.id.trim();
+    const validatedId = checkId(id);
 
-    const restaurant = await getRestaurantById(id);
+    const restaurant = await getRestaurantById(validatedId);
 
     if (!restaurant) {
       return res.status(404).json({ error: 'Not found' });
@@ -63,7 +97,7 @@ router.route('/:id').get(async (req, res) => {
 
     res.json(restaurant);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    handleError(res, error);
   }
 });
 
@@ -72,22 +106,46 @@ router.route('/:id').get(async (req, res) => {
 router.route('/:id').patch(async (req, res) => {
   try {
     const id = req.params.id.trim();
+    const validatedId = checkId(id);
 
-    if (!id) {
-      return res.status(400).json({ error: 'Invalid restaurant ID' });
-    }
+    const {
+      name,
+      type,
+      latitude,
+      longitude,
+      website,
+      phone,
+      permit_number,
+      status
+    } = req.body;
 
-    const updated = await updateRestaurant(id, req.body);
+    // Input validation
+    if (name !== undefined) name = checkString(name, "name");
+    if (type !== undefined) type = checkString(type, "type");
+    if (latitude !== undefined) latitude = checkNumber(latitude, "latitude");
+    if (longitude !== undefined) longitude = checkNumber(longitude, "longitude");
+    if (website !== undefined) website = checkWebsite(website, "website");
+    if (phone !== undefined) phone = checkPhone(phone, "phone");
+    if (permit_number !== undefined) permit_number = checkString(permit_number, "permit_number");
+    if (status !== undefined) status = checkReportStatus(status, "status");
 
-    if (!updated) {
-      return res.status(404).json({ error: 'Restaurant not found' });
-    }
+    const updated = await updateRestaurant(
+      validatedId,
+      name,
+      type,
+      latitude,
+      longitude,
+      website,
+      phone,
+      permit_number,
+      status
+    );
 
     res.status(200).json(updated);
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    handleError(res, error);
   }
 });
 
@@ -95,11 +153,12 @@ router.route('/:id').patch(async (req, res) => {
 // deletes a restaurant by id
 router.route('/:id').delete(async (req, res) => {
   try {
-    await deleteRestaurant(req.params.id);
+    const validatedId = checkId(req.params.id.trim());
+    await deleteRestaurant(validatedId);
 
     res.status(204).send();
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    handleError(res, error);
   }
 });
 
@@ -107,11 +166,12 @@ router.route('/:id').delete(async (req, res) => {
 // Gets all restaurant comments by id
 router.get('/:id/comments', async (req, res) => {
   try {
-    const comments = await getRestaurantComments(req.params.id);
+    const validatedId = checkId(req.params.id.trim());
+    const comments = await getRestaurantComments(validatedId);
 
     res.status(200).json(comments);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    handleError(res, error);
   }
 });
 
@@ -123,7 +183,7 @@ router.post('/:id/comments', async (req, res) => {
 
     res.status(201).json(comment);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    handleError(res, error);
   }
 });
 
@@ -135,7 +195,7 @@ router.get('/:id/rodentReports', async (req, res) => {
 
     res.status(200).json(reports);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    handleError(res, error);
   }
 });
 
