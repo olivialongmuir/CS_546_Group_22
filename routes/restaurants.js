@@ -1,7 +1,5 @@
 // ROUTES FOR RESTAURANTS
 
-// TODO - import and use validation
-
 import { Router } from 'express';
 const router = Router();
 
@@ -57,15 +55,25 @@ router.route('/').post(async (req, res) => {
       status
     } = req.body;
 
+    // Input validation
+    const validatedName = checkString(name, "name");
+    const validatedType = checkString(type, "type");
+    const validatedLatitude = checkNumber(latitude, "latitude");
+    const validatedLongitude = checkNumber(longitude, "longitude");
+    const validatedWebsite = checkWebsite(website, "website");
+    const validatedPhone = checkPhone(phone, "phone");
+    const validatedPermitNumber = checkString(permit_number, "permit_number");
+    const validatedStatus = checkReportStatus(status, "status");
+
     const newRestaurant = await createRestaurant(
-      name,
-      type,
-      latitude,
-      longitude,
-      website,
-      phone,
-      permit_number,
-      status
+      validatedName,
+      validatedType,
+      validatedLatitude,
+      validatedLongitude,
+      validatedWebsite,
+      validatedPhone,
+      validatedPermitNumber,
+      validatedStatus
     );
 
     res.status(201).json(newRestaurant);
@@ -79,8 +87,9 @@ router.route('/').post(async (req, res) => {
 router.route('/:id').get(async (req, res) => {
   try {
     const id = req.params.id.trim();
+    const validatedId = checkId(id);
 
-    const restaurant = await getRestaurantById(id);
+    const restaurant = await getRestaurantById(validatedId);
 
     if (!restaurant) {
       return res.status(404).json({ error: 'Not found' });
@@ -97,6 +106,7 @@ router.route('/:id').get(async (req, res) => {
 router.route('/:id').patch(async (req, res) => {
   try {
     const id = req.params.id.trim();
+    const validatedId = checkId(id);
 
     const {
       name,
@@ -109,8 +119,18 @@ router.route('/:id').patch(async (req, res) => {
       status
     } = req.body;
 
+    // Input validation
+    if (name !== undefined) name = checkString(name, "name");
+    if (type !== undefined) type = checkString(type, "type");
+    if (latitude !== undefined) latitude = checkNumber(latitude, "latitude");
+    if (longitude !== undefined) longitude = checkNumber(longitude, "longitude");
+    if (website !== undefined) website = checkWebsite(website, "website");
+    if (phone !== undefined) phone = checkPhone(phone, "phone");
+    if (permit_number !== undefined) permit_number = checkString(permit_number, "permit_number");
+    if (status !== undefined) status = checkReportStatus(status, "status");
+
     const updated = await updateRestaurant(
-      id,
+      validatedId,
       name,
       type,
       latitude,
@@ -133,7 +153,8 @@ router.route('/:id').patch(async (req, res) => {
 // deletes a restaurant by id
 router.route('/:id').delete(async (req, res) => {
   try {
-    await deleteRestaurant(req.params.id);
+    const validatedId = checkId(req.params.id.trim());
+    await deleteRestaurant(validatedId);
 
     res.status(204).send();
   } catch (error) {
@@ -145,7 +166,8 @@ router.route('/:id').delete(async (req, res) => {
 // Gets all restaurant comments by id
 router.get('/:id/comments', async (req, res) => {
   try {
-    const comments = await getRestaurantComments(req.params.id);
+    const validatedId = checkId(req.params.id.trim());
+    const comments = await getRestaurantComments(validatedId);
 
     res.status(200).json(comments);
   } catch (error) {
