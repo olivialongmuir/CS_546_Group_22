@@ -1,0 +1,36 @@
+{{!-- THIS FILE WILL BE WRAPPED BY MAIN.HANDLEBARS --}}
+
+<section id="loginSection">
+    <h1>Login</h1>
+
+    {{#if error}}
+        <p class="loginError" style="color: #c0392b;">{{ error }}</p>
+    {{/if}}
+
+    <form id="loginForm" method="POST" action="/login">
+        <div>
+            <label for="username">Username</label>
+            <input
+                type="text"
+                id="username"
+                name="username"
+                value="{{ username }}"
+                required
+                minlength="3"
+                maxlength="20"
+            />
+        </div>
+
+        <div>
+            <label for="password">Password</label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                required
+            />
+        </div>
+
+        <button type="submit" class="pillButton">Log In</button>
+    </form>
+</section>

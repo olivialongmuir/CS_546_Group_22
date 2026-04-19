@@ -4,6 +4,7 @@ import express from 'express';
 const app = express();
 import configRoutes from './routes/index.js';
 import exphbs from 'express-handlebars';
+import session from 'express-session';
 
 const rewriteUnsupportedBrowserMethods = (req, res, next) => {
   // If the user posts to the server with a property called _method, rewrite the request's method
@@ -20,7 +21,19 @@ const rewriteUnsupportedBrowserMethods = (req, res, next) => {
 app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+app.use(session({
+  name: 'SqueakPeekSession',
+  secret: 'squeakpeek_secret_key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 1000 * 60 * 60 * 8 }
+}));
 app.use(rewriteUnsupportedBrowserMethods);
+
+app.use((req, res, next) => {
+  res.locals.isLoggedIn = Boolean(req.session && req.session.userId);
+  next();
+});
 
 app.engine('handlebars', exphbs.engine({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');

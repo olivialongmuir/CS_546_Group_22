@@ -29,7 +29,7 @@ const main = async () => {
       "lastName": "Smith",
       "username": "smithy889",
       "emailAddress": "johnSmith643@gmail.com",
-      "hashPassword": null,
+      "hashPassword": "$2b$10$VdNkzFQk0aCjTaRRk8Sdb.BXNkQTB3ef3VHWeP1FFS583ZDWLL8UW", //password: test123
       "timestamp": "2026-03-04T01:26:32.547Z",
       "comments": []
     },
