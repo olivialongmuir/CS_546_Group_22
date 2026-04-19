@@ -4,36 +4,45 @@
 
 <section id="heatmapSection">
 
-    {{!-- Titles --}}
     <h1 id="heatmapTitle">NYC Rodent Heatmap</h1>
     <p id="heatmapSubtitle">Interactive map showing rodent hotspots across New York City</p>
 
-    {{!-- Search Bar --}}
-    <div id="searchBarContainer">
-        <input
-            id="searchInput"
-            type="text"
-            placeholder="Search Restaurants"
-        >
-        <button id="searchButton">Search</button>
-    </div>
-    
-    {{!-- map container --}}
-    <div id="heatmap"></div>
+    <!-- Layout wrapper -->
+    <div id="heatmapLayout">
 
-    {{!-- server data --}}
+        <!-- left - map and search bar -->
+        <div id="mapColumn">
+
+            <div id="searchBarContainer">
+                <input id="searchInput" type="text" placeholder="Search Restaurants">
+                <button id="searchButton">Search</button>
+            </div>
+
+            <div id="heatmap"></div>
+        </div>
+
+        <!-- right - hotspot feed -->
+        <aside id="hotspotFeed">
+            <h2>Hotspot Feed</h2>
+            {{!-- TODO - populate list --}}
+            <ul id="hotspotList">
+                {{#each hotspotFeed}}
+                    <li>
+                        <strong>{{this.name}}</strong><br>
+                        <span>{{this.status}}</span>
+                    </li>
+                {{/each}}
+            </ul>
+        </aside>
+
+    </div>
+
     <script>
-        {{!-- TODO - pass in rodent data --}}
         const restaurantMapData = {{{restaurantMapData}}};
     </script>
 
-    {{!-- leaflet scripts --}}
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-    {{!-- leaflet heat plugin --}}
     <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
-
-    {{!-- custom heatmap script --}}
     <script src="/public/js/heatmap.js"></script>
 
 </section>

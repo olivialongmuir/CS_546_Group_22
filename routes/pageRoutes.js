@@ -29,9 +29,18 @@ router.route('/heatmap').get(async (req, res) => {
 
         const restaurantMapData = JSON.stringify(restaurantData);
 
+        // TODO - hone in on hotspot feed
+        // potentially grab restaurants with top comments
+        // or grab rodent data with top comments
+        const hotspotFeed = restaurantList.slice(0, 9).map(r => ({
+            name: r.name,
+            status: r.status ?? "Status Unavailable"
+        }));
+
         res.render("heatmap", {
             title: 'Heatmap',
-            restaurantMapData: restaurantMapData
+            restaurantMapData: restaurantMapData,
+            hotspotFeed: hotspotFeed
             // TODO - pass in rodent data
         });
 
