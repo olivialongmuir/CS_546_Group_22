@@ -16,6 +16,17 @@ import {
   getRestaurantRodentReports
 } from '../data/restaurants.js';
 
+// Error handling helper function
+const handleError = (res, error) => {
+  const message = error.toString();
+  // 404 error - not found
+  if (message.includes('No restaurant')) return res.status(404).json({ error: message });
+  // 400 error - bad request
+  if (message.includes('Error:')) return res.status(400).json({ error: message });
+  // 500 error - internal server error
+  return res.status(500).json({ error: error.message });
+};
+
 // GET /restaurants
 // Grabs all restaurants data
 router.route('/').get(async (req, res) => {
@@ -27,7 +38,7 @@ router.route('/').get(async (req, res) => {
 
     res.json(restaurants);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    handleError(res, error);
   }
 });
 
@@ -35,17 +46,31 @@ router.route('/').get(async (req, res) => {
 // Creates a restaurant
 router.route('/').post(async (req, res) => {
   try {
-    const data = req.body;
+    const {
+      name,
+      type,
+      latitude,
+      longitude,
+      website,
+      phone,
+      permit_number,
+      status
+    } = req.body;
 
-    if (!data.name) {
-      return res.status(400).json({ error: 'Name required' });
-    }
-
-    const newRestaurant = await createRestaurant(data);
+    const newRestaurant = await createRestaurant(
+      name,
+      type,
+      latitude,
+      longitude,
+      website,
+      phone,
+      permit_number,
+      status
+    );
 
     res.status(201).json(newRestaurant);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    handleError(res, error);
   }
 });
 
@@ -63,7 +88,7 @@ router.route('/:id').get(async (req, res) => {
 
     res.json(restaurant);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    handleError(res, error);
   }
 });
 
@@ -73,21 +98,34 @@ router.route('/:id').patch(async (req, res) => {
   try {
     const id = req.params.id.trim();
 
-    if (!id) {
-      return res.status(400).json({ error: 'Invalid restaurant ID' });
-    }
+    const {
+      name,
+      type,
+      latitude,
+      longitude,
+      website,
+      phone,
+      permit_number,
+      status
+    } = req.body;
 
-    const updated = await updateRestaurant(id, req.body);
-
-    if (!updated) {
-      return res.status(404).json({ error: 'Restaurant not found' });
-    }
+    const updated = await updateRestaurant(
+      id,
+      name,
+      type,
+      latitude,
+      longitude,
+      website,
+      phone,
+      permit_number,
+      status
+    );
 
     res.status(200).json(updated);
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    handleError(res, error);
   }
 });
 
@@ -99,7 +137,7 @@ router.route('/:id').delete(async (req, res) => {
 
     res.status(204).send();
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    handleError(res, error);
   }
 });
 
@@ -111,7 +149,7 @@ router.get('/:id/comments', async (req, res) => {
 
     res.status(200).json(comments);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    handleError(res, error);
   }
 });
 
@@ -123,7 +161,7 @@ router.post('/:id/comments', async (req, res) => {
 
     res.status(201).json(comment);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    handleError(res, error);
   }
 });
 
@@ -135,7 +173,7 @@ router.get('/:id/rodentReports', async (req, res) => {
 
     res.status(200).json(reports);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    handleError(res, error);
   }
 });
 
