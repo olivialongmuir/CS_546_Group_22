@@ -1,4 +1,6 @@
 import { users } from "../config/mongoCollections.js";
+import { checkId } from "../helpers.js";
+import { ObjectId } from "mongodb";
 
 /**
  * Gets all users from database as a list of objects
@@ -21,8 +23,13 @@ export const getAllUsers = async() => {
     return userList
 };
 
-export const getUserById = async() => {
-
+export const getUserById = async(id) => {
+    const parsedId = checkId(id);
+    const usersCollection = await users();
+    const user = await usersCollection.findOne({ _id: new ObjectId(parsedId) });
+    if (!user) throw `Error {getUserById}: No user found with id ${id}`;
+    user._id = user._id.toString();
+    return user;
 };
 
 export const createUser = async() => {

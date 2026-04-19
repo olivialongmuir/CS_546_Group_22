@@ -5,6 +5,7 @@ const router = Router();
 import { getAllRestaurants } from '../data/restaurants.js';
 
 import { getAllReports} from '../data/rodentReports.js'
+import { getUserById } from '../data/users.js';
 
 router.route(['/', '/home']).get(async (req, res) => { //Both of these routes will go to the homepage. Not sure if this is correct design or if should redirect - peter
     try {
@@ -68,26 +69,33 @@ router.route('/restaurants').get(async (req, res) => {
 });
 
 router.route('/profile').get(async (req, res) => {
-  // TODO: remove hard-coded user
-  const user = {
-    avatar: '🐭',
-    name: 'Demo User',
-    email: 'demo@stevens.edu',
-    userType: 'Consumer',
-    reportsSubmitted: 7,
-    savedRestaurants: 12,
-    notifications: 3,
-    joinedDate: 'Jan 2026',
-    activity: [
-      { color: 'green',  text: 'Submitted a rodent report for Joe\'s Pizza',     time: '2 hours ago'  },
-      { color: 'blue',   text: 'Saved Halal Guys to your restaurant list',       time: 'Yesterday'    },
-      { color: 'orange', text: 'New hotspot alert near Washington Square Park',  time: '3 days ago'   },
-      { color: 'green',  text: 'Submitted a rodent report for Corner Deli',      time: '1 week ago'   },
-      { color: 'blue',   text: 'Updated notification preferences',               time: '2 weeks ago'  }
-    ]
-  };
- 
-  return res.render('profile', { title: 'SqueakPeek - Profile', user });
+  if (!req.session.userId) return res.redirect('/login');
+
+  try {
+    const dbUser = await getUserById(req.session.userId);
+
+    const joinedDate = new Date(dbUser.timestamp).toLocaleDateString('en-US', {
+      month: 'short',
+      year: 'numeric'
+    });
+
+    const user = {
+      avatar: '🐭',
+      name: `${dbUser.firstName} ${dbUser.lastName}`,
+      email: dbUser.emailAddress,
+      userType: dbUser.type.charAt(0).toUpperCase() + dbUser.type.slice(1),
+      reportsSubmitted: 0,
+      savedRestaurants: 0,
+      notifications: 0,
+      joinedDate,
+      activity: []
+    };
+
+    return res.render('profile', { title: 'SqueakPeek - Profile', user });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send('Error loading Profile');
+  }
 });
 
 export default router;
