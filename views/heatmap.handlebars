@@ -3,6 +3,21 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
 <section id="heatmapSection">
+
+    {{!-- Titles --}}
+    <h1 id="heatmapTitle">NYC Rodent Heatmap</h1>
+    <p id="heatmapSubtitle">Interactive map showing rodent hotspots across New York City</p>
+
+    {{!-- Search Bar --}}
+    <div id="searchBarContainer">
+        <input
+            id="searchInput"
+            type="text"
+            placeholder="Search Restaurants"
+        >
+        <button id="searchButton">Search</button>
+    </div>
+    
     {{!-- map container --}}
     <div id="heatmap"></div>
 
