@@ -1,29 +1,52 @@
 # CS_546_Group_22
 
+## Directory Structure
 
-**DIRECTORY STRUCTURE**
-data
-    restaurants.js
-    rodentReports.js
-    users.js
-public
-    |-css
-        styles.css
-    |-images
-        *store images here*
-routes
-    index.js
-    restaurants.js
-    rodentReports.js
-    users.js
-tasks
-    seed.js
-    *store task files here*
-views
-    |-layouts
-        main.handlebars
-    home.handlebars
-    *store all html pages here*
-app.js
-README.md
-
+```
+.
+├── app.js
+├── helpers.js
+├── seed.js
+├── README.md
+├── config/
+│   ├── mongoCollections.js
+│   ├── mongoConnection.js
+│   └── settings.js
+├── data/
+│   ├── restaurants.js
+│   ├── rodentReports.js
+│   └── users.js
+├── database/
+│   ├── restaurants.json
+│   ├── restaurants_sample.json
+│   ├── rodents.json
+│   └── rodents_sample.json
+├── public/
+│   ├── css/
+│   │   ├── profile.css
+│   │   ├── restaurants.css
+│   │   └── styles.css
+│   ├── js/
+│   │   ├── heatmap.js
+│   │   ├── profile.js
+│   │   └── rodentReports.js
+│   └── images/
+├── routes/
+│   ├── auth.js
+│   ├── index.js
+│   ├── pageRoutes.js
+│   ├── restaurants.js
+│   ├── rodentReports.js
+│   └── users.js
+└── views/
+    ├── layouts/
+    │   └── main.handlebars
+    ├── error.handlebars
+    ├── heatmap.handlebars
+    ├── home.handlebars
+    ├── login.handlebars
+    ├── profile.handlebars
+    ├── ratreports.handlebars
+    ├── restaurant.handlebars
+    └── restaurants.handlebars
+```
