@@ -8,17 +8,18 @@
             <h2>Filter Reports</h2>
 
             <label for="reportDate">Report Date:</label><br>
-            <input type="date" id="reportDate" name="reportDate">
-            <input type="date" id="reportDate" name="reportDate"><br>
+            <input id="startDate" type="date" id="reportDate" name="reportDate">
+            <input id="endDate" type="date" id="reportDate" name="reportDate"><br>
             <label for="verifiedStatus">Verified Only:</label>
-            <input type="checkbox" id="verifiedStatus" name="verifiedStatus">
+            <input type="checkbox" id="verifiedStatus" name="verifiedStatus"><br>
+            <button id="clearFilters">Clear Filters</button>
         </div>
     
 
 
         <!-- Cards list -->
         {{#each reports}}
-            <div class="ratCard" data-id="{{this._id}}" status-id="{{this.status}}">
+            <div class="ratCard" data-id="{{this._id}}" status-id="{{this.status}}" data-timestamp="{{this.timestamp}}">
                 <p>{{this._id}}</p>
                 {{!-- <p>{{this.latitude}}</p>
                 <p>{{this.longitude}}</p> --}}
