@@ -194,3 +194,185 @@ main {
   grid-template-columns: 30% 70%;
   height: 100vh;
 }
+
+/* Shared utilities — used across multiple pages*/
+
+.page-container {
+  width: 100%;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--fg);
+  margin-bottom: 0.25rem;
+}
+
+.page-subtitle {
+  color: var(--muted);
+}
+
+/* --- Panel --- */
+.panel {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  backdrop-filter: blur(4px);
+}
+
+/* --- Card Header --- */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.card-header-icon {
+  color: var(--primary);
+  font-size: 1.1rem;
+}
+
+.card-header h3 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+/* --- Forms --- */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #71717a;
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.625rem 0.75rem 0.625rem 2.25rem;
+  background-color: #18181b;
+  border: 1px solid #3f3f46;
+  border-radius: 0.5rem;
+  color: var(--fg);
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(163, 230, 53, 0.2);
+}
+
+.form-select {
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  background-color: #18181b;
+  border: 1px solid #3f3f46;
+  border-radius: 0.5rem;
+  color: var(--fg);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  appearance: none;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(163, 230, 53, 0.2);
+}
+
+.form-hint {
+  font-size: 0.75rem;
+  color: #71717a;
+}
+
+.form-error {
+  color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+}
+
+/* --- Buttons --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.btn--primary {
+  background-color: var(--primary);
+  color: #000;
+}
+
+.btn--primary:hover { background-color: var(--primary-hover); }
+
+.btn--outline {
+  background-color: transparent;
+  color: #d4d4d8;
+  border-color: var(--input-border);
+}
+
+.btn--outline:hover { color: var(--fg); border-color: var(--muted); }
+
+.btn--full { width: 100%; }
+
+/* --- Shared responsive --- */
+@media (min-width: 768px) {
+  .page-title {
+    font-size: 2.5rem;
+  }
+
+  .form-actions {
+    flex-direction: row;
+  }
+
+  .btn--full {
+    flex: 1;
+  }
+}

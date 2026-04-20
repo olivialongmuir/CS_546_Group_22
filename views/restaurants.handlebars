@@ -1,1 +1,98 @@
-this the the restaraunts page TODO
+<link rel="stylesheet" href="/public/css/restaurants.css">
+
+<div class="restaurants-page">
+  <div class="page-container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1 class="page-title">Restaurant Results</h1>
+      <p class="page-subtitle">Browse restaurants and their rodent safety ratings</p>
+    </div>
+
+    <div class="restaurants-grid">
+
+      <!-- Sidebar: search + filters -->
+      <aside class="restaurants-sidebar panel" aria-label="Search and filters">
+        <form action="/restaurants" method="GET" class="filter-form">
+
+          <div class="form-group">
+            <label for="search">Search</label>
+            <div class="input-wrapper">
+              <span class="input-icon">🔍</span>
+              <input
+                type="text"
+                id="search"
+                name="search"
+                value="{{filters.search}}"
+                placeholder="Search restaurants..."
+                class="form-input"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="borough">Borough</label>
+            <select id="borough" name="borough" class="form-select">
+              <option value="all" {{#if allBoroughsSelected}}selected{{/if}}>All Boroughs</option>
+              {{#each boroughOptions}}
+                <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+              {{/each}}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="status">Status</label>
+            <select id="status" name="status" class="form-select">
+              <option value="all" {{#if allStatusesSelected}}selected{{/if}}>All Status</option>
+              {{#each statusOptions}}
+                <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+              {{/each}}
+            </select>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn--primary btn--full">Apply Filters</button>
+            <a href="/restaurants" class="btn btn--outline btn--full">Reset</a>
+          </div>
+        </form>
+      </aside>
+
+      <!-- Main: results -->
+      <section class="restaurants-main" aria-labelledby="results-heading">
+        <h2 id="results-heading" class="results-heading">{{countLabel}}</h2>
+
+        {{#if restaurants.length}}
+          <ul class="restaurant-list">
+            {{#each restaurants}}
+              <li>
+                <a href="/restaurants/{{this.id}}" class="restaurant-card panel">
+                  <div class="restaurant-card-main">
+                    <h3 class="restaurant-name">{{this.name}}</h3>
+                    <div class="restaurant-meta">
+                      <span class="meta-item"><span class="meta-icon">📍</span>{{this.borough}}</span>
+                      <span class="meta-sep">•</span>
+                      <span>{{this.cuisine}}</span>
+                    </div>
+                    <p class="restaurant-address">{{this.address}}</p>
+                  </div>
+                  <div class="restaurant-card-side">
+                    <span class="status-badge status-badge--{{this.status.key}}">{{this.status.label}}</span>
+                    {{#if this.grade}}
+                      <span class="grade-pill">Grade {{this.grade}}</span>
+                    {{/if}}
+                  </div>
+                </a>
+              </li>
+            {{/each}}
+          </ul>
+        {{else}}
+          <div class="empty-state panel">
+            <p>No restaurants match those filters.</p>
+            <a href="/restaurants" class="btn btn--outline">Clear filters</a>
+          </div>
+        {{/if}}
+      </section>
+
+    </div>
+  </div>
+</div>

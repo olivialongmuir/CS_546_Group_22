@@ -1,0 +1,85 @@
+<link rel="stylesheet" href="/public/css/restaurants.css">
+
+<div class="restaurant-detail-page">
+  <div class="page-container">
+
+    <div class="back-link">
+      <a href="/restaurants">← Back to restaurants</a>
+    </div>
+
+    <article class="restaurant-detail panel">
+
+      <header class="detail-header">
+        <div>
+          <h1 class="detail-name">{{restaurant.name}}</h1>
+          <div class="detail-meta">
+            <span class="meta-item"><span class="meta-icon">📍</span>{{restaurant.borough}}</span>
+            <span class="meta-sep">•</span>
+            <span>{{restaurant.cuisine}}</span>
+          </div>
+          {{#if restaurant.address}}
+            <p class="restaurant-address">
+              {{restaurant.address}}{{#if restaurant.zipcode}}, {{restaurant.zipcode}}{{/if}}
+            </p>
+          {{/if}}
+        </div>
+        <div class="restaurant-card-side">
+          <span class="status-badge status-badge--lg status-badge--{{restaurant.status.key}}">
+            {{restaurant.status.label}}
+          </span>
+          {{#if restaurant.grade}}
+            <span class="grade-pill">Grade {{restaurant.grade}}</span>
+          {{/if}}
+        </div>
+      </header>
+
+      {{#if restaurant.phone}}
+        <div class="detail-actions">
+          <span class="meta-item"><span class="meta-icon">📞</span>{{restaurant.phone}}</span>
+        </div>
+      {{/if}}
+
+      <div class="detail-stats">
+        <div class="stat-tile">
+          <div class="stat-tile-value">{{#if restaurant.grade}}{{restaurant.grade}}{{else}}—{{/if}}</div>
+          <div class="stat-tile-label">Health Grade</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-tile-value">{{#if restaurant.rodentScore}}{{restaurant.rodentScore}}{{else}}—{{/if}}</div>
+          <div class="stat-tile-label">Rodent Score</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-tile-value stat-tile-value--small">
+            {{#if restaurant.lastVerified}}{{restaurant.lastVerified}}{{else}}Not verified{{/if}}
+          </div>
+          <div class="stat-tile-label">Last Verified</div>
+        </div>
+      </div>
+
+      <section class="detail-comments" aria-labelledby="comments-heading">
+        <div class="comments-header">
+          <span class="comments-icon">💬</span>
+          <h2 id="comments-heading">Comments</h2>
+          <span class="comments-count">({{comments.length}})</span>
+        </div>
+
+        {{#if comments.length}}
+          <ul class="comment-list">
+            {{#each comments}}
+              <li class="comment-item">
+                <p class="comment-author">{{this.user}}</p>
+                <p class="comment-text">{{this.comment}}</p>
+                <p class="comment-time">{{this.createdAt}}</p>
+              </li>
+            {{/each}}
+          </ul>
+        {{else}}
+          <div class="empty-comments">
+            <p>No comments yet.</p>
+          </div>
+        {{/if}}
+      </section>
+
+    </article>
+  </div>
+</div>
