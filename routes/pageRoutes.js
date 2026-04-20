@@ -2,10 +2,11 @@
 
 import { Router } from 'express';
 const router = Router();
-import { getAllRestaurants } from '../data/restaurants.js';
+import { getAllRestaurants, getRestaurantById } from '../data/restaurants.js';
 
 import { getAllReports} from '../data/rodentReports.js'
 import { getUserById } from '../data/users.js';
+import { checkId } from '../helpers.js';
 
 router.route(['/', '/home']).get(async (req, res) => { //Both of these routes will go to the homepage. Not sure if this is correct design or if should redirect - peter
     try {
@@ -56,11 +57,62 @@ router.route('/ratreports').get(async (req, res) => {
         res.status(500).send("Error loading Rat Reports");
     }
 });
+const gradeToStatus = (grade) => {
+  if (grade === 'A') return { key: 'safe',      label: 'Safe' };
+  if (grade === 'B') return { key: 'watchlist', label: 'Watchlist' };
+  if (grade === 'C') return { key: 'danger',    label: 'Danger' };
+  return { key: 'unknown', label: 'Not Graded' };
+};
+
+// Normalizing into template
+const normalizeRestaurant = (r) => ({
+  id: r._id?.toString(),
+  name: r.name,
+  borough: r.boro,
+  cuisine: r.type,
+  address: [r.building, r.street].filter(Boolean).join(' '),
+  zipcode: r.zipcode ? String(r.zipcode).split('.')[0] : '',
+  phone: r.phone,
+  grade: r.grade,
+  rodentScore: r.score,
+  lastVerified: r.gradeDate,
+  status: gradeToStatus(r.grade),
+  recentReports: 0 // TODO - count from rodentReports collection once linked
+});
 
 router.route('/restaurants').get(async (req, res) => {
     try {
+        const search   = (req.query.search || '').trim();
+        const borough  = req.query.borough || 'all';
+        const status   = req.query.status  || 'all';
+
+        const all = (await getAllRestaurants()).map(normalizeRestaurant);
+
+        const filtered = all.filter(r => {
+            const matchSearch  = !search || (r.name || '').toLowerCase().includes(search.toLowerCase());
+            const matchBorough = borough === 'all' || r.borough === borough;
+            const matchStatus  = status  === 'all' || r.status.key === status;
+            return matchSearch && matchBorough && matchStatus;
+        });
+
         res.render("restaurants", {
-            title: 'Restaurants'
+            title: 'Restaurants',
+            restaurants: filtered,
+            count: filtered.length,
+            countLabel: filtered.length === 0
+                ? 'No restaurants'
+                : `${filtered.length} restaurant${filtered.length === 1 ? '' : 's'}`,
+            filters: { search, borough, status },
+            boroughOptions: ['Manhattan','Brooklyn','Queens','Bronx','Staten Island'].map(b => ({
+                value: b, label: b, selected: borough === b
+            })),
+            statusOptions: [
+                { value: 'safe',      label: 'Safe',      selected: status === 'safe' },
+                { value: 'watchlist', label: 'Watchlist', selected: status === 'watchlist' },
+                { value: 'danger',    label: 'Danger',    selected: status === 'danger' }
+            ],
+            allBoroughsSelected: borough === 'all',
+            allStatusesSelected: status === 'all'
         });
     } catch (error) {
         console.error(error);
@@ -68,6 +120,22 @@ router.route('/restaurants').get(async (req, res) => {
     }
 });
 
+router.route('/restaurants/:id').get(async (req, res) => {
+    try {
+        const id = req.params.id.trim();
+        const validatedId = checkId(id);
+        const raw = await getRestaurantById(validatedId);
+        const restaurant = normalizeRestaurant(raw);
+        res.render("restaurant", {
+            title: `${restaurant.name} - SqueakPeek`,
+            restaurant,
+            comments: [] // TODO:load from getRestaurantComments(id)
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(404).send("Restaurant not found");
+    }
+});
 router.route('/profile').get(async (req, res) => {
   if (!req.session.userId) return res.redirect('/login');
 

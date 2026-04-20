@@ -1,0 +1,316 @@
+.restaurants-page,
+.restaurant-detail-page {
+  padding: 2rem 0;
+}
+
+.restaurants-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .restaurants-grid {
+    grid-template-columns: 18rem 1fr;
+    align-items: start;
+  }
+}
+
+.filter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.results-heading {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--muted);
+  margin: 0 0 1rem 0;
+}
+
+.restaurant-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.restaurant-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s, transform 0.1s;
+}
+
+.restaurant-card:hover {
+  border-color: var(--primary);
+}
+
+.restaurant-card-main {
+  min-width: 0; 
+  flex: 1;
+}
+
+.restaurant-name {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--fg);
+  margin: 0 0 0.35rem 0;
+}
+
+.restaurant-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.meta-sep {
+  opacity: 0.5;
+}
+
+.restaurant-address {
+  font-size: 0.8rem;
+  color: var(--input-placeholder);
+  margin: 0;
+}
+
+.restaurant-card-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* --- Status Badge --- */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+
+.status-badge--lg {
+  padding: 0.4rem 0.9rem;
+  font-size: 0.85rem;
+}
+
+.status-badge--safe {
+  background-color: rgba(163, 230, 53, 0.15);
+  border-color: rgba(163, 230, 53, 0.3);
+  color: var(--primary);
+}
+
+.status-badge--watchlist {
+  background-color: rgba(250, 204, 21, 0.15);
+  border-color: rgba(250, 204, 21, 0.3);
+  color: #facc15;
+}
+
+.status-badge--danger {
+  background-color: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+}
+
+.status-badge--unknown {
+  background-color: rgba(161, 161, 170, 0.15);
+  border-color: rgba(161, 161, 170, 0.3);
+  color: var(--muted);
+}
+
+.grade-pill {
+  font-size: 0.75rem;
+  color: var(--muted);
+  background-color: var(--black-overlay);
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* DETAIL PAGE*/
+
+
+.back-link {
+  margin-bottom: 1rem;
+}
+
+.back-link a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.back-link a:hover {
+  color: var(--fg);
+}
+
+.restaurant-detail {
+  padding: 0; 
+  overflow: hidden;
+}
+
+.detail-header {
+  padding: 1.5rem;
+  background-color: var(--black-overlay);
+  border-bottom: 1px solid var(--card-border);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.detail-name {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--fg);
+  margin: 0 0 0.5rem 0;
+}
+
+.detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.detail-actions {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.detail-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--card-border);
+}
+
+@media (max-width: 640px) {
+  .detail-stats { grid-template-columns: 1fr; }
+}
+
+.stat-tile {
+  text-align: center;
+  padding: 1rem;
+  background-color: var(--black-overlay);
+  border-radius: 0.5rem;
+}
+
+.stat-tile-value {
+  font-size: 1.75rem;
+  font-weight: 500;
+  color: var(--fg);
+  margin-bottom: 0.25rem;
+}
+
+.stat-tile-value--small {
+  font-size: 1rem;
+}
+
+.stat-tile-label {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.detail-comments {
+  padding: 1.5rem;
+}
+
+.comments-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.comments-header h2 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--fg);
+  margin: 0;
+}
+
+.comments-icon {
+  color: var(--primary);
+}
+
+.comments-count {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.empty-comments {
+  text-align: center;
+  padding: 2rem;
+  background-color: var(--black-overlay);
+  border-radius: 0.75rem;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.comment-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.comment-item {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background-color: var(--black-overlay);
+}
+
+.comment-author {
+  font-weight: 500;
+  color: var(--fg);
+  margin: 0 0 0.25rem 0;
+}
+
+.comment-text {
+  color: #d4d4d8;
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.comment-time {
+  font-size: 0.75rem;
+  color: var(--input-placeholder);
+  margin: 0;
+}
