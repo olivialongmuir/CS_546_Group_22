@@ -1,13 +1,29 @@
 <section>
     <div class="container">
     <div class="leftPane">
+
+
+        {{!-- Filter Panel --}}
+        <div>
+            <h2>Filter Reports</h2>
+
+            <label for="reportDate">Report Date:</label><br>
+            <input type="date" id="reportDate" name="reportDate">
+            <input type="date" id="reportDate" name="reportDate"><br>
+            <label for="verifiedStatus">Verified Only:</label>
+            <input type="checkbox" id="verifiedStatus" name="verifiedStatus">
+        </div>
+    
+
+
         <!-- Cards list -->
         {{#each reports}}
-            <div class="ratCard" data-id="{{this._id}}">
+            <div class="ratCard" data-id="{{this._id}}" status-id="{{this.status}}">
                 <p>{{this._id}}</p>
                 {{!-- <p>{{this.latitude}}</p>
                 <p>{{this.longitude}}</p> --}}
                 <p>{{this.timestamp}}</p>
+                <p>{{this.status}}</p>
             </div>
         {{/each}}
     </div>

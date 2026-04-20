@@ -1,5 +1,5 @@
 
-
+//Allows rodent report on left to be clicked and then shows the details on the right
 document.querySelector(".leftPane").addEventListener("click", async (e) => {
 
     // allows full card to be clicked
@@ -29,3 +29,27 @@ document.querySelector(".leftPane").addEventListener("click", async (e) => {
     `;
 });
 
+
+//Filters out non-verified reports based on filter checkbox
+document.getElementById("verifiedStatus").addEventListener('change', function() {
+  if (this.checked) {
+    //if checked then hide all the non verified rodent reports
+    //get all report with status-id of unverified
+    let cards = document.querySelectorAll(".ratCard");
+    for(card of cards){
+        //check if that data-id should be hidden since its unverified
+        let statusId = card.attributes['status-id'].value
+        if(statusId == 'unverified'){
+            card.style.display = 'none'
+        }
+    }
+    //hide them
+  } else {
+    //show all
+    let cards = document.querySelectorAll(".ratCard");
+    for(card of cards){
+        card.style.display = ''
+    }
+
+  }
+});
