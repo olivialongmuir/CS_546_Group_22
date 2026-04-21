@@ -45,35 +45,42 @@ window.addEventListener('load', () => {
         });
     }
 
-    // rodent markers
     if (typeof rodentMapData !== 'undefined') {
-        rodentMapData.forEach(rodent => {
-            L.marker([rodent.lat, rodent.lng], {icon: ratPin})
-                .addTo(map)
-        })
-    }
 
-    // example heatmap data: [latitude, longitude, intensity]
-    // TODO have intensity increase based on number of reports in vicinity
-    // TODO - replace with actual rodent report data from database
-    L.heatLayer([
-        // sample points
-        // leaflet expects data in format [lat, lng, intensity]
-        [40.7128, -74.0060, 1], // TODO - replace with actual rodent data
-        [40.7138, -74.0050, 0.5],
-        [40.7148, -74.0040, 0.1]
-    ], {
-        radius: 25,
-        blur: 15,
-        // adding custom gradient for heat map points
-        gradient: {
-            0.1: 'blue',
-            0.3: 'yellow',
-            0.5: 'orange',
-            0.7: 'darkorange',
-            1.0: 'red'
-        }
-    }).addTo(map);
+        // markers ?
+        // rodentMapData.forEach(r => {
+        //     L.marker([r.lat, r.lng], { icon: ratPin }).addTo(map);
+        // });
+
+        // cluster counts
+        const counts = {};
+
+        rodentMapData.forEach(r => {
+            const lat = Number(r.lat);
+            const lng = Number(r.lng);
+
+            const key = `${lat.toFixed(3)},${lng.toFixed(3)}`;
+            counts[key] = (counts[key] || 0) + 1;
+        });
+
+        // build heatmap data
+        const heatData = Object.entries(counts).map(([key, count]) => {
+            const [lat, lng] = key.split(',').map(Number);
+            return [lat, lng, count];
+        });
+
+        // heatmap
+        L.heatLayer(heatData, {
+            radius: 50,
+            blur: 15,
+            maxZoom: 17,
+            gradient: {
+                0.1: '#ff4d4d',
+                0.5: '#e60000',
+                1.0: '#990000'
+            }
+        }).addTo(map);
+    }
 
     setTimeout(() => {
         map.invalidateSize(true);
