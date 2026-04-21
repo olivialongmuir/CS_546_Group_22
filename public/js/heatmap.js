@@ -1,3 +1,17 @@
+const restaurantPin = L.icon({
+    iconUrl: '/public/images/restaurant_pin.png',
+    iconSize: [30, 30],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32]
+})
+
+const ratPin = L.icon({
+    iconUrl: '/public/images/rat_pin.png',
+    iconSize: [30, 30],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32]
+})
+
 window.addEventListener('load', () => {
     // set the initial center of the map to New York City
     const nycLatLng = [40.7128, -74.0060];
@@ -27,7 +41,7 @@ window.addEventListener('load', () => {
         console.log(restaurantMapData);
         restaurantMapData.forEach(restaurant => {
             console.log(restaurant);
-            L.marker([restaurant.lat, restaurant.lng])
+            L.marker([restaurant.lat, restaurant.lng],{icon: restaurantPin})
                 .addTo(map)
                 .bindPopup(restaurant.name);
         });
