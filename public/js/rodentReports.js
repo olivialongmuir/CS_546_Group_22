@@ -31,30 +31,6 @@ document.querySelector(".leftPane").addEventListener("click", async (e) => {
 
 
 //FILTERING FUNCTIONS FOR RODENT REPORTS
-//Filters out non-verified reports based on filter checkbox
-document.getElementById("verifiedStatus").addEventListener('change', function() {
-  if (this.checked) {
-    //if checked then hide all the non verified rodent reports
-    //get all report with status-id of unverified
-    let cards = document.querySelectorAll(".ratCard");
-    for(card of cards){
-        //check if that data-id should be hidden since its unverified
-        let statusId = card.attributes['status-id'].value
-        if(statusId == 'unverified'){
-            card.style.display = 'none'
-        }
-    }
-    //hide them
-  } else {
-    //show all
-    let cards = document.querySelectorAll(".ratCard");
-    for(card of cards){
-        card.style.display = ''
-    }
-
-  }
-});
-
 
 //returns current date as str "YYYY-MM-DD" format to be used for join date
 const getDateNow=()=>{
@@ -66,7 +42,6 @@ const getDateNow=()=>{
 
     return date
 } 
-
 
 //Auto sets the date filters to be today and last 30 days
 const today = new Date().toISOString().split('T')[0];
@@ -83,41 +58,53 @@ const compareDate =(date1, date2)=>{
     //both inputs are strings. convert back to date and then compare
     date1 = new Date(date1)
     date2 = new Date(date2)
+
     return date1 > date2
 }
 
+//verified status box
+let verifiedStatus = document.getElementById("verifiedStatus")
 
-//add event listeners to both date selectors. on change update the visbility of 
-document.getElementById('startDate').addEventListener('change', function() {
-    //get the date value of each
-    //filter the cards that are not in that date range (if not already filtered)
+//Function that will apply filter to DOM elements based on status of all filters
+const filterElements=()=>{
+    //determine if verififed or all should show
+
+    //for all elements in column
     let cards = document.querySelectorAll(".ratCard");
     for(card of cards){
-        //check if that data-id should be hidden since its unverified
-        let cardDate = card.attributes['data-timestamp'].value
 
-        //if that date is < start date then hide
-        if(!compareDate(cardDate, startDate)){
-            card.style.display = 'none';
+        //flag to track if that card should be shown
+        let show = true
+
+        //filter of that card is in time window
+        let cardDate = card.attributes['data-timestamp'].value
+        //if date is not within range dont show it
+        if(!(compareDate(cardDate, startDate.value) && (!compareDate(cardDate, endDate.value)))){
+            show = false
+        }
+
+        //if the valid filter is checked then check that cards status
+        if(verifiedStatus.checked){
+                if(card.attributes['status-id'].value !== 'verified'){
+                    show = false
+                }
+        }
+
+        //show if true else false
+        if(show){
+            card.style.display = ''
+        }else{
+            card.style.display = 'none'
         }
     }
-})
+}
 
-//add event listeners to both date selectors. on change update the visbility of 
-document.getElementById('endDate').addEventListener('change', function() {
-    //get the date value of each
-    //filter the cards that are not in that date range (if not already filtered)
-    let cards = document.querySelectorAll(".ratCard");
-    for(card of cards){
-        //check if that data-id should be hidden since its unverified
-        let cardDate = card.attributes['data-timestamp'].value
 
-        //if that date is > end date then hide
-        if(compareDate(cardDate, endDate)){
-            card.style.display = 'none';
-        }
-    }
-})
+//add event listeners to both date selectors. on change update the visbility of cards in rat report
+document.getElementById('startDate').addEventListener('change', filterElements);
+document.getElementById('endDate').addEventListener('change', filterElements);
+document.getElementById("verifiedStatus").addEventListener('change', filterElements);
+
 
 //A clear filters button RESETS ALL FILTERS
 document.getElementById('clearFilters').addEventListener("click", function(){
