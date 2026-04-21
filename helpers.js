@@ -1,4 +1,9 @@
-import { ObjectId } from "mongodb";
+/**
+ * Note:
+ * Avoid using any special library calls in this helper file.
+ * By utilizing only native javascript, the functions in this file can be used for both server-side and client-side calls.
+ * If further validation is required, perform it at the point of use.
+ */
 
 //General parsing and validation
 export const checkString = (str, fieldName) => {
@@ -22,7 +27,6 @@ export const checkNumber = (num, fieldName) => {
 //Specific parsing and validation
 export const checkId = (id) => {
     const parsed_id = checkString(id, "id");
-    if (!ObjectId.isValid(parsed_id)) throw 'Error: ID is not a valid ObjectId';
     return parsed_id;
 };
 
@@ -71,13 +75,13 @@ export const checkEmail = (email) => {
 };
 
 export const checkPhotoUrl = (photoUrl) => {
-    const parsed_url = checkString(photoUrl, "photoUrl");
+    const parsed_url = checkString(photoUrl, "photo Url");
     if (!/^https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp)$/i.test(parsed_url)) throw 'Error: Photo URL is not valid';
     return parsed_url;
 };
 
 export const checkPassword = (password) => {
-    const parsed_password = checkString(password);
+    const parsed_password = checkString(password, "password");
     if (parsed_password.length < 8) throw 'Error: Password must be at least 8 characters';
     if (parsed_password.length > 16) throw 'Error: Password can at most be 15 characters';
     if (!/[A-Z]/.test(parsed_password)) throw 'Error: Password must contain at least one uppercase letter';
@@ -87,13 +91,13 @@ export const checkPassword = (password) => {
 };
 
 export const checkZipcode = (zipcode) => {
-    const parsed_zipcode = checkString(zipcode); //zipcode can be 00502
+    const parsed_zipcode = checkString(zipcode, "zipcode"); //zipcode can be 00502
     if (/^\d{5}$/.test(parsed_zipcode)) throw 'Error: Zipcode must contain exactly 5 integers';
     return parsed_zipcode;
 };
 
 export const checkRatSizeRating = (rating) => {
-    const parsed_rating = checkNumber(rating);
+    const parsed_rating = checkNumber(rating, "ratSizeRating");
     if (!Number.isInteger(parsed_rating)) throw 'Error: Rat size rating must be an integer';
     if (parsed_rating < 1 || parsed_rating > 5) throw 'Error: Rat size rating must be between 1 and 5';
     return parsed_rating;
@@ -106,14 +110,19 @@ export const checkReactionType = (reactionType) => {
     return parsed_reaction;
 };
 
-export const checkReportStatus = (reportStatus) => {
-    const parsed_reportStatus = checkString(reportStatus, "reportStatus").toLowerCase();
+export const checkRestaurantStatus = (restaurantStatus) => {
+    const parsed_restaurantStatus = checkString(restaurantStatus, "restaurantStatus").toLowerCase();
     const validStatus = ['sanitary', 'unsanitary', 'inspecting'];
-    if (!validStatus.includes(parsed_reportStatus)) throw `Error: Report status must be one of the following: ${validStatus.join(', ')}`;
-    return parsed_reportStatus;
+    if (!validStatus.includes(parsed_restaurantStatus)) throw `Error: Report status must be one of the following: ${validStatus.join(', ')}`;
+    return parsed_restaurantStatus;
 };
 
-
+export const checkRodentStatus = (rodentStatus) => {
+    const parsed_rodentStatus = checkString(rodentStatus, "rodentStatus").toLowerCase();
+    const validStatus = ['pending', 'confirmed', 'disputed', 'removed'];
+    if (!validStatus.includes(parsed_rodentStatus)) throw `Error: Report status must be one of the following: ${validStatus.join(', ')}`;
+    return parsed_rodentStatus;
+};
 
 export const checkVerifiedBy = (user) => {
     const parsed_user = checkString(user, "verifiedBy").toLowerCase();
