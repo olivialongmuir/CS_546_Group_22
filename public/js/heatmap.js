@@ -38,13 +38,19 @@ window.addEventListener('load', () => {
 
     // restaurant markers
     if (typeof restaurantMapData !== 'undefined') {
-        console.log(restaurantMapData);
         restaurantMapData.forEach(restaurant => {
-            console.log(restaurant);
             L.marker([restaurant.lat, restaurant.lng],{icon: restaurantPin})
                 .addTo(map)
                 .bindPopup(restaurant.name);
         });
+    }
+
+    // rodent markers
+    if (typeof rodentMapData !== 'undefined') {
+        rodentMapData.forEach(rodent => {
+            L.marker([rodent.lat, rodent.lng], {icon: ratPin})
+                .addTo(map)
+        })
     }
 
     // example heatmap data: [latitude, longitude, intensity]
