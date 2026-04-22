@@ -1,3 +1,9 @@
+// global variables
+let map;
+let heat;
+const zoomThreshold = 16;
+const rodentMarkers = L.layerGroup();
+
 // restaurant and rodent icons
 const restaurantPin = L.icon({
     iconUrl: '/public/images/restaurant_pin.png',
@@ -12,12 +18,6 @@ const ratPin = L.icon({
     iconAnchor: [16, 32],
     popupAnchor: [0, -32]
 });
-
-// global variables
-let map;
-let heat;
-const zoomThreshold = 16;
-const rodentMarkers = L.layerGroup();
 
 // dynamic way to show rodent markers when zoomed in beyond thresh
 function updateLayers() {
@@ -57,7 +57,13 @@ window.addEventListener('load', () => {
         restaurantMapData.forEach(restaurant => {
             L.marker([restaurant.lat, restaurant.lng], { icon: restaurantPin })
                 .addTo(map)
-                .bindPopup(restaurant.name);
+                .bindPopup(`
+                    <div style="text-align:center;">
+                        <a href="/restaurants/${restaurant._id}" class="popup-link">
+                            ${restaurant.name}
+                        </a>
+                    </div>
+                `);
         });
     }
 

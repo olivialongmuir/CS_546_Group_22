@@ -24,6 +24,7 @@ router.route('/heatmap').get(async (req, res) => {
         // get restaurant data
         const restaurantList = await getAllRestaurants();
         const restaurantData = restaurantList.map(r => ({
+            _id: r._id,
             name: r.name,
             lat: Number(r.latitude),
             lng: Number(r.longitude)

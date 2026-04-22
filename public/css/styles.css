@@ -131,6 +131,7 @@ main {
   font-weight: 500;
 }
 
+/* Heatmap Styles */
 #heatmap {
   width: 100%;
   height: 70vh;
@@ -234,6 +235,28 @@ main {
     filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
 }
 
+.leaflet-popup-content-wrapper {
+  background-color: #111 !important;
+  color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.leaflet-popup-tip {
+  background-color: #111 !important;
+}
+
+.popup-link {
+  display: inline-block;
+  color: white !important;
+  text-decoration: none;
+}
+
+.popup-link:hover {
+  color: #8bc629 !important;
+}
+
+/* End Heatmap Styles */
 
 
 /* pill grapic to store text */
