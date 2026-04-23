@@ -3,7 +3,6 @@
 import { Router } from 'express';
 const router = Router();
 import { getAllRestaurants, getRestaurantById } from '../data/restaurants.js';
-
 import { getAllReports} from '../data/rodentReports.js'
 import { getUserById } from '../data/users.js';
 import { checkId } from '../helpers.js';
@@ -21,15 +20,26 @@ router.route(['/', '/home']).get(async (req, res) => { //Both of these routes wi
 
 router.route('/heatmap').get(async (req, res) => {
     try {
-        const restaurantList = await getAllRestaurants();
 
+        // get restaurant data
+        const restaurantList = await getAllRestaurants();
         const restaurantData = restaurantList.map(r => ({
+            _id: r._id,
             name: r.name,
             lat: Number(r.latitude),
             lng: Number(r.longitude)
         }));
-
         const restaurantMapData = JSON.stringify(restaurantData);
+
+        // get rodent data
+        const rodentList = await getAllReports();
+        const rodentData = rodentList.map(r => ({
+            _id: r._id,
+            lat: Number(r.latitude),
+            lng: Number(r.longitude),
+            status: r.status
+        }));
+        const rodentMapData = JSON.stringify(rodentData);
 
         // TODO - hone in on hotspot feed
         // potentially grab restaurants with top comments
@@ -42,8 +52,8 @@ router.route('/heatmap').get(async (req, res) => {
         res.render("heatmap", {
             title: 'Heatmap',
             restaurantMapData: restaurantMapData,
+            rodentMapData: rodentMapData,
             hotspotFeed: hotspotFeed
-            // TODO - pass in rodent data
         });
 
     } catch (error) {

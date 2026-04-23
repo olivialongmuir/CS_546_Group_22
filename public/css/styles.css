@@ -131,6 +131,7 @@ main {
   font-weight: 500;
 }
 
+/* Heatmap Styles */
 #heatmap {
   width: 100%;
   height: 70vh;
@@ -205,6 +206,40 @@ main {
   transform: scale(0.97);
 }
 
+#searchBarContainer {
+  position: relative; /* needed for dropdown */
+}
+
+#autocompleteList {
+  position: absolute;
+  top: 100%;
+  left: 0;
+
+  width: 100%;
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 10px;
+
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+#autocompleteList:empty {
+  display: none;
+}
+
+.autocomplete-item {
+  padding: 10px;
+  cursor: pointer;
+  color: white;
+  border-bottom: 1px solid #222;
+}
+
+.autocomplete-item:hover {
+  background: #222;
+}
+
 #hotspotFeed {
   flex: 1;
   color: white;
@@ -234,6 +269,28 @@ main {
     filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
 }
 
+.leaflet-popup-content-wrapper {
+  background-color: #111 !important;
+  color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.leaflet-popup-tip {
+  background-color: #111 !important;
+}
+
+.popup-link {
+  display: inline-block;
+  color: white !important;
+  text-decoration: none;
+}
+
+.popup-link:hover {
+  color: #8bc629 !important;
+}
+
+/* End Heatmap Styles */
 
 
 /* pill grapic to store text */
