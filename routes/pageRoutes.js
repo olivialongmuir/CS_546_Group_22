@@ -156,8 +156,6 @@ router.route('/restaurants/:id').get(async (req, res) => {
     }
 });
 router.route('/profile').get(async (req, res) => {
-  if (!req.session.userId) return res.redirect('/login');
-
   try {
     const dbUser = await getUserById(req.session.userId);
 
