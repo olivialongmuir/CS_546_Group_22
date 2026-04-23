@@ -1,8 +1,12 @@
 // global variables
 let map;
 let heat;
+let searchInput;
+let searchButton;
+let autocompleteList;
 const zoomThreshold = 16;
 const rodentMarkers = L.layerGroup();
+const restaurantMarkers = {};
 
 // restaurant and rodent icons
 const restaurantPin = L.icon({
@@ -23,10 +27,19 @@ const ratPin = L.icon({
 function updateLayers() {
     const zoom = map.getZoom();
     if (zoom >= zoomThreshold) {
-        if (heat && !map.hasLayer(rodentMarkers)) map.addLayer(rodentMarkers);
+        if (!map.hasLayer(rodentMarkers)) map.addLayer(rodentMarkers);
     } else {
         if (map.hasLayer(rodentMarkers)) map.removeLayer(rodentMarkers);
     }
+}
+
+// search bar functionality
+function searchRestaurant() {
+    const query = searchInput.value.trim().toLowerCase();
+    const marker = restaurantMarkers[query];
+    // zoom + center map on input and open popup
+    map.setView(marker.getLatLng(), 17);
+    marker.openPopup();
 }
 
 window.addEventListener('load', () => {
@@ -52,10 +65,15 @@ window.addEventListener('load', () => {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
+    // grab search bar elements
+    searchInput = document.getElementById("searchInput");
+    searchButton = document.getElementById("searchButton");
+    autocompleteList = document.getElementById("autocompleteList");
+
     // restaurant markers
     if (typeof restaurantMapData !== 'undefined') {
         restaurantMapData.forEach(restaurant => {
-            L.marker([restaurant.lat, restaurant.lng], { icon: restaurantPin })
+            const marker = L.marker([restaurant.lat, restaurant.lng], { icon: restaurantPin })
                 .addTo(map)
                 .bindPopup(`
                     <div style="text-align:center;">
@@ -64,8 +82,10 @@ window.addEventListener('load', () => {
                         </a>
                     </div>
                 `);
+            // store marker
+            restaurantMarkers[restaurant.name.toLowerCase()] = marker;
         });
-    }
+    };
 
     if (typeof rodentMapData !== 'undefined') {
         // markers
@@ -95,14 +115,50 @@ window.addEventListener('load', () => {
                 1.0: '#990000'
             }
         });
-
         // add heatmap
         heat.addTo(map);
-    }
+    };
 
     // dynamic zoom
     map.on('zoomend', updateLayers);
-    updateLayers(); // run once on load
+    updateLayers();
+
+    // event listeners for search bar (button click or enter)
+    searchButton.addEventListener("click", searchRestaurant);
+    searchInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            searchRestaurant();
+        }
+    });
+    searchInput.addEventListener("input", () => {
+        const query = searchInput.value.trim().toLowerCase();
+        autocompleteList.innerHTML = "";
+        if (!query) return;
+        const matches = restaurantMapData
+            .filter(r => r.name.toLowerCase().includes(query))
+            .slice(0, 6); // limit results
+        matches.forEach(r => {
+            const item = document.createElement("div");
+            item.classList.add("autocomplete-item");
+            item.textContent = r.name;
+            item.addEventListener("click", () => {
+                const marker = restaurantMarkers[r.name.toLowerCase()];
+                // fly map to the marker
+                if (marker) {
+                    map.flyTo(marker.getLatLng(), 17);
+                    marker.openPopup();
+                }
+                searchInput.value = r.name;
+                autocompleteList.innerHTML = "";
+            });
+            autocompleteList.appendChild(item);
+        });
+    });
+    document.addEventListener("click", (e) => {
+        if (!document.getElementById("searchBarContainer").contains(e.target)) {
+            autocompleteList.innerHTML = "";
+        }
+    });
 
     setTimeout(() => {
         map.invalidateSize(true);

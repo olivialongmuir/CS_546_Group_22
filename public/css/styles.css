@@ -206,6 +206,40 @@ main {
   transform: scale(0.97);
 }
 
+#searchBarContainer {
+  position: relative; /* needed for dropdown */
+}
+
+#autocompleteList {
+  position: absolute;
+  top: 100%;
+  left: 0;
+
+  width: 100%;
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 10px;
+
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+#autocompleteList:empty {
+  display: none;
+}
+
+.autocomplete-item {
+  padding: 10px;
+  cursor: pointer;
+  color: white;
+  border-bottom: 1px solid #222;
+}
+
+.autocomplete-item:hover {
+  background: #222;
+}
+
 #hotspotFeed {
   flex: 1;
   color: white;
