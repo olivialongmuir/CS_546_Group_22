@@ -16,7 +16,6 @@ const buildTypeOptions = (selected) =>
   USER_TYPE_OPTIONS.map(o => ({ ...o, selected: o.value === selected }));
 
 router.route('/login').get(async (req, res) => {
-  if (req.session.userId) return res.redirect('/profile');
   return res.render('login', { title: 'SqueakPeek - Login' });
 });
 
@@ -59,7 +58,6 @@ router.route('/login').post(async (req, res) => {
 });
 
 router.route('/register').get(async (req, res) => {
-  if (req.session.userId) return res.redirect('/profile');
   return res.render('register', {
     title: 'SqueakPeek - Register',
     typeOptions: buildTypeOptions()
