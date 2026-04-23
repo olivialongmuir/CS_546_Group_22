@@ -34,6 +34,7 @@ router.route('/heatmap').get(async (req, res) => {
         // get rodent data
         const rodentList = await getAllReports();
         const rodentData = rodentList.map(r => ({
+            _id: r._id,
             lat: Number(r.latitude),
             lng: Number(r.longitude),
             status: r.status
@@ -53,7 +54,6 @@ router.route('/heatmap').get(async (req, res) => {
             restaurantMapData: restaurantMapData,
             rodentMapData: rodentMapData,
             hotspotFeed: hotspotFeed
-            // TODO - pass in rodent data
         });
 
     } catch (error) {

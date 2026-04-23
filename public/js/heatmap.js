@@ -71,6 +71,7 @@ window.addEventListener('load', () => {
         // markers
         rodentMapData.forEach(r => {
             const marker = L.marker([Number(r.lat), Number(r.lng)], { icon: ratPin })
+            // TODO - add link to rodent report details similar to restaurant above
                 .bindPopup("Rodent Report");
 
             // add rodent layer to group
