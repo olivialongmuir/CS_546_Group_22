@@ -4,9 +4,10 @@ let heat;
 let searchInput;
 let searchButton;
 let autocompleteList;
-const zoomThreshold = 16;
 const rodentMarkers = L.layerGroup();
 const restaurantMarkers = {};
+const zoomThreshold = 16;
+const flyDuration = 3;
 
 // restaurant and rodent icons
 const restaurantPin = L.icon({
@@ -37,9 +38,26 @@ function updateLayers() {
 function searchRestaurant() {
     const query = searchInput.value.trim().toLowerCase();
     const marker = restaurantMarkers[query];
+    if (!marker) return;
     // zoom + center map on input and open popup
-    map.setView(marker.getLatLng(), 17);
+    flyToRestaurant(marker);
     marker.openPopup();
+}
+
+function flyToRestaurant(marker) {
+    // hide heatmap
+    if (heat && map.hasLayer(heat)) {
+        map.removeLayer(heat);
+    }
+
+    map.flyTo(marker.getLatLng(), 17, {
+        duration: flyDuration
+    });
+
+    // show heatmap
+    setTimeout(() => {
+        if (heat) heat.addTo(map);
+    }, flyDuration * 1000);
 }
 
 window.addEventListener('load', () => {
@@ -57,7 +75,8 @@ window.addEventListener('load', () => {
         maxBounds: bounds,
         maxBoundsViscosity: 0.0,
         minZoom: 10, // zoom out bounds
-        maxZoom: 18  // zoom in bounds
+        maxZoom: 18,  // zoom in bounds
+        zoomControl: false // remove zoom controls
     }).setView(nycLatLng, 12);
 
     // map layer
@@ -145,7 +164,7 @@ window.addEventListener('load', () => {
                 const marker = restaurantMarkers[r.name.toLowerCase()];
                 // fly map to the marker
                 if (marker) {
-                    map.flyTo(marker.getLatLng(), 17);
+                    flyToRestaurant(marker);
                     marker.openPopup();
                 }
                 searchInput.value = r.name;
