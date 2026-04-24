@@ -142,6 +142,20 @@ main {
   place-items: center;
 }
 
+
+/* Added mini heapmap used in rodent report detail */
+#miniHeatmapSection {
+  width: min(200, 50vw);
+  margin: 0 auto;
+  place-items: center;
+}
+
+#miniHeatmap {
+  width: 30vw;
+  height: 40vh;
+}
+
+
 /* css map dark mode override */
 .leaflet-tile-pane {
     filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);

@@ -27,6 +27,20 @@ document.querySelector(".leftPane").addEventListener("click", async (e) => {
         <p>latitude: ${data.latitude}</p>
         <p>longitude: ${data.longitude}</p>
     `;
+
+    //Heatmap update - set the heatmaps view to be the center of this elements lat and long coordinates
+    const lo = [data.latitude, data.longitude]
+    //clear all old markers
+
+    //set the center view (use fly to or pan to?)
+    map.panTo(lo, 14, {animate: true, duration: 0.5}); 
+    // map.flyTo(lo, map.getZoom(), { duration: 0.3 });
+    //add new marker to the map for that rodent sighting
+    //TODO - set a marker icon to be a small rat??? use L.Icon from docs
+    L.marker([data.latitude, data.longitude])
+                .addTo(map)
+                .bindPopup(data._id);
+
 });
 
 
@@ -122,3 +136,69 @@ document.getElementById('clearFilters').addEventListener("click", function(){
         card.style.display = '';
     }
 })
+
+
+
+
+//set map as a global var to edit 
+let map;
+
+//Rodent Report Heatmap Function
+//will display as a minimap with the rodent report coordinate as its center marking point
+//Make small and not scrollable
+window.addEventListener('load', () => {
+
+    const mapEl = document.getElementById('miniHeatmap');
+    if (!mapEl) {
+        console.error('miniHeatmap element not found');
+        return;
+    }
+
+
+    //get the lat and long of the current restaurant
+    let temp = restaurantMapData[0];
+    let lat = temp.lat
+    let lng = temp.lng
+
+    //set map center to the current restaurant
+    const nycLatLng = [lat, lng];
+
+    
+    //initialize the map and set the rules
+    map = L.map('miniHeatmap', {
+        preferCanvas: true,
+        dragging: false,
+        zoomControl: false,       //Removes the +/- buttons
+        scrollWheelZoom: false,   //Disables mouse wheel zoom
+        doubleClickZoom: false,   //Disables zoom on double-click
+        touchZoom: false,         //Disables pinch-to-zoom on mobile
+        boxZoom: false            //Disables zoom by dragging with shift key
+    }).setView(nycLatLng, 14);
+
+
+    //map layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+
+    // restaurant marker (only showing one since it should just be current rodent report)
+    if (typeof restaurantMapData !== 'undefined') {
+        console.log(restaurantMapData);
+        restaurantMapData.forEach(restaurant => {
+            // console.log(restaurant);
+            L.marker([restaurant.lat, restaurant.lng])
+                .addTo(map)
+                .bindPopup(restaurant.name);
+        });
+    }
+
+    setTimeout(() => {
+        map.invalidateSize(true);
+    }, 0);
+});
+
+
+
+
+
