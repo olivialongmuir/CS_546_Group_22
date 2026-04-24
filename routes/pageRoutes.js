@@ -46,7 +46,9 @@ router.route('/heatmap').get(async (req, res) => {
 router.route('/ratreports').get(async (req, res) => {
     try {
 
-        //Todo error handling and invalid data checking
+        //TODO - allow this route to be called with a req payload storing the rodent report to be opened? - need to check with @olivia
+
+        //TODO -  error handling and invalid data checking
 
         //get all reports
         let reports = await getAllReports();
