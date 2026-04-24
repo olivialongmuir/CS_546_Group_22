@@ -1,13 +1,30 @@
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
 <section>
     <div class="container">
     <div class="leftPane">
+
+
+        {{!-- Filter Panel --}}
+        <div>
+            <h2>Filter Reports</h2>
+
+            <label for="reportDate">Report Date:</label><br>
+            <input id="startDate" type="date" id="reportDate" name="reportDate">
+            <input id="endDate" type="date" id="reportDate" name="reportDate"><br>
+            <label for="verifiedStatus">Verified Only:</label>
+            <input type="checkbox" id="verifiedStatus" name="verifiedStatus"><br>
+            <button id="clearFilters">Clear Filters</button>
+        </div>
+    
+
         <!-- Cards list -->
         {{#each reports}}
-            <div class="ratCard" data-id="{{this._id}}">
-                <p>{{this._id}}</p>
-                {{!-- <p>{{this.latitude}}</p>
-                <p>{{this.longitude}}</p> --}}
-                <p>{{this.timestamp}}</p>
+            <div class="ratCard" data-id="{{this._id}}" status-id="{{this.status}}" data-timestamp="{{this.timestamp}}">
+                <p>Report: {{this.jobId}}</p>
+                <p>Time: {{this.timestamp}}</p>
+                <p>Location: {{this.latitude}} {{this.longitude}}</p>
+                <p>{{this.status}}</p>
             </div>
         {{/each}}
     </div>
@@ -15,14 +32,51 @@
     <div class="rightPane">
         <!-- this part will be edited by client side js -->
         <h2 class="homeH2">Rodent Report</h2>
-        <div id="ratReportDetail">
-            Select Report to View Detail
+
+        <div>
+            <section id="miniHeatmapSection">
+            {{!-- map container --}}
+            <div id="miniHeatmap"></div>
+
+            <script>
+                {{!-- TODO - pass in rodent data --}}
+                const restaurantMapData = {{{restaurantMapData}}};
+            </script>
+            </section>
         </div>
-    </div>
+        <div id="ratReportDetail">
+            {{#if firstReport}}
+                <h2>Report {{firstReport._id}}</h2>
+                <p>Date: {{firstReport.inspectionDate}}</p>
+                <p>Status: {{firstReport.status}}</p>
+                <p>Timestamp: {{firstReport.timestamp}}</p>
+                <p>zipcode: {{firstReport.zipcode}}</p>
+                <p>latitude: {{firstReport.latitude}}</p>
+                <p>longitude: {{firstReport.longitude}}</p>
+            {{/if}}
+            Select Report to View Detail
+            {{!-- Data for that report gets written into here when a card is clicked --}}
+        </div>
+
+        <div>
+            <button>Comment</button>
+            <button>Like</button>
+            <p>Rat Report Commments go here</p>
+        </div>
+
     </div>
 </section>
 
+
 <script src="/js/rodentReports.js"></script>
+
+{{!-- leaflet scripts --}}
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+{{!-- leaflet heat plugin --}}
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+
 
     {{!-- "_id": "69dcc7b4cc0c22fba23864b1",
     "jobId": "PC7002932",
