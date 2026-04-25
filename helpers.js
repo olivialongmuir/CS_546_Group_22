@@ -27,7 +27,7 @@ export const checkNumber = (num, fieldName) => {
 //Specific parsing and validation
 export const checkId = (id) => {
     const parsed_id = checkString(id, "id");
-    return parsed_id;
+    return parsed_id; //Moved check objectId out of here for client side compatibility
 };
 
 export const checkJobId = (jobId) => {
@@ -67,6 +67,18 @@ export const checkUsername = (username) => {
     if (!/^[a-zA-Z0-9_]+$/.test(parsed_username)) throw 'Error: Username can only contain letters, numbers, and underscores';
     return parsed_username;
 };
+
+export const checkFirstName = (firstName) => {
+    const parsed_name = checkString(firstName, "firstName");
+    if (!/^[\p{L}\s'-]+$/u.test(parsed_name)) throw 'Error: First name can only '; //Only alphabetic and accented characters. Apostrophes and hyphens are fine
+    return parsed_name
+}
+
+export const checkLastName = (lastName) => {
+    const parsed_name = checkString(lastName, "lastName");
+    if (!/^[\p{L}\s'-]+$/u.test(parsed_name)) throw 'Error: Last name can only '; //Only alphabetic and accented characters. Apostrophes and hyphens are fine
+    return parsed_name
+}
 
 export const checkEmail = (email) => {
     const parsed_email = checkString(email, "email");
@@ -124,9 +136,9 @@ export const checkRodentStatus = (rodentStatus) => {
     return parsed_rodentStatus;
 };
 
-export const checkVerifiedBy = (user) => {
-    const parsed_user = checkString(user, "verifiedBy").toLowerCase();
-    const validUser = ['exterminator', 'inspector', 'admin'];
+export const checkUserType = (userType) => {
+    const parsed_user = checkString(userType, "userType").toLowerCase();
+    const validUser = ['member', 'exterminator', 'inspector', 'admin'];
     if (!validUser.includes(parsed_user)) throw `Error: User must be one of the following: ${validStatus.join(', ')}`;
     return parsed_user;
 };

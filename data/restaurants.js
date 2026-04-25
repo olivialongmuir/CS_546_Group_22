@@ -103,7 +103,7 @@ export const createRestaurant = async(
     const insertInfo = await restaurantCollection.insertOne(newRestaurant);
     if (!insertInfo.acknowledged) throw `Error {${errorSource}}: Could not add restaurant to database`;
 
-    //Return newly created restaurant
+    // Return newly created restaurant
     const newId = insertInfo.insertedId.toString();
     return await getRestaurantById(newId);
 };

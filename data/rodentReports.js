@@ -11,7 +11,7 @@ import {
     checkRatSizeRating, 
     checkRatType, 
     checkRodentStatus, 
-    checkVerifiedBy, 
+    checkUserType, 
     checkZipcode 
 } from "../helpers.js";
 
@@ -20,14 +20,14 @@ import {
  * @returns reportsList
  */
 export const getAllReports = async() => {
-    //Get rodentReports collection from database
+    // Get rodentReports collection from database
     const reportsCollection = await rodentReports();
     let reportsList = await reportsCollection.find({}).toArray();
 
-    //Check if database returned anything. Return empty array if nothing
+    // Check if database returned anything. Return empty array if nothing
     if (reportsList.length === 0) return [];
 
-    //Convert all object ids to string ids
+    // Convert all object ids to string ids
     reportsList = reportsList.map(report => {
         report._id = report._id.toString();
         return report
@@ -45,12 +45,12 @@ export const getReportById = async(id) => {
     const validatedId = checkId(id);
     if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
 
-    //Get rodentReports collection from database
+    // Get rodentReports collection from database
     const reportsCollection = await rodentReports();
     const reportItem = await reportsCollection.findOne({_id: new ObjectId(validatedId)});
     if (!reportItem) throw `Error {${errorSource}}: No report associated with this id ${validatedId}`;
 
-    //Convert object id to regular string id
+    // Convert object id to regular string id
     reportItem._id = reportItem._id.toString();
     return reportItem;
 };
@@ -99,15 +99,16 @@ export const createReport = async(
     const validatedUserId = checkId(userId);
     if (!ObjectId.isValid(validatedUserId)) throw `Error {${errorSource}}: userId is not a valid objectId`;
     
-    //Make sure no duplicate report exists
-    const reportList = await getAllReports();
-    if (reportList.some(report => report.jobId === validatedJobId)) throw `Error {${errorSource}}: Report with this jobId already exists`;
+    // Make sure no duplicate report exists
+    const reportCollection = await rodentReports();
+    const reportInfo = reportCollection.findOne({jobId: validatedJobId})
+    if (reportInfo) throw `Error {${errorSource}}: Report with this jobId already exists`;
 
-    //Timestamp request
+    // Timestamp request
     const now = new Date();
     const timestamp = now.toISOString();
 
-    //Template for new report
+    // Template for new report
     const newReport = {
         jobId: validatedJobId,
         zipcode: validatedZipcode,
@@ -125,12 +126,11 @@ export const createReport = async(
         verifiedBy: null
     }
 
-    //Insert new report into database
-    const reportCollection = await rodentReports();
+    // Insert new report into database
     const insertInfo = await reportCollection.insertOne(newReport);
     if (!insertInfo.acknowledged) throw `Error {${errorSource}}: Unable to add new report`;
 
-    //Return newly created report
+    // Return newly created report
     const newId = insertInfo.insertedId.toString();
     return await getReportById(newId);
 };
@@ -178,7 +178,7 @@ export const updateReport = async(
     if (status !== undefined)  updateReport["status"] = checkReportStatus(status);
     if (approvedDate !== undefined) updateReport["approvedDate"] = checkDate(approvedDate);
     if (description !== undefined) updateReport["description"] = checkDescription(description);
-    if (verifiedBy !== undefined) updateReport["verifiedBy"] = checkVerifiedBy(verifiedBy);
+    if (verifiedBy !== undefined) updateReport["verifiedBy"] = checkUserType(verifiedBy);
 
     if (jobId !== undefined) {
         updateReport["jobId"] = checkJobId(jobId);
@@ -197,7 +197,7 @@ export const updateReport = async(
 
     if (Object.keys(updatedFields).length === 0) throw `Error {${errorSource}}: No fields to update`;
 
-    //Find report matching Id and update it
+    // Find report matching Id and update it
     const reportCollection = await rodentReports();
     const updateInfo = await reportCollection.findOneAndUpdate(
         {_id: new ObjectId(validatedId)},
@@ -237,7 +237,7 @@ export const createRodent = async(
     const validatedNote = checkNote(note);
     const validatedPhotoUrl = checkPhotoUrl(photoUrl);
 
-    //Template for new rodent comment
+    // Template for new rodent comment
     const newRodent = {
         name: validatedName,
         type: validatedType,
@@ -246,7 +246,7 @@ export const createRodent = async(
         photoUrl: validatedPhotoUrl
     }
     
-    //Insert new rodent into database
+    // Insert new rodent into database
     const reportCollection = await rodentReports();
     const insertInfo = await reportCollection.findOneAndUpdate(
         {_id: new ObjectId(validatedId)},
@@ -255,7 +255,7 @@ export const createRodent = async(
     );
     if (!insertInfo) throw `Error {${errorSource}}: Could not find and push rodent to id ${validatedId}`;
 
-    //Return newly created report
+    // Return newly created report
     const newId = insertInfo.insertedId.toString();
     return await getReportById(newId);
 };
@@ -270,7 +270,7 @@ export const deleteReport = async(id) => {
     const validatedId = checkId(id);
     if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
 
-    //Delete report from database
+    // Delete report from database
     const reportCollection = await rodentReports();
     const deletionInfo = await reportCollection.findOneAndDelete({_id: new ObjectId(validatedId)});
     if (!deletionInfo) throw `Error {${errorSource}}: Could not delete id ${validatedId}`;
