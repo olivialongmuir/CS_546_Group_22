@@ -1,0 +1,11 @@
+
+Plan for adding a rodent report
+
+DONE - create new rodent report db function
+DONE - post new rodent report route
+TODO - rodent report entry form
+TODO - minimap added to entry form
+TODO - DB validation
+TODO - route validation
+TODO - client side form validation
+TODO - rodent report creation page?

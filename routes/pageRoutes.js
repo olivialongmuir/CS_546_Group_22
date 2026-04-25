@@ -211,5 +211,27 @@ router.route('/profile').get(async (req, res) => {
 
 
 
+//DISPLAY REPORT CREAITON FORM FOR SET UP, 
+router.route('/createReport').get(async(req, res)=>{
+    
+    const firstLocation = {
+        name: 'userClickedHere',
+        lat: Number(40.6940285125),
+        lng: Number(-73.9348118964)
+    }
+
+    //put object in arr since its iterated when the maps built
+    const restaurantData = [firstLocation];
+    const restaurantMapData = JSON.stringify(restaurantData);
+    
+    console.log("ROUTE " + restaurantMapData)
+    
+    res.render("createReport", {
+            title: 'Create Report',
+            restaurantMapData: restaurantMapData
+        });
+
+});
+
 
 export default router;

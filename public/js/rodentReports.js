@@ -1,6 +1,9 @@
 
+console.log(restaurantMapData);
+
+
 //Allows rodent report on left to be clicked and then shows the details on the right
-document.querySelector(".leftPane").addEventListener("click", async (e) => {
+document.querySelector(".leftPane")?.addEventListener("click", async (e) => {
 
     // allows full card to be clicked
     const card = e.target.closest(".ratCard");
@@ -35,9 +38,15 @@ document.querySelector(".leftPane").addEventListener("click", async (e) => {
     //set the center view (use fly to or pan to?)
     map.panTo(lo, 14, {animate: true, duration: 0.5}); 
     // map.flyTo(lo, map.getZoom(), { duration: 0.3 });
+    //set a marker icon to be a small rat??? use L.Icon from docs
+    const ratPin = L.icon({
+        iconUrl: '/public/images/rat_pin.png',
+        iconSize: [30, 30],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+    });
     //add new marker to the map for that rodent sighting
-    //TODO - set a marker icon to be a small rat??? use L.Icon from docs
-    L.marker([data.latitude, data.longitude])
+    L.marker([data.latitude, data.longitude]), { icon: ratPin }
                 .addTo(map)
                 .bindPopup(data._id);
 
@@ -62,10 +71,17 @@ const today = new Date().toISOString().split('T')[0];
 let monthAgo = new Date();
 monthAgo.setDate(monthAgo.getDate() - 30);
 monthAgo = monthAgo.toISOString().split('T')[0];
+
 let startDate = document.getElementById("startDate");
-startDate.value = monthAgo
+if(startDate){
+    startDate.value = monthAgo
+}
+
 let endDate = document.getElementById("endDate");
-endDate.value = today
+if(endDate){
+    endDate.value = today
+}
+
 
 //Compares a date against a filter date. Returns true if first date1 came after date2
 const compareDate =(date1, date2)=>{
@@ -115,13 +131,13 @@ const filterElements=()=>{
 
 
 //add event listeners to both date selectors. on change update the visbility of cards in rat report
-document.getElementById('startDate').addEventListener('change', filterElements);
-document.getElementById('endDate').addEventListener('change', filterElements);
-document.getElementById("verifiedStatus").addEventListener('change', filterElements);
+document.getElementById('startDate')?.addEventListener('change', filterElements);
+document.getElementById('endDate')?.addEventListener('change', filterElements);
+document.getElementById("verifiedStatus")?.addEventListener('change', filterElements);
 
 
 //A clear filters button RESETS ALL FILTERS
-document.getElementById('clearFilters').addEventListener("click", function(){
+document.getElementById('clearFilters')?.addEventListener("click", function(){
     
     //set all filters back to default
     let verifiedButton = document.getElementById("verifiedStatus")
@@ -159,6 +175,8 @@ window.addEventListener('load', () => {
     let temp = restaurantMapData[0];
     let lat = temp.lat
     let lng = temp.lng
+    
+
 
     //set map center to the current restaurant
     const nycLatLng = [lat, lng];
