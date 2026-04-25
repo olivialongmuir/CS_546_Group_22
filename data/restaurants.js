@@ -134,26 +134,26 @@ export const updateRestaurant = async(
 ) => {
     const errorSource = "updateRestaurant";
     const validatedId = checkId(id);
-    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: jobId is not a valid objectId`;
+    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: id is not a valid objectId`;
 
-    // Dynamically update object
-    const updatedFields = {};
-    if (name !== undefined) updatedFields["name"] = checkString(name, "name");
-    if (type !== undefined) updatedFields["type"] = checkString(type, "type");
-    if (latitude !== undefined) updatedFields["latitude"] = checkNumber(latitude, "latitude");
-    if (longitude !== undefined) updatedFields["longitude"] = checkNumber(longitude, "longitude");
-    if (website !== undefined) updatedFields["website"] = checkWebsite(website);
-    if (phone !== undefined) updatedFields["phone"] = checkPhone(phone);
-    if (permit_number !== undefined) updatedFields["permit_number"] = checkString(permit_number);
-    if (status !== undefined) updatedFields["status"] = checkRestaurantStatus(status);
+    // Template for partial update
+    const updateRestaurant = {};
+    if (name !== undefined) updateRestaurant["name"] = checkString(name, "name");
+    if (type !== undefined) updateRestaurant["type"] = checkString(type, "type");
+    if (latitude !== undefined) updateRestaurant["latitude"] = checkNumber(latitude, "latitude");
+    if (longitude !== undefined) updateRestaurant["longitude"] = checkNumber(longitude, "longitude");
+    if (website !== undefined) updateRestaurant["website"] = checkWebsite(website);
+    if (phone !== undefined) updateRestaurant["phone"] = checkPhone(phone);
+    if (permit_number !== undefined) updateRestaurant["permit_number"] = checkString(permit_number);
+    if (status !== undefined) updateRestaurant["status"] = checkRestaurantStatus(status);
 
-    if (Object.keys(updatedFields).length === 0) throw `Error {${errorSource}}: No fields to update`;
+    if (Object.keys(updateRestaurant).length === 0) throw `Error {${errorSource}}: No fields to update`;
 
     // Find restaurant Id and update it
     const restaurantCollection = await restaurants();
     const updateInfo = await restaurantCollection.findOneAndUpdate(
         {_id: new ObjectId(validatedId)},
-        {$set: {...updatedFields}},
+        {$set: {...updateRestaurant}},
         {ReturnDocument: "after"}
     );
     if (!updateInfo) throw `Error {${errorSource}}: Could not update restaurant with id ${validatedId}`;

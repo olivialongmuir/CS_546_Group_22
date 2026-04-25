@@ -195,7 +195,7 @@ export const updateReport = async(
         if (!ObjectId.isValid(updateReport.userId)) throw `Error {${errorSource}}: userId is not a valid objectId`;
     }
 
-    if (Object.keys(updatedFields).length === 0) throw `Error {${errorSource}}: No fields to update`;
+    if (Object.keys(updateReport).length === 0) throw `Error {${errorSource}}: No fields to update`;
 
     // Find report matching Id and update it
     const reportCollection = await rodentReports();
@@ -204,7 +204,7 @@ export const updateReport = async(
         {$set: {...updateReport}},
         {ReturnDocument: "after"}
     );
-    if (!updateInfo) throw `Error {${errorSource}}: Could not find and update id ${validatedId}`;
+    if (!updateInfo) throw `Error {${errorSource}}: Could update rodent report with id ${validatedId}`;
 
     return updateInfo
 };
@@ -263,7 +263,7 @@ export const createRodent = async(
 /**
  * Deletes rodent report from database by objectId
  * @param {string} id 
- * @returns deletionInfo
+ * @returns
  */
 export const deleteReport = async(id) => {
     const errorSource = "deleteReport"
@@ -273,7 +273,7 @@ export const deleteReport = async(id) => {
     // Delete report from database
     const reportCollection = await rodentReports();
     const deletionInfo = await reportCollection.findOneAndDelete({_id: new ObjectId(validatedId)});
-    if (!deletionInfo) throw `Error {${errorSource}}: Could not delete id ${validatedId}`;
+    if (!deletionInfo.deletedCount === 0) throw `Error {${errorSource}}: Could not delete rodent report with id ${validatedId}`;
 
-    return deletionInfo
+    return { deleted: true };
 };

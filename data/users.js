@@ -1,5 +1,5 @@
 import { users } from "../config/mongoCollections.js";
-import { ObjectId } from "mongodb";
+import { ObjectId, ReturnDocument } from "mongodb";
 import { hash, compare } from "bcrypt";
 import { 
     checkEmail, 
@@ -50,6 +50,16 @@ export const getUserById = async(id) => {
     return userItem;
 };
 
+/**
+ * Creates a new user with selected type and inserts it into the database
+ * @param {*} type 
+ * @param {*} firstName 
+ * @param {*} lastName 
+ * @param {*} username      //Must be unique
+ * @param {*} password 
+ * @param {*} emailAddress  //Must be unique
+ * @returns newUser
+ */
 export const createUser = async(
     type,
     firstName,
@@ -102,17 +112,70 @@ export const createUser = async(
     return await getUserById(newId);
 };
 
-export const updateUser = async(id) => {
+export const updateUser = async(
+    id,
+    type,
+    firstName,
+    lastName,
+    emailAddress
+) => {
     const errorSource = "updateUser";
+    const validatedId = checkId(id);
+    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: id is not a valid objectId`;
 
+    // Template for partial update
+    const updateUser = {};
+    if (type !== undefined) updateUser["type"] = checkUserType(type);
+    if (firstName !== undefined) updateUser["firstName"] = checkFirstName(firstName);
+    if (lastName !== undefined) updateUser["lastName"] = checkLastName(lastName);
+    if (emailAddress !== undefined) updateUser["emailAddress"] = checkEmail(emailAddress);
+
+    if (Object.keys(updateUser).length === 0) throw `Error {${errorSource}}: No fields to update`;
+
+    // Find user Id and update it
+    const userCollection = await users();
+    const updateInfo = await userCollection.findOneAndUpdate(
+        {_id: new ObjectId(validatedId)},
+        {$set: {...updateUser}},
+        {ReturnDocument: "after"}
+    );
+    if (!updateInfo) throw `Error {${errorSource}}: Could not update user with id ${validatedId}`;
+
+    return updateInfo;
 };
 
+export const createComment = async () => {
+    const errorSource = "createComment";
+};
+
+/**
+ * Deletes user from database by objectId
+ * @param {string} id 
+ * @returns 
+ */
 export const deleteUser = async(id) => {
     const errorSource = "deleteUser";
+    const validatedId = checkId(id);
+    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
 
+    // Get user collection from database
+    const userCollection = await users();
+
+    // Delete user from database
+    const deletionInfo = await userCollection.deleteOne({_id: validatedId});
+    if (deletionInfo.deletedCount === 0) throw `Error {${errorSource}}: Could not delete user with id ${validatedId}`;
+
+    return { deleted: true };
 };
 
+/**
+ * 
+ * @param {*} id 
+ * @returns commentList
+ */
 export const getUserComments = async(id) => {
     const errorSource = "getUserComments";
+    const validatedId = checkId(id);
+    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
 
 };
