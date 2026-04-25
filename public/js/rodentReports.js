@@ -1,5 +1,72 @@
+//Rodent Report Heatmap Function
+//will display as a minimap with the rodent report coordinate as its center marking point
+//Make small and not scrollable
 
-console.log(restaurantMapData);
+//set map as a global var to edit 
+let map;
+let ratPin;
+
+
+window.addEventListener('load', () => {
+
+    const mapEl = document.getElementById('miniHeatmap');
+    if (!mapEl) {
+        console.error('miniHeatmap element not found');
+        return;
+    }
+
+
+    //get the lat and long of the current restaurant
+    let temp = restaurantMapData[0];
+    let lat = temp.lat
+    let lng = temp.lng
+    
+
+
+    //set map center to the current restaurant
+    const nycLatLng = [lat, lng];
+
+    
+    //initialize the map and set the rules
+    map = L.map('miniHeatmap', {
+        preferCanvas: true,
+        dragging: false,
+        zoomControl: false,       //Removes the +/- buttons
+        scrollWheelZoom: false,   //Disables mouse wheel zoom
+        doubleClickZoom: false,   //Disables zoom on double-click
+        touchZoom: false,         //Disables pinch-to-zoom on mobile
+        boxZoom: false            //Disables zoom by dragging with shift key
+    }).setView(nycLatLng, 14);
+
+
+    //map layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    //Define pin syle to be used will update the global var
+    ratPin = L.icon({
+            iconUrl: '/public/images/rat_pin_alt.png',
+            iconSize: [30, 30],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
+        });
+
+
+    // restaurant marker (only showing one since it should just be current rodent report)
+    if (typeof restaurantMapData !== 'undefined') {
+        restaurantMapData.forEach(restaurant => {
+            L.marker([restaurant.lat, restaurant.lng], { icon: ratPin})
+                .addTo(map)
+                .bindPopup(restaurant.name);
+        });
+    }
+
+    setTimeout(() => {
+        map.invalidateSize(true);
+    }, 0);
+});
+
 
 
 //Allows rodent report on left to be clicked and then shows the details on the right
@@ -12,7 +79,6 @@ document.querySelector(".leftPane")?.addEventListener("click", async (e) => {
 
     //Gets the id of that rodent
     const id = card.dataset.id;
-    console.log(id);
 
     //get the data for that id by calling the api
     const res = await fetch(`/rodentReports/${id}`);
@@ -39,16 +105,9 @@ document.querySelector(".leftPane")?.addEventListener("click", async (e) => {
     map.panTo(lo, 14, {animate: true, duration: 0.5}); 
     // map.flyTo(lo, map.getZoom(), { duration: 0.3 });
     //set a marker icon to be a small rat??? use L.Icon from docs
-    const ratPin = L.icon({
-        iconUrl: '/public/images/rat_pin.png',
-        iconSize: [30, 30],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32]
-    });
+
     //add new marker to the map for that rodent sighting
-    L.marker([data.latitude, data.longitude]), { icon: ratPin }
-                .addTo(map)
-                .bindPopup(data._id);
+    L.marker([data.latitude, data.longitude], { icon: ratPin }).addTo(map).bindPopup(data._id);
 
 });
 
@@ -155,66 +214,6 @@ document.getElementById('clearFilters')?.addEventListener("click", function(){
 
 
 
-
-//set map as a global var to edit 
-let map;
-
-//Rodent Report Heatmap Function
-//will display as a minimap with the rodent report coordinate as its center marking point
-//Make small and not scrollable
-window.addEventListener('load', () => {
-
-    const mapEl = document.getElementById('miniHeatmap');
-    if (!mapEl) {
-        console.error('miniHeatmap element not found');
-        return;
-    }
-
-
-    //get the lat and long of the current restaurant
-    let temp = restaurantMapData[0];
-    let lat = temp.lat
-    let lng = temp.lng
-    
-
-
-    //set map center to the current restaurant
-    const nycLatLng = [lat, lng];
-
-    
-    //initialize the map and set the rules
-    map = L.map('miniHeatmap', {
-        preferCanvas: true,
-        dragging: false,
-        zoomControl: false,       //Removes the +/- buttons
-        scrollWheelZoom: false,   //Disables mouse wheel zoom
-        doubleClickZoom: false,   //Disables zoom on double-click
-        touchZoom: false,         //Disables pinch-to-zoom on mobile
-        boxZoom: false            //Disables zoom by dragging with shift key
-    }).setView(nycLatLng, 14);
-
-
-    //map layer
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-
-    // restaurant marker (only showing one since it should just be current rodent report)
-    if (typeof restaurantMapData !== 'undefined') {
-        console.log(restaurantMapData);
-        restaurantMapData.forEach(restaurant => {
-            // console.log(restaurant);
-            L.marker([restaurant.lat, restaurant.lng])
-                .addTo(map)
-                .bindPopup(restaurant.name);
-        });
-    }
-
-    setTimeout(() => {
-        map.invalidateSize(true);
-    }, 0);
-});
 
 
 
