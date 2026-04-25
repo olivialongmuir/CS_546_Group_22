@@ -9,14 +9,13 @@
         <div>
             <h2>Filter Reports</h2>
 
-            <label for="reportDate">Report Date:</label><br>
+            <p>Report Date:</p>
             <input id="startDate" type="date" id="reportDate" name="reportDate">
             <input id="endDate" type="date" id="reportDate" name="reportDate"><br>
             <label for="verifiedStatus">Verified Only:</label>
             <input type="checkbox" id="verifiedStatus" name="verifiedStatus"><br>
             <button id="clearFilters">Clear Filters</button>
         </div>
-    
 
         <!-- Cards list -->
         {{#each reports}}

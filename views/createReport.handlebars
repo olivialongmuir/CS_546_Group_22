@@ -1,0 +1,73 @@
+
+<link rel="stylesheet" href="public/css/rodentReport.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+
+{{!-- Page serves as a small pop up for creating a new rodent report --}}
+<div class ="cardPopup">
+    <div class="rodentReportCard">
+        <section>
+        <form id="rodentForm" method="POST" action="/rodentReports">
+
+            <div class="reportCardHeader">
+            <h1>New Rodent Report</h1>
+
+                <div>
+                    <section id="miniHeatmapSection">
+                    {{!-- map container --}}
+                    <div id="miniHeatmap"></div>
+
+
+                    <script>
+                        {{!-- TODO - pass in rodent data --}}
+                        const restaurantMapData = {{{restaurantMapData}}};
+
+                    </script>
+                    </section>
+                </div>
+
+                <p>Reporter: USER {{user}}</p>
+                <p>Location: LAT AND LONG THEY CLICKED{{latitude}} {{longitude}}</p>
+                <p>Zip Code: getZip(lat,long) {{zipcode}}</p>
+            </div>
+            
+            <div>
+                <label for="description">Description:</label><br>
+                <textarea 
+                    id="description" 
+                    name="description" 
+                    rows="4" 
+                    cols="50" 
+                    value="{{description}}" 
+                    required>
+                </textarea>
+            </div>
+
+            {{!-- Hidden items that are derrived from map click and passed to route --}}
+            <div>
+                {{!-- <label for="zipcode">Zip Code:</label> --}}
+                <input type="text" id="zipcode" name="zipcode" value="{{ zipcode }}" hidden/>
+                {{!-- <label for="latitude">Latitude:</label> --}}
+                <input type="text" id="latitude" name="latitude" value="{{ latitude }}" hidden/>
+                {{!-- <label for="longitude">Longitude:</label> --}}
+                <input type="text" id="longitude" name="longitude" value="{{ longitude }}" hidden/>
+                
+                {{!-- if (!data.restaurantId || !data.userId || !data.description || data.latitude === undefined || data.longitude === undefined) { --}}
+
+                
+            </div>
+
+            <button type="submit" class="pillButton">Submit</button>
+        </form>
+        </section>
+    </div>
+</div>
+
+
+<script src="/js/rodentReports.js"></script>
+
+{{!-- leaflet scripts --}}
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+{{!-- leaflet heat plugin --}}
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>

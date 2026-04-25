@@ -275,6 +275,7 @@ main {
 #miniHeatmap {
   width: 30vw;
   height: 40vh;
+  border-radius: 12px;
 }
 
 
