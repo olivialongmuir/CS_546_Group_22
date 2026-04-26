@@ -341,6 +341,13 @@ main {
 
 /* Shared utilities — used across multiple pages*/
 
+.link-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
 .page-container {
   width: 100%;
   max-width: 72rem;
