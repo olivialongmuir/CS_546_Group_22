@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb';
+import { ObjectId, ReturnDocument } from 'mongodb';
 import { rodentReports } from "../config/mongoCollections.js";
 import { 
     checkDate, 
@@ -206,6 +206,7 @@ export const updateReport = async(
     );
     if (!updateInfo) throw `Error {${errorSource}}: Could update rodent report with id ${validatedId}`;
 
+    updateInfo._id = updateInfo._id.toString();
     return updateInfo
 };
 
@@ -251,7 +252,7 @@ export const createRodent = async(
     const insertInfo = await reportCollection.findOneAndUpdate(
         {_id: new ObjectId(validatedId)},
         {$push: {rodent: newRodent}},
-        {ReturnDocument: "after"}
+        {returnDocument: "after"}
     );
     if (!insertInfo) throw `Error {${errorSource}}: Could not find and push rodent to id ${validatedId}`;
 

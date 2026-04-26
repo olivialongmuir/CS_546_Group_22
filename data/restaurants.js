@@ -6,7 +6,9 @@ import {
     checkNumber, 
     checkWebsite, 
     checkPhone, 
-    checkRestaurantStatus 
+    checkRestaurantStatus, 
+    checkComment,
+    checkUsername
 } from '../helpers.js';
 
 /**
@@ -181,6 +183,10 @@ export const deleteRestaurant = async(id) => {
     return { deleted: true };
 };
 
+export const getRestaurantCommentById = async(commentId) => {
+
+};
+
 /**
  * Gets all restaurant comments as an array
  * @param {string} id 
@@ -211,17 +217,28 @@ export const getRestaurantComments = async(id) => {
  * @param {string} user 
  * @returns newComment
  */
-export const addCommentToRestaurant = async (id, comment, user) => {
+export const addCommentToRestaurant = async (
+    id, 
+    comment, 
+    username
+) => {
     const errorSource = "addCommentToRestaurant";
     const validatedId = checkId(id);
     if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
 
+    const validatedComment = checkComment(comment);
+    const validatedUsername = checkUsername(username);
+
+    // Timestamp request
+    const now = new Date();
+    const timestamp = now.toISOString();
+
     //Comment template object
     const newComment = {
         _id: new ObjectId(),
-        comment: checkString(comment, "comment"),
-        user: checkString(user, "user"),
-        createdAt: new Date()
+        comment: validatedComment,
+        username: validatedUsername,
+        timestamp: timestamp
     };
 
     // Append new comment onto restaurant comments
@@ -233,9 +250,8 @@ export const addCommentToRestaurant = async (id, comment, user) => {
     );
     if (!updateInfo) throw `Error {${errorSource}}: No restaurant associated with this id ${validatedId}`;
 
-    //Convert object id to regular string id
-    newComment._id = newComment._id.toString();
-    return newComment;
+    updateInfo._id = updateInfo._id.toString();
+    return updateInfo;
 };
 
 /**

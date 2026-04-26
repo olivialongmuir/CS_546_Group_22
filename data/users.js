@@ -2,6 +2,7 @@ import { users } from "../config/mongoCollections.js";
 import { ObjectId, ReturnDocument } from "mongodb";
 import { hash, compare } from "bcrypt";
 import { 
+    checkComment,
     checkEmail, 
     checkFirstName, 
     checkId, 
@@ -112,6 +113,15 @@ export const createUser = async(
     return await getUserById(newId);
 };
 
+/**
+ * Updates user by objectId
+ * @param {*} id 
+ * @param {*} type 
+ * @param {*} firstName 
+ * @param {*} lastName 
+ * @param {*} emailAddress 
+ * @returns updateInfo
+ */
 export const updateUser = async(
     id,
     type,
@@ -141,11 +151,38 @@ export const updateUser = async(
     );
     if (!updateInfo) throw `Error {${errorSource}}: Could not update user with id ${validatedId}`;
 
+    updateInfo._id = updateInfo._id.toString();
     return updateInfo;
 };
 
-export const createComment = async () => {
+/**
+ * Appends new comment id to user comments array
+ * @param {*} id 
+ * @param {*} commentId 
+ * @returns newComment
+ */
+export const addCommentToUser = async (
+    id,
+    commentId
+) => {
     const errorSource = "createComment";
+    const validatedId = checkId(id);
+    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: id is not a valid objectId`;
+
+    const validatedCommentId = checkId(commentId);
+    if (!ObjectId.isValid(validatedCommentId)) throw `Error {${errorSource}}: commentId is not a valid objectId`;
+
+    // Add the comment id to user comments
+    const userCollection = await users();
+    const updateInfo = userCollection.findOneAndUpdate(
+        {_id: new ObjectId(validatedId)},
+        {$push: {comments: validatedCommentId}},
+        {ReturnDocument: "after"}
+    )
+    if (!updateInfo) throw `Error {${errorSource}}: No user associated with this id ${validatedId}`;
+
+    updateInfo._id = updateInfo._id.toString();
+    return updateInfo
 };
 
 /**
@@ -170,7 +207,7 @@ export const deleteUser = async(id) => {
 
 /**
  * 
- * @param {*} id 
+ * @param {string} id 
  * @returns commentList
  */
 export const getUserComments = async(id) => {
@@ -178,4 +215,5 @@ export const getUserComments = async(id) => {
     const validatedId = checkId(id);
     if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
 
+    
 };
