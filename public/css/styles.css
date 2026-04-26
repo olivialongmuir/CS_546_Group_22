@@ -121,6 +121,8 @@ main {
 
 .card {
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
   width: 200px;                 
   padding: 1.5rem;
@@ -346,6 +348,13 @@ main {
   height: 24px;
   margin-right: 6px;
   vertical-align: middle;
+}
+
+.home-icon {
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  color: #a3e635;
 }
 
 .page-container {
