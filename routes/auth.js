@@ -1,11 +1,21 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import { users } from '../config/mongoCollections.js';
+import { createUser } from '../data/users.js';
 
 const router = Router();
 
+const USER_TYPE_OPTIONS = [
+  { value: 'consumer',     label: 'Consumer' },
+  { value: 'inspector',    label: 'Health Inspector' },
+  { value: 'restaurant',   label: 'Restaurant Owner' },
+  { value: 'exterminator', label: 'Exterminator' }
+];
+
+const buildTypeOptions = (selected) =>
+  USER_TYPE_OPTIONS.map(o => ({ ...o, selected: o.value === selected }));
+
 router.route('/login').get(async (req, res) => {
-  if (req.session.userId) return res.redirect('/profile');
   return res.render('login', { title: 'SqueakPeek - Login' });
 });
 
@@ -44,6 +54,51 @@ router.route('/login').post(async (req, res) => {
       title: 'SqueakPeek - Login',
       error: 'Something went wrong. Please try again.'
     });
+  }
+});
+
+router.route('/register').get(async (req, res) => {
+  return res.render('register', {
+    title: 'SqueakPeek - Register',
+    typeOptions: buildTypeOptions()
+  });
+});
+
+router.route('/register').post(async (req, res) => {
+  const { firstName, lastName, username, emailAddress, password, confirmPassword, type } = req.body;
+
+  const renderError = (message) =>
+    res.status(400).render('register', {
+      title: 'SqueakPeek - Register',
+      error: message,
+      firstName,
+      lastName,
+      username,
+      emailAddress,
+      typeOptions: buildTypeOptions(type)
+    });
+
+  if (password !== confirmPassword) {
+    return renderError('Passwords do not match');
+  }
+
+  try {
+    const newUser = await createUser({
+      firstName,
+      lastName,
+      username,
+      emailAddress,
+      password,
+      type
+    });
+    req.session.userId = newUser._id;
+    return res.redirect('/profile');
+  } catch (error) {
+    console.error(error);
+    const message = typeof error === 'string'
+      ? error.replace(/^Error:\s*/, '')
+      : (error?.message || 'Something went wrong. Please try again.');
+    return renderError(message);
   }
 });
 

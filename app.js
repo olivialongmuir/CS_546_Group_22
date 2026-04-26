@@ -5,6 +5,7 @@ const app = express();
 import configRoutes from './routes/index.js';
 import exphbs from 'express-handlebars';
 import session from 'express-session';
+import { logger, loginRedirect, protectedRoute } from './middleware.js';
 
 const rewriteUnsupportedBrowserMethods = (req, res, next) => {
   // If the user posts to the server with a property called _method, rewrite the request's method
@@ -30,10 +31,16 @@ app.use(session({
 }));
 app.use(rewriteUnsupportedBrowserMethods);
 
+app.use(logger);
+
 app.use((req, res, next) => {
   res.locals.isLoggedIn = Boolean(req.session && req.session.userId);
   next();
 });
+
+app.use('/login', loginRedirect);
+app.use('/register', loginRedirect);
+app.use('/profile', protectedRoute);
 
 app.engine('handlebars', exphbs.engine({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');

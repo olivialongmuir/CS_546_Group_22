@@ -6,6 +6,7 @@
 .
 ├── app.js
 ├── helpers.js
+├── middleware.js
 ├── seed.js
 ├── README.md
 ├── config/
@@ -47,6 +48,7 @@
     ├── login.handlebars
     ├── profile.handlebars
     ├── ratreports.handlebars
+    ├── register.handlebars
     ├── restaurant.handlebars
     └── restaurants.handlebars
 ```

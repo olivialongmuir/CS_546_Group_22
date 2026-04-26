@@ -1,0 +1,29 @@
+
+
+.cardPopup{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 2vw;
+    background: rgba(231, 228, 228, 0.188); /* Semi-transparent color */
+    backdrop-filter: blur(8px);      /* Blurs content behind the overlay */
+    padding: 2%;
+}
+
+
+
+.rodentReportCard{
+
+    background-color: rgb(0, 0, 0);
+    width: 30vw;
+
+    border: 2px solid rgba(86, 176, 13, 0.815);
+    padding: 10px;
+    border-radius: 12px;
+
+    align-items: left;
+}
+
+.reportCardHeader{
+    text-align: center;
+}
