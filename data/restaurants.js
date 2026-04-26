@@ -43,7 +43,7 @@ export const getRestaurantById = async(id) => {
 
     // Get restaurant collection from database
     const restaurantCollection = await restaurants();
-    const restaurantItem = await restaurantCollection.findOne({_id: new ObjectId(validatedId)});
+    let restaurantItem = await restaurantCollection.findOne({_id: new ObjectId(validatedId)});
     if (!restaurantItem) throw `Error {${errorSource}}: No restaurant associated with this id ${validatedId}`;
 
     // Convert object id to regular string id
@@ -151,14 +151,15 @@ export const updateRestaurant = async(
 
     // Find restaurant Id and update it
     const restaurantCollection = await restaurants();
-    const updateInfo = await restaurantCollection.findOneAndUpdate(
+    let updateInfo = await restaurantCollection.findOneAndUpdate(
         {_id: new ObjectId(validatedId)},
         {$set: {...updateRestaurant}},
         {ReturnDocument: "after"}
     );
     if (!updateInfo) throw `Error {${errorSource}}: Could not update restaurant with id ${validatedId}`;
 
-    return updateInfo
+    updateInfo._id = updateInfo._id.toString();
+    return updateInfo;
 };
 
 /**
@@ -196,10 +197,10 @@ export const getRestaurantComments = async(id) => {
 
     // Get all comments from comments database associated with this restaurant
     const commentCollection = await comments();
-    const commentItems = await commentCollection.find({restaurantId: validatedId}).toArray(); // Assuming not too many comments
+    let commentItems = await commentCollection.find({restaurantId: validatedId}).toArray(); // Assuming not too many comments
 
     // Ensure all comment IDs are in the form of a string
-    const commentItems = (commentItems || []).map(item => {
+    commentItems = (commentItems || []).map(item => {
         item._id = item._id.toString();
         return item
     })
@@ -215,30 +216,16 @@ export const getRestaurantComments = async(id) => {
 export const addCommentIdToRestaurant = async (
     id, 
     comment, 
-    username
 ) => {
     const errorSource = "addCommentToRestaurant";
     const validatedId = checkId(id);
     if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
 
-    const validatedComment = checkComment(comment);
     const validatedUsername = checkUsername(username);
-
-    // Timestamp request
-    const now = new Date();
-    const timestamp = now.toISOString();
-
-    //Comment template object
-    const newComment = {
-        _id: new ObjectId(),
-        comment: validatedComment,
-        username: validatedUsername,
-        timestamp: timestamp
-    };
 
     // Append new comment onto restaurant comments
     const restaurantCollection = await restaurants();
-    const updateInfo = await restaurantCollection.findOneAndUpdate(
+    let updateInfo = await restaurantCollection.findOneAndUpdate(
         {_id: new ObjectId(validatedId)},
         {$push: {comments: newComment}},
         {ReturnDocument: "after"}
@@ -266,12 +253,12 @@ export const getRestaurantRodentReports = async (restaurantId) => {
 
     // Gets all rodent reports attached to a restaurant
     const reportCollection = await rodentReports();
-    const reportItems = await reportCollection
+    let reportItems = await reportCollection
         .find({restaurantId: validatedId})
         .toArray();
 
     // Ensure all rodent report IDs are in the form of a string
-    const reportItems = reports.map(report => {
+    reportItems = reports.map(report => {
         report._id = report._id.toString();
         return report;
     })

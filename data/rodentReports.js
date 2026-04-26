@@ -9,7 +9,8 @@ import {
     checkNumber, 
     checkPhotoUrl, 
     checkRatSizeRating, 
-    checkRatType, 
+    checkRodentName,
+    checkRodentType, 
     checkRodentStatus, 
     checkUserType, 
     checkZipcode 
@@ -47,7 +48,7 @@ export const getReportById = async(id) => {
 
     // Get rodentReports collection from database
     const reportsCollection = await rodentReports();
-    const foundInfo = await reportsCollection.findOne({_id: new ObjectId(validatedId)});
+    let foundInfo = await reportsCollection.findOne({_id: new ObjectId(validatedId)});
     if (!foundInfo) throw `Error {${errorSource}}: No report associated with this id ${validatedId}`;
 
     // Convert object id to regular string id
@@ -199,7 +200,7 @@ export const updateReport = async(
 
     // Find report matching Id and update it
     const reportCollection = await rodentReports();
-    const updateInfo = await reportCollection.findOneAndUpdate(
+    let updateInfo = await reportCollection.findOneAndUpdate(
         {_id: new ObjectId(validatedId)},
         {$set: {...updateReport}},
         {ReturnDocument: "after"}
@@ -207,7 +208,7 @@ export const updateReport = async(
     if (!updateInfo) throw `Error {${errorSource}}: Could update rodent report with id ${validatedId}`;
 
     updateInfo._id = updateInfo._id.toString();
-    return updateInfo
+    return updateInfo;
 };
 
 /**
@@ -232,8 +233,8 @@ export const createRodent = async(
     const validatedId = checkId(id);
     if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
 
-    const validatedName = checkName(name);
-    const validatedType = checkRatType(type);
+    const validatedName = checkRodentName(name);
+    const validatedType = checkRodentType(type);
     const validatedRating = checkRatSizeRating(rating);
     const validatedNote = checkNote(note);
     const validatedPhotoUrl = checkPhotoUrl(photoUrl);
@@ -249,16 +250,16 @@ export const createRodent = async(
     
     // Insert new rodent into database
     const reportCollection = await rodentReports();
-    const insertInfo = await reportCollection.findOneAndUpdate(
+    let insertInfo = await reportCollection.findOneAndUpdate(
         {_id: new ObjectId(validatedId)},
         {$push: {rodent: newRodent}},
-        {returnDocument: "after"}
+        {ReturnDocument: "after"}
     );
     if (!insertInfo) throw `Error {${errorSource}}: Could not find and push rodent to id ${validatedId}`;
 
     // Return newly created report
     insertInfo._id = insertInfo._id.toString();
-    return insertInfo
+    return insertInfo;
 };
 
 /**

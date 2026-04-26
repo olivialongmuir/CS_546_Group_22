@@ -68,6 +68,14 @@ export const checkUsername = (username) => {
     return parsed_username;
 };
 
+export const checkRodentName = (rodentName) => {
+    const parsed_rodentName = checkString(rodentName, "rodentName");
+    if (parsed_rodentName.length < 3) throw 'Error: rodentName must be at least 3 characters';
+    if (parsed_rodentName.length > 20) throw 'Error: rodentName cannot exceed 20 characters';
+    if (!/^[a-zA-Z0-9_]+$/.test(parsed_rodentName)) throw 'Error: rodentName can only contain letters, numbers, and underscores';
+    return parsed_rodentName;
+}
+
 export const checkFirstName = (firstName) => {
     const parsed_name = checkString(firstName, "firstName");
     if (!/^[\p{L}\s'-]+$/u.test(parsed_name)) throw 'Error: First name can only '; //Only alphabetic and accented characters. Apostrophes and hyphens are fine
@@ -138,15 +146,15 @@ export const checkRodentStatus = (rodentStatus) => {
 
 export const checkUserType = (userType) => {
     const parsed_user = checkString(userType, "userType").toLowerCase();
-    const validUser = ['member', 'exterminator', 'inspector', 'admin'];
-    if (!validUser.includes(parsed_user)) throw `Error: User must be one of the following: ${validStatus.join(', ')}`;
+    const validUsers = ['member', 'exterminator', 'inspector', 'admin'];
+    if (!validUsers.includes(parsed_user)) throw `Error: User must be one of the following: ${validUsers.join(', ')}`;
     return parsed_user;
 };
 
-export const checkRatType = (ratType) => {
-    const parsed_type = checkString(ratType, "ratType").toLowerCase();
-    const validTypes = [];
-    if (!validTypes.includes(parsed_type)) throw `Error: Rat type must be one of the following: ${validStatus.join(', ')}`;
+export const checkRodentType = (rodentType) => {
+    const parsed_type = checkString(rodentType, "rodentType").toLowerCase();
+    const validTypes = ["rat", "mouse"];
+    if (!validTypes.includes(parsed_type)) throw `Error: rodentType must be one of the following: ${validTypes.join(', ')}`;
     return parsed_type;
 };
 

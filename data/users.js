@@ -44,7 +44,7 @@ export const getUserById = async(id) => {
 
     // Get rodentReports collection from database
     const usersCollection = await users();
-    const userItem = await usersCollection.findOne({_id: new ObjectId(validatedId)});
+    let userItem = await usersCollection.findOne({_id: new ObjectId(validatedId)});
     if (!userItem) throw `Error {${errorSource}}: No user found with id ${validatedId}`;
 
     userItem._id = userItem._id.toString();
@@ -79,11 +79,11 @@ export const createUser = async(
 
     // Make sure no duplicate user exists
     const userCollection = await users();
-    const userInfo = userCollection.findOne({username: validatedUsername});
+    const userInfo = await userCollection.findOne({username: validatedUsername});
     if (userInfo) throw `Error {${errorSource}}: Unable to create user`;
 
     // Also emails have to be unique
-    const emailInfo = userCollection.findOne({emailAddress: validatedEmail});
+    const emailInfo = await userCollection.findOne({emailAddress: validatedEmail});
     if (emailInfo) throw `Error {${errorSource}}: Unable to create user`;
 
     // Timestamp request
@@ -106,7 +106,7 @@ export const createUser = async(
     }
 
     // Save into database as a new user
-    const insertInfo = userCollection.insertOne(newUser);
+    const insertInfo = await userCollection.insertOne(newUser);
     if (!insertInfo.acknowledged) throw `Error {${errorSource}}: Could not add user to database`;
 
     const newId = insertInfo.insertedId.toString();
@@ -144,7 +144,7 @@ export const updateUser = async(
 
     // Find user Id and update it
     const userCollection = await users();
-    const updateInfo = await userCollection.findOneAndUpdate(
+    let updateInfo = await userCollection.findOneAndUpdate(
         {_id: new ObjectId(validatedId)},
         {$set: {...updateUser}},
         {ReturnDocument: "after"}
@@ -192,24 +192,24 @@ export const addCommentIdToUser = async (
 
     // Check that commentId does not already exist in user comments
     const userCollection = await users();
-    const userItem = userCollection.findOne({_id: new ObjectId(validatedUserId)});
+    const userItem = await userCollection.findOne({_id: new ObjectId(validatedUserId)});
     if (!userItem) throw `Error {${errorSource}} No user found with id ${validatedUserId}`;
     if (userItem.comments.some(comment => comment===validatedCommentId)) throw `Error {${errorSource}}: Comment already exists in user comments`;
 
     // Check that the commentId exists in comments database
     const commentCollection = await comments();
-    const commentItem = commentCollection.findOne({_id: new ObjectId(validatedCommentId)});
+    const commentItem = await commentCollection.findOne({_id: new ObjectId(validatedCommentId)});
     if (!commentItem) throw `Error {${errorSource}}: No comment associated with this id ${validatedUserId}`;
 
     // Add the comment id to user comments
-    const updateInfo = userCollection.findOneAndUpdate(
+    let updateInfo = await userCollection.findOneAndUpdate(
         {_id: new ObjectId(validatedUserId)},
         {$push: {comments: validatedCommentId}},
         {ReturnDocument: "after"}
     )
 
     updateInfo._id = updateInfo._id.toString();
-    return updateInfo
+    return updateInfo;
 };
 
 /**
@@ -229,12 +229,12 @@ export const getUserComments = async(userId) => {
 
     // Get all comments from comments database associated with this user
     const commentCollection = await comments();
-    const commentItems = await commentCollection
+    let commentItems = await commentCollection
         .find({userId: validatedId})
         .toArray(); // Assuming not too many comments
 
     // Ensure all comment IDs are in the form of a string
-    const commentItems = (commentItems || []).map(item => {
+    commentItems = (commentItems || []).map(item => {
         item._id = item._id.toString();
         return item
     })
@@ -251,19 +251,19 @@ export const getUserRodentReports = async (id) => {
     const validatedId = checkId(id);
     if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
 
-    // Check restaurant exists in database
+    // Check user exists in database
     const userCollection = await users();
     const userItems = await userCollection.findOne({_id: new ObjectId(validatedId)});
     if (!userItems) `Error {${errorSource}} No user found with id ${validatedId}`;
 
     // Gets all rodent reports attached to a user
     const reportCollection = await rodentReports();
-    const reportItems = await reportCollection
+    let reportItems = await reportCollection
         .find({userId: validatedId})
         .toArray();
 
     // Ensure all rodent report IDs are in the form of a string
-    const reportItems = reports.map(report => {
+    reportItems = reports.map(report => {
         report._id = report._id.toString();
         return report;
     })
