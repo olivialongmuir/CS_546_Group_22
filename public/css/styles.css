@@ -121,6 +121,8 @@ main {
 
 .card {
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
   width: 200px;                 
   padding: 1.5rem;
@@ -131,6 +133,7 @@ main {
   font-weight: 500;
 }
 
+/* Heatmap Styles */
 #heatmap {
   width: 100%;
   height: 70vh;
@@ -205,6 +208,40 @@ main {
   transform: scale(0.97);
 }
 
+#searchBarContainer {
+  position: relative; /* needed for dropdown */
+}
+
+#autocompleteList {
+  position: absolute;
+  top: 100%;
+  left: 0;
+
+  width: 100%;
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 10px;
+
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+#autocompleteList:empty {
+  display: none;
+}
+
+.autocomplete-item {
+  padding: 10px;
+  cursor: pointer;
+  color: white;
+  border-bottom: 1px solid #222;
+}
+
+.autocomplete-item:hover {
+  background: #222;
+}
+
 #hotspotFeed {
   flex: 1;
   color: white;
@@ -229,11 +266,48 @@ main {
   background: #222;
 }
 
+
+/* Added mini heapmap used in rodent report detail */
+#miniHeatmapSection {
+  width: min(200, 50vw);
+  margin: 0 auto;
+  place-items: center;
+}
+
+#miniHeatmap {
+  width: 30vw;
+  height: 40vh;
+  border-radius: 12px;
+}
+
+
 /* css map dark mode override */
 .leaflet-tile-pane {
     filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
 }
 
+.leaflet-popup-content-wrapper {
+  background-color: #111 !important;
+  color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.leaflet-popup-tip {
+  background-color: #111 !important;
+}
+
+.popup-link {
+  display: inline-block;
+  color: white !important;
+  text-decoration: none;
+}
+
+.popup-link:hover {
+  color: #8bc629 !important;
+}
+
+/* End Heatmap Styles */
 
 
 /* pill grapic to store text */
@@ -283,6 +357,20 @@ main {
 }
 
 /* Shared utilities — used across multiple pages*/
+
+.link-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.home-icon {
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  color: #a3e635;
+}
 
 .page-container {
   width: 100%;

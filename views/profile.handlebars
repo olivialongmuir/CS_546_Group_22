@@ -107,13 +107,14 @@
               <!-- Account Type -->
                 <div class="form-group">
                   <label for="userType">Account Type</label>
-                  <select id="userType" name="userType" class="form-select">
-                    <option value="Consumer" selected>Consumer</option>
-                    <option value="Inspector">Health Inspector</option>
-                    <option value="Owner">Restaurant Owner</option>
-                    <option value="Exterminator">Exterminator</option>
-                  </select>
-                  <p class="form-hint">Your account type determines what actions you can perform</p>
+                  <input
+                    type="text"
+                    id="userType"
+                    name="userType"
+                    value="{{user.userType}}"
+                    class="form-input"
+                    readonly
+                  />
                 </div>
 
               <!-- Notification Preferences -->

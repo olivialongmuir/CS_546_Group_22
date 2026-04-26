@@ -3,7 +3,6 @@
 import { Router } from 'express';
 const router = Router();
 import { getAllRestaurants, getRestaurantById } from '../data/restaurants.js';
-
 import { getAllReports} from '../data/rodentReports.js'
 import { getUserById } from '../data/users.js';
 import { checkId } from '../helpers.js';
@@ -21,15 +20,26 @@ router.route(['/', '/home']).get(async (req, res) => { //Both of these routes wi
 
 router.route('/heatmap').get(async (req, res) => {
     try {
-        const restaurantList = await getAllRestaurants();
 
+        // get restaurant data
+        const restaurantList = await getAllRestaurants();
         const restaurantData = restaurantList.map(r => ({
+            _id: r._id,
             name: r.name,
             lat: Number(r.latitude),
             lng: Number(r.longitude)
         }));
-
         const restaurantMapData = JSON.stringify(restaurantData);
+
+        // get rodent data
+        const rodentList = await getAllReports();
+        const rodentData = rodentList.map(r => ({
+            _id: r._id,
+            lat: Number(r.latitude),
+            lng: Number(r.longitude),
+            status: r.status
+        }));
+        const rodentMapData = JSON.stringify(rodentData);
 
         // TODO - hone in on hotspot feed
         // potentially grab restaurants with top comments
@@ -42,8 +52,8 @@ router.route('/heatmap').get(async (req, res) => {
         res.render("heatmap", {
             title: 'Heatmap',
             restaurantMapData: restaurantMapData,
+            rodentMapData: rodentMapData,
             hotspotFeed: hotspotFeed
-            // TODO - pass in rodent data
         });
 
     } catch (error) {
@@ -55,17 +65,43 @@ router.route('/heatmap').get(async (req, res) => {
 router.route('/ratreports').get(async (req, res) => {
     try {
 
+        //TODO - allow this route to be called with a req payload storing the rodent report to be opened? - need to check with @olivia
+
+        //TODO -  error handling and invalid data checking
+
+        //get all reports
         let reports = await getAllReports();
+
+        //set the minimaps location to be first report if available
+        let firstReport = reports[0]
+        const firstLocation = {
+            name: firstReport.name,
+            lat: Number(firstReport.latitude),
+            lng: Number(firstReport.longitude)
+        }
+
+        //put object in arr since its iterated when the maps built
+        const restaurantData = [firstLocation];
+
+        const restaurantMapData = JSON.stringify(restaurantData);
 
         res.render("ratreports", {
             title: 'Rat Reports',
-            reports:reports
+            reports:reports,
+            restaurantMapData: restaurantMapData,
+            firstReport: firstReport //passing in first report which will be the default starting data shown
         });
     } catch (error) {
         console.error(error);
         res.status(500).send("Error loading Rat Reports");
     }
 });
+
+
+
+
+
+
 const gradeToStatus = (grade) => {
   if (grade === 'A') return { key: 'safe',      label: 'Safe' };
   if (grade === 'B') return { key: 'watchlist', label: 'Watchlist' };
@@ -146,8 +182,6 @@ router.route('/restaurants/:id').get(async (req, res) => {
     }
 });
 router.route('/profile').get(async (req, res) => {
-  if (!req.session.userId) return res.redirect('/login');
-
   try {
     const dbUser = await getUserById(req.session.userId);
 
@@ -174,5 +208,30 @@ router.route('/profile').get(async (req, res) => {
     return res.status(500).send('Error loading Profile');
   }
 });
+
+
+
+//DISPLAY REPORT CREAITON FORM FOR SET UP, 
+router.route('/createReport').get(async(req, res)=>{
+    
+    const firstLocation = {
+        name: 'userClickedHere',
+        lat: Number(40.6940285125),
+        lng: Number(-73.9348118964)
+    }
+
+    //put object in arr since its iterated when the maps built
+    const restaurantData = [firstLocation];
+    const restaurantMapData = JSON.stringify(restaurantData);
+    
+    console.log("ROUTE " + restaurantMapData)
+    
+    res.render("createReport", {
+            title: 'Create Report',
+            restaurantMapData: restaurantMapData
+        });
+
+});
+
 
 export default router;

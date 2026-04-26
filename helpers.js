@@ -95,7 +95,7 @@ export const checkPhotoUrl = (photoUrl) => {
 export const checkPassword = (password) => {
     const parsed_password = checkString(password, "password");
     if (parsed_password.length < 8) throw 'Error: Password must be at least 8 characters';
-    if (parsed_password.length > 16) throw 'Error: Password can at most be 15 characters';
+    if (parsed_password.length > 16) throw 'Error: Password can at most be 16 characters';
     if (!/[A-Z]/.test(parsed_password)) throw 'Error: Password must contain at least one uppercase letter';
     if (!/[0-9]/.test(parsed_password)) throw 'Error: Password must contain at least one number';
     if (!/[!@#$%^&*]/.test(parsed_password)) throw 'Error: Password must contain at least one special character (!@#$%^&*)';
@@ -129,12 +129,22 @@ export const checkRestaurantStatus = (restaurantStatus) => {
     return parsed_restaurantStatus;
 };
 
+<<<<<<< HEAD
 export const checkRodentStatus = (rodentStatus) => {
     const parsed_rodentStatus = checkString(rodentStatus, "rodentStatus").toLowerCase();
     const validStatus = ['pending', 'confirmed', 'disputed', 'removed'];
     if (!validStatus.includes(parsed_rodentStatus)) throw `Error: Report status must be one of the following: ${validStatus.join(', ')}`;
     return parsed_rodentStatus;
 };
+=======
+export const checkUserType = (type) => {
+    const parsed_type = checkString(type, "type").toLowerCase();
+    const validTypes = ['consumer', 'exterminator', 'inspector', 'restaurant', 'admin'];
+    if (!validTypes.includes(parsed_type)) throw `Error: User type must be one of the following: ${validTypes.join(', ')}`;
+    return parsed_type;
+};
+
+>>>>>>> main
 
 export const checkUserType = (userType) => {
     const parsed_user = checkString(userType, "userType").toLowerCase();
