@@ -10,27 +10,33 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/public/css/styles.css">
+    <link rel="icon" type="image/png" href="/public/images/rat_icon.png">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
 <body>
     <header>
         <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/heatmap">Rat Map</a></li>
-            <li><a href="/ratreports">Rat Reports</a></li>
-            <li><a href="/restaurants">Restaurants</a></li>
-            <li><a href="/createReport">Report (TEMP)</a></li>
+            <li><a href="/home"><i data-lucide="home"class="link-icon"></i>Home</a></li>
+            <li><a href="/heatmap"><i data-lucide="map"class="link-icon"></i>Rat Map</a></li>
+            <li><a href="/ratreports"><i data-lucide="rat"class="link-icon"></i>Rat Reports</a></li>
+            <li><a href="/restaurants"><i data-lucide="utensils-crossed"class="link-icon"></i>Restaurants</a></li>
+            {{!-- TODO - add lucide icon to Report unless this is going away  --}}
+            <li><a href="/createReport">Report (TEMP)</a></li> 
             {{#if isLoggedIn}}
-            <li><a href="/profile">Profile</a></li>
-            <li><a href="/logout">Logout</a></li>
+            <li><a href="/profile"><i data-lucide="user-round-pen"class="link-icon"></i>Profile</a></li>
+            <li><a href="/logout"><i data-lucide="log-out"class="link-icon"></i>Logout</a></li>
             {{else}}
-            <li><a href="/login">Login</a></li>
-            <li><a href="/register">Sign Up</a></li>
+            <li><a href="/login"><i data-lucide="log-in"class="link-icon"></i>Login</a></li>
+            <li><a href="/register"><i data-lucide="square-pen"class="link-icon"></i>Sign Up</a></li>
             {{/if}}
         </ul>
     </header>
     <main>
         {{{ body }}}
+        <script>
+            lucide.createIcons();
+        </script>
     </main>
     <footer>
         <p>CS546 - Group 22 Project</p>
