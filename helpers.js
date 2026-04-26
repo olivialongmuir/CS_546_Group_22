@@ -129,22 +129,12 @@ export const checkRestaurantStatus = (restaurantStatus) => {
     return parsed_restaurantStatus;
 };
 
-<<<<<<< HEAD
 export const checkRodentStatus = (rodentStatus) => {
     const parsed_rodentStatus = checkString(rodentStatus, "rodentStatus").toLowerCase();
     const validStatus = ['pending', 'confirmed', 'disputed', 'removed'];
     if (!validStatus.includes(parsed_rodentStatus)) throw `Error: Report status must be one of the following: ${validStatus.join(', ')}`;
     return parsed_rodentStatus;
 };
-=======
-export const checkUserType = (type) => {
-    const parsed_type = checkString(type, "type").toLowerCase();
-    const validTypes = ['consumer', 'exterminator', 'inspector', 'restaurant', 'admin'];
-    if (!validTypes.includes(parsed_type)) throw `Error: User type must be one of the following: ${validTypes.join(', ')}`;
-    return parsed_type;
-};
-
->>>>>>> main
 
 export const checkUserType = (userType) => {
     const parsed_user = checkString(userType, "userType").toLowerCase();

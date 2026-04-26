@@ -47,12 +47,12 @@ export const getReportById = async(id) => {
 
     // Get rodentReports collection from database
     const reportsCollection = await rodentReports();
-    const reportItem = await reportsCollection.findOne({_id: new ObjectId(validatedId)});
-    if (!reportItem) throw `Error {${errorSource}}: No report associated with this id ${validatedId}`;
+    const foundInfo = await reportsCollection.findOne({_id: new ObjectId(validatedId)});
+    if (!foundInfo) throw `Error {${errorSource}}: No report associated with this id ${validatedId}`;
 
     // Convert object id to regular string id
-    reportItem._id = reportItem._id.toString();
-    return reportItem;
+    foundInfo._id = foundInfo._id.toString();
+    return foundInfo;
 };
 
 /**
@@ -257,8 +257,8 @@ export const createRodent = async(
     if (!insertInfo) throw `Error {${errorSource}}: Could not find and push rodent to id ${validatedId}`;
 
     // Return newly created report
-    const newId = insertInfo.insertedId.toString();
-    return await getReportById(newId);
+    insertInfo._id = insertInfo._id.toString();
+    return insertInfo
 };
 
 /**

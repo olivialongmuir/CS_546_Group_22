@@ -1,5 +1,5 @@
 import { ObjectId, ReturnDocument } from 'mongodb';
-import { restaurants } from '../config/mongoCollections.js';
+import { comments, restaurants } from '../config/mongoCollections.js';
 import { 
     checkId,
     checkString, 
@@ -44,8 +44,6 @@ export const getRestaurantById = async(id) => {
     // Get restaurant collection from database
     const restaurantCollection = await restaurants();
     const restaurantItem = await restaurantCollection.findOne({_id: new ObjectId(validatedId)});
-
-    // Check if database returned anything
     if (!restaurantItem) throw `Error {${errorSource}}: No restaurant associated with this id ${validatedId}`;
 
     // Convert object id to regular string id
@@ -173,51 +171,48 @@ export const deleteRestaurant = async(id) => {
     const validatedId = checkId(id);
     if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
 
-    // Get restaurant collection from database
-    const restaurantCollection = await restaurants();
-
     // Delete restaurant from database
+    const restaurantCollection = await restaurants();
     const deletionInfo = await restaurantCollection.deleteOne({_id: new ObjectId(validatedId)});
     if (deletionInfo.deletedCount === 0) throw `Error {${errorSource}}: Could not delete restaurant with id ${validatedId}`;
 
     return { deleted: true };
 };
 
-export const getRestaurantCommentById = async(commentId) => {
-
-};
-
 /**
  * Gets all restaurant comments as an array
  * @param {string} id 
- * @returns restaurantComments
+ * @returns commentItems
  */
 export const getRestaurantComments = async(id) => {
     const errorSource = "getRestaurantComments";
     const validatedId = checkId(id);
     if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
 
-    // Get restaurant collection from database
+    // Check that this restaurant exists in restaurants database
     const restaurantCollection = await restaurants();
     const restaurantItem = await restaurantCollection.findOne({_id: new ObjectId(validatedId)});
-    if (!restaurantItem) throw `Error {${errorSource}}: No restaurant associated with this id ${validatedId}`;
+    if (!restaurantItem) `Error {${errorSource}} No restaurant found with id ${validatedId}`;
+
+    // Get all comments from comments database associated with this restaurant
+    const commentCollection = await comments();
+    const commentItems = await commentCollection.find({restaurantId: validatedId}).toArray(); // Assuming not too many comments
 
     // Ensure all comment IDs are in the form of a string
-    const restaurantComments = (restaurantItem.comments || []).map(comment => {
-        comment._id = comment._id.toString();
-        return comment
+    const commentItems = (commentItems || []).map(item => {
+        item._id = item._id.toString();
+        return item
     })
-    return restaurantComments
+    return commentItems
 };
 
 /**
  * Appends new comment to restaurant by restaurant objectId
- * @param {string} id 
- * @param {string} comment 
- * @param {string} user 
+ * @param {string} restaurantid 
+ * @param {string} commentId
  * @returns newComment
  */
-export const addCommentToRestaurant = async (
+export const addCommentIdToRestaurant = async (
     id, 
     comment, 
     username
@@ -255,13 +250,13 @@ export const addCommentToRestaurant = async (
 };
 
 /**
- * Gets a list of rodent reports attached to restaurant by restaurant objectId
- * @param {string} id 
+ * Gets a list of rodent reports associated with restaurant by objectId
+ * @param {string} restaurantId 
  * @returns rodentReports
  */
-export const getRestaurantRodentReports = async (id) => {
+export const getRestaurantRodentReports = async (restaurantId) => {
     const errorSource = "getRestaurantRodentReports";
-    const validatedId = checkId(id);
+    const validatedId = checkId(restaurantId);
     if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
 
     // Check restaurant exists in database
@@ -271,14 +266,14 @@ export const getRestaurantRodentReports = async (id) => {
 
     // Gets all rodent reports attached to a restaurant
     const reportCollection = await rodentReports();
-    const reports = await reportCollection
-        .find({ restaurantId: validatedId })
+    const reportItems = await reportCollection
+        .find({restaurantId: validatedId})
         .toArray();
 
     // Ensure all rodent report IDs are in the form of a string
-    const rodentReports = reports.map(report => {
+    const reportItems = reports.map(report => {
         report._id = report._id.toString();
         return report;
     })
-    return rodentReports;
+    return reportItems;
 };
