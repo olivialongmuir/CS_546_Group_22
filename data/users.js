@@ -1,6 +1,6 @@
 import { users, comments } from "../config/mongoCollections.js";
 import { ObjectId, ReturnDocument } from "mongodb";
-import { hash, compare } from "bcrypt";
+import { hash, compare } from "bcryptjs";
 import { 
     checkEmail, 
     checkFirstName, 
