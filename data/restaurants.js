@@ -7,7 +7,6 @@ import {
     checkWebsite, 
     checkPhone, 
     checkRestaurantStatus, 
-    checkComment,
     checkUsername
 } from '../helpers.js';
 
@@ -205,35 +204,6 @@ export const getRestaurantComments = async(id) => {
         return item
     })
     return commentItems
-};
-
-/**
- * Appends new comment to restaurant by restaurant objectId
- * @param {string} restaurantid 
- * @param {string} commentId
- * @returns newComment
- */
-export const addCommentIdToRestaurant = async (
-    id, 
-    comment, 
-) => {
-    const errorSource = "addCommentToRestaurant";
-    const validatedId = checkId(id);
-    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
-
-    const validatedUsername = checkUsername(username);
-
-    // Append new comment onto restaurant comments
-    const restaurantCollection = await restaurants();
-    let updateInfo = await restaurantCollection.findOneAndUpdate(
-        {_id: new ObjectId(validatedId)},
-        {$push: {comments: newComment}},
-        {ReturnDocument: "after"}
-    );
-    if (!updateInfo) throw `Error {${errorSource}}: No restaurant associated with this id ${validatedId}`;
-
-    updateInfo._id = updateInfo._id.toString();
-    return updateInfo;
 };
 
 /**

@@ -119,7 +119,7 @@ export const checkZipcode = (zipcode) => {
 export const checkRatSizeRating = (rating) => {
     const parsed_rating = checkNumber(rating, "ratSizeRating");
     if (!Number.isInteger(parsed_rating)) throw 'Error: Rat size rating must be an integer';
-    if (parsed_rating < 1 || parsed_rating > 5) throw 'Error: Rat size rating must be between 1 and 5';
+    if (parsed_rating < 1 || parsed_rating > 10) throw 'Error: Rat size rating must be between 1 and 10';
     return parsed_rating;
 };
 

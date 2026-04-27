@@ -77,8 +77,8 @@ export const createComment = async(
  */
 export const getCommentById = async(id) => {
     const errorSource = "getCommentById";
-    const validatedId = checkId(userId);
-    if (!ObjectId.isValid(validatedUserId)) throw `Error {${errorSource}}: userId is not a valid objectId`;
+    const validatedId = checkId(id);
+    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: userId is not a valid objectId`;
 
     // Find comment from database
     const commentCollection = await comments();
@@ -95,7 +95,7 @@ export const getCommentById = async(id) => {
  * @returns 
  */
 export const deleteComment = async(id) => {
-    const errorSource = "getCommentById";
+    const errorSource = "deleteComment";
     const validatedId = checkId(id);
     if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: userId is not a valid objectId`;
 

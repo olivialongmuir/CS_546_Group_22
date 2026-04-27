@@ -2,7 +2,6 @@ import { users, comments } from "../config/mongoCollections.js";
 import { ObjectId, ReturnDocument } from "mongodb";
 import { hash, compare } from "bcrypt";
 import { 
-    checkComment,
     checkEmail, 
     checkFirstName, 
     checkId, 
@@ -171,45 +170,6 @@ export const deleteUser = async(id) => {
     if (deletionInfo.deletedCount === 0) throw `Error {${errorSource}}: Could not delete user with id ${validatedId}`;
 
     return { deleted: true };
-};
-
-/**
- * Appends comment id to user comments array
- * @param {string} userId 
- * @param {string} commentId 
- * @returns updatedInfo
- */
-export const addCommentIdToUser = async (
-    userId,
-    commentId
-) => {
-    const errorSource = "addCommentIdToUser";
-    const validatedUserId = checkId(userId);
-    if (!ObjectId.isValid(validatedUserId)) throw `Error {${errorSource}}: userId is not a valid objectId`;
-
-    const validatedCommentId = checkId(commentId);
-    if (!ObjectId.isValid(validatedCommentId)) throw `Error {${errorSource}}: commentId is not a valid objectId`;
-
-    // Check that commentId does not already exist in user comments
-    const userCollection = await users();
-    const userItem = await userCollection.findOne({_id: new ObjectId(validatedUserId)});
-    if (!userItem) throw `Error {${errorSource}} No user found with id ${validatedUserId}`;
-    if (userItem.comments.some(comment => comment===validatedCommentId)) throw `Error {${errorSource}}: Comment already exists in user comments`;
-
-    // Check that the commentId exists in comments database
-    const commentCollection = await comments();
-    const commentItem = await commentCollection.findOne({_id: new ObjectId(validatedCommentId)});
-    if (!commentItem) throw `Error {${errorSource}}: No comment associated with this id ${validatedUserId}`;
-
-    // Add the comment id to user comments
-    let updateInfo = await userCollection.findOneAndUpdate(
-        {_id: new ObjectId(validatedUserId)},
-        {$push: {comments: validatedCommentId}},
-        {ReturnDocument: "after"}
-    )
-
-    updateInfo._id = updateInfo._id.toString();
-    return updateInfo;
 };
 
 /**
