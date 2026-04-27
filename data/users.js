@@ -263,7 +263,7 @@ export const getUserRodentReports = async (id) => {
         .toArray();
 
     // Ensure all rodent report IDs are in the form of a string
-    reportItems = reports.map(report => {
+    reportItems = reportItems.map(report => {
         report._id = report._id.toString();
         return report;
     })

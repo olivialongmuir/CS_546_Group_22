@@ -10,7 +10,6 @@ import {
   updateRestaurant,
   deleteRestaurant,
   getRestaurantComments,
-  addCommentToRestaurant,
   getRestaurantRodentReports
 } from '../data/restaurants.js';
 
@@ -179,7 +178,7 @@ router.get('/:id/comments', async (req, res) => {
 // Creates a restaurant comment by id
 router.post('/:id/comments', async (req, res) => {
   try {
-    const comment = await addCommentToRestaurant(req.params.id, req.body);
+    // requires a bit more refining before completing this route
 
     res.status(201).json(comment);
   } catch (error) {

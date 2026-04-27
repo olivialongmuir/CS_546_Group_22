@@ -139,7 +139,7 @@ export const checkRestaurantStatus = (restaurantStatus) => {
 
 export const checkRodentStatus = (rodentStatus) => {
     const parsed_rodentStatus = checkString(rodentStatus, "rodentStatus").toLowerCase();
-    const validStatus = ['pending', 'confirmed', 'disputed', 'removed'];
+    const validStatus = ['pending', 'verified', 'disputed', 'removed', 'unverified'];
     if (!validStatus.includes(parsed_rodentStatus)) throw `Error: Report status must be one of the following: ${validStatus.join(', ')}`;
     return parsed_rodentStatus;
 };

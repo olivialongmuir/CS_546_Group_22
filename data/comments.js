@@ -54,12 +54,12 @@ export const createComment = async(
     if (!insertInfo.acknowledged) throw `Error {${errorSource}}: Could not add comment to database`;
 
     // Update user and restaurants comments array. This can be done concurrently as they are independent events
-    const updateUserQuery = userCollection.findOneAndUpdate(
+    const updateUserQuery = userCollection.updateOne(
         {_id: new ObjectId(validatedUserId)},
         {$push: {comments: newIdStr}}
     )
 
-    const updateRestaurantQuery = restaurantCollection.findOneAndUpdate(
+    const updateRestaurantQuery = restaurantCollection.updateOne(
         {_id: new ObjectId(validatedRestaurantId)},
         {$push: {comments: newIdStr}}
     )
@@ -89,10 +89,42 @@ export const getCommentById = async(id) => {
     return commentItem;
 };
 
+/**
+ * Deletes comment from database by objectId. Updates all linked collections
+ * @param {string} id 
+ * @returns 
+ */
 export const deleteComment = async(id) => {
     const errorSource = "getCommentById";
-    const validatedId = checkId(userId);
-    if (!ObjectId.isValid(validatedUserId)) throw `Error {${errorSource}}: userId is not a valid objectId`;
+    const validatedId = checkId(id);
+    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: userId is not a valid objectId`;
 
     // Delete comment from database. Must remove ids from restaurant and user list
+    const commentCollection = await comments();
+    const commentItem = await commentCollection.findOne({_id: new ObjectId(validatedId)});
+    if (!commentItem) `Error {${errorSource}} No comment found with id ${validatedId}`;
+
+    const userId = commentItem.userId;
+    const restaurantId = commentItem.restaurantId;
+
+    const deletionInfo = await commentCollection.deleteOne({_id: new ObjectId(validatedId)});
+    if (deletionInfo.deletedCount === 0) throw `Error {${errorSource}}: Could not delete restaurant with id ${validatedId}`;
+
+    // Delete id from users and restaurants collections
+    const userCollection = await users();
+    const restaurantCollection = await restaurants();
+    
+    const updateUserQuery = userCollection.updateOne(
+        {_id: new ObjectId(userId)},
+        {$pull: {comments: validatedId}}
+    )
+
+    const updateRestaurantQuery = restaurantCollection.updateOne(
+        {_id: new ObjectId(restaurantId)},
+        {$pull: {comments: validatedId}}
+    )
+
+    await Promise.all([updateUserQuery, updateRestaurantQuery]);
+
+    return { deleted: true }
 }
