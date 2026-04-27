@@ -1,94 +1,231 @@
-import { users } from "../config/mongoCollections.js";
-import {
-    checkId,
-    checkString,
-    checkUsername,
-    checkEmail,
-    checkPassword,
-    checkUserType
+import { users, comments } from "../config/mongoCollections.js";
+import { ObjectId, ReturnDocument } from "mongodb";
+import { hash, compare } from "bcrypt";
+import { 
+    checkEmail, 
+    checkFirstName, 
+    checkId, 
+    checkLastName, 
+    checkPassword, 
+    checkUsername, 
+    checkUserType 
 } from "../helpers.js";
-import { ObjectId } from "mongodb";
-import bcrypt from "bcryptjs";
 
-const SALT_ROUNDS = 10;
-
-export const getAllUsers = async () => {
+/**
+ * Gets all users from database as a list of objects
+ * @returns usersList
+ */
+export const getAllUsers = async() => {
+    // Get users collection from database
     const usersCollection = await users();
     let userList = await usersCollection.find({}).toArray();
-    if (!userList) throw "Error {getAllUsers}: No user accounts in database";
 
+    // Check if database returned anything
+    if (userList.length === 0) return [];
+
+    // Convert all object ids to string ids
     userList = userList.map(user => {
-        user._id = user._id.toString();
-        delete user.hashPassword;
-        return user;
-    });
-
-    return userList;
+        user.__id = user.__id.toString();
+        return user
+    })
+    return userList
 };
 
-export const getUserById = async (id) => {
-    const parsedId = checkId(id);
+/**
+ * Gets user from database by objectId
+ * @param {string} id 
+ * @returns userItem
+ */
+export const getUserById = async(id) => {
+    const errorSource = "getUserById";
+    const validatedId = checkId(id);
+    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
+
+    // Get rodentReports collection from database
     const usersCollection = await users();
-    const user = await usersCollection.findOne({ _id: new ObjectId(parsedId) });
-    if (!user) throw `Error {getUserById}: No user found with id ${id}`;
-    user._id = user._id.toString();
-    return user;
+    let userItem = await usersCollection.findOne({_id: new ObjectId(validatedId)});
+    if (!userItem) throw `Error {${errorSource}}: No user found with id ${validatedId}`;
+
+    userItem._id = userItem._id.toString();
+    return userItem;
 };
 
-export const createUser = async ({
+/**
+ * Creates a new user with selected type and inserts it into the database
+ * @param {*} type 
+ * @param {*} firstName 
+ * @param {*} lastName 
+ * @param {*} username      //Must be unique
+ * @param {*} password 
+ * @param {*} emailAddress  //Must be unique
+ * @returns newUser
+ */
+export const createUser = async(
+    type,
     firstName,
     lastName,
     username,
-    emailAddress,
     password,
-    type
-}) => {
-    const validatedFirstName = checkString(firstName, "firstName");
-    const validatedLastName = checkString(lastName, "lastName");
-    const validatedUsername = checkUsername(username);
-    const validatedEmail = checkEmail(emailAddress).toLowerCase();
-    const validatedPassword = checkPassword(password);
+    emailAddress
+) => {
+    const errorSource = "createUser";
     const validatedType = checkUserType(type);
+    const validatedFirstName = checkFirstName(firstName);
+    const validatedLastName = checkLastName(lastName);
+    const validatedUsername = checkUsername(username);
+    const validatedPassword = checkPassword(password);
+    const validatedEmail = checkEmail(emailAddress);
 
-    const usersCollection = await users();
+    // Make sure no duplicate user exists
+    const userCollection = await users();
+    const userInfo = await userCollection.findOne({username: validatedUsername});
+    if (userInfo) throw `Error {${errorSource}}: Unable to create user`;
 
-    const existingByUsername = await usersCollection.findOne({ username: validatedUsername });
-    if (existingByUsername) throw "Error: Username is already taken";
+    // Also emails have to be unique
+    const emailInfo = await userCollection.findOne({emailAddress: validatedEmail});
+    if (emailInfo) throw `Error {${errorSource}}: Unable to create user`;
 
-    const existingByEmail = await usersCollection.findOne({ emailAddress: validatedEmail });
-    if (existingByEmail) throw "Error: An account with that email already exists";
+    // Timestamp request
+    const now = new Date();
+    const timestamp = now.toISOString();
 
-    const hashPassword = await bcrypt.hash(validatedPassword, SALT_ROUNDS);
+    // Hash our password and salt it
+    const hashPassword = await hash(validatedPassword, 10);
 
+    // Template for new user
     const newUser = {
         type: validatedType,
         firstName: validatedFirstName,
         lastName: validatedLastName,
         username: validatedUsername,
         emailAddress: validatedEmail,
-        hashPassword,
-        timestamp: new Date().toISOString(),
+        hashPassword: hashPassword,
+        timestamp: timestamp,
         comments: []
-    };
-
-    const insertInfo = await usersCollection.insertOne(newUser);
-    if (!insertInfo.acknowledged || !insertInfo.insertedId) {
-        throw "Error {createUser}: Could not create user";
     }
 
-    const inserted = { ...newUser, _id: insertInfo.insertedId.toString() };
-    delete inserted.hashPassword;
-    return inserted;
+    // Save into database as a new user
+    const insertInfo = await userCollection.insertOne(newUser);
+    if (!insertInfo.acknowledged) throw `Error {${errorSource}}: Could not add user to database`;
+
+    const newId = insertInfo.insertedId.toString();
+    return await getUserById(newId);
 };
 
-export const updateUser = async () => {
+/**
+ * Updates user by objectId
+ * @param {*} id 
+ * @param {*} type 
+ * @param {*} firstName 
+ * @param {*} lastName 
+ * @param {*} emailAddress 
+ * @returns updateInfo
+ */
+export const updateUser = async(
+    id,
+    type,
+    firstName,
+    lastName,
+    emailAddress
+) => {
+    const errorSource = "updateUser";
+    const validatedId = checkId(id);
+    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: id is not a valid objectId`;
 
+    // Template for partial update
+    const updateUser = {};
+    if (type !== undefined) updateUser["type"] = checkUserType(type);
+    if (firstName !== undefined) updateUser["firstName"] = checkFirstName(firstName);
+    if (lastName !== undefined) updateUser["lastName"] = checkLastName(lastName);
+    if (emailAddress !== undefined) updateUser["emailAddress"] = checkEmail(emailAddress);
+
+    if (Object.keys(updateUser).length === 0) throw `Error {${errorSource}}: No fields to update`;
+
+    // Find user Id and update it
+    const userCollection = await users();
+    let updateInfo = await userCollection.findOneAndUpdate(
+        {_id: new ObjectId(validatedId)},
+        {$set: {...updateUser}},
+        {ReturnDocument: "after"}
+    );
+    if (!updateInfo) throw `Error {${errorSource}}: Could not update user with id ${validatedId}`;
+
+    updateInfo._id = updateInfo._id.toString();
+    return updateInfo;
 };
 
-export const deleteUser = async () => {
+/**
+ * Deletes user from database by objectId
+ * @param {string} id 
+ * @returns 
+ */
+export const deleteUser = async(id) => {
+    const errorSource = "deleteUser";
+    const validatedId = checkId(id);
+    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
 
+    // Delete user from database
+    const userCollection = await users();
+    const deletionInfo = await userCollection.deleteOne({_id: validatedId});
+    if (deletionInfo.deletedCount === 0) throw `Error {${errorSource}}: Could not delete user with id ${validatedId}`;
+
+    return { deleted: true };
 };
 
-export const getUserComments = async () => {
+/**
+ * Gets all user comments as an array
+ * @param {string} userId 
+ * @returns commentList
+ */
+export const getUserComments = async(userId) => {
+    const errorSource = "getUserComments";
+    const validatedId = checkId(userId);
+    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
 
+    // Check that this user exists in user database
+    const userCollection = await users();
+    const userItems = await userCollection.findOne({_id: new ObjectId(validatedId)});
+    if (!userItems) `Error {${errorSource}} No user found with id ${validatedId}`;
+
+    // Get all comments from comments database associated with this user
+    const commentCollection = await comments();
+    let commentItems = await commentCollection
+        .find({userId: validatedId})
+        .toArray(); // Assuming not too many comments
+
+    // Ensure all comment IDs are in the form of a string
+    commentItems = (commentItems || []).map(item => {
+        item._id = item._id.toString();
+        return item
+    })
+    return commentItems
+};
+
+/**
+ * Gets a list of rodent reports associated with user by objectId
+ * @param {string} id 
+ * @returns rodentReports
+ */
+export const getUserRodentReports = async (id) => {
+    const errorSource = "getUserRodentReports";
+    const validatedId = checkId(id);
+    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
+
+    // Check user exists in database
+    const userCollection = await users();
+    const userItems = await userCollection.findOne({_id: new ObjectId(validatedId)});
+    if (!userItems) `Error {${errorSource}} No user found with id ${validatedId}`;
+
+    // Gets all rodent reports attached to a user
+    const reportCollection = await rodentReports();
+    let reportItems = await reportCollection
+        .find({userId: validatedId})
+        .toArray();
+
+    // Ensure all rodent report IDs are in the form of a string
+    reportItems = reportItems.map(report => {
+        report._id = report._id.toString();
+        return report;
+    })
+    return reportItems;
 };

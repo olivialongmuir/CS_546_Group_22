@@ -16,3 +16,4 @@ const getCollectionFn = (collection) => {
 export const restaurants = getCollectionFn('restaurants');
 export const rodentReports = getCollectionFn('rodentReports');
 export const users = getCollectionFn('users');
+export const comments = getCollectionFn('comments');

@@ -1,4 +1,9 @@
-import { ObjectId } from "mongodb";
+/**
+ * Note:
+ * Avoid using any special library calls in this helper file.
+ * By utilizing only native javascript, the functions in this file can be used for both server-side and client-side calls.
+ * If further validation is required, perform it at the point of use.
+ */
 
 //General parsing and validation
 export const checkString = (str, fieldName) => {
@@ -22,8 +27,7 @@ export const checkNumber = (num, fieldName) => {
 //Specific parsing and validation
 export const checkId = (id) => {
     const parsed_id = checkString(id, "id");
-    if (!ObjectId.isValid(parsed_id)) throw 'Error: ID is not a valid ObjectId';
-    return parsed_id;
+    return parsed_id; //Moved check objectId out of here for client side compatibility
 };
 
 export const checkJobId = (jobId) => {
@@ -64,6 +68,26 @@ export const checkUsername = (username) => {
     return parsed_username;
 };
 
+export const checkRodentName = (rodentName) => {
+    const parsed_rodentName = checkString(rodentName, "rodentName");
+    if (parsed_rodentName.length < 3) throw 'Error: rodentName must be at least 3 characters';
+    if (parsed_rodentName.length > 20) throw 'Error: rodentName cannot exceed 20 characters';
+    if (!/^[a-zA-Z0-9_]+$/.test(parsed_rodentName)) throw 'Error: rodentName can only contain letters, numbers, and underscores';
+    return parsed_rodentName;
+}
+
+export const checkFirstName = (firstName) => {
+    const parsed_name = checkString(firstName, "firstName");
+    if (!/^[\p{L}\s'-]+$/u.test(parsed_name)) throw 'Error: First name can only '; //Only alphabetic and accented characters. Apostrophes and hyphens are fine
+    return parsed_name
+}
+
+export const checkLastName = (lastName) => {
+    const parsed_name = checkString(lastName, "lastName");
+    if (!/^[\p{L}\s'-]+$/u.test(parsed_name)) throw 'Error: Last name can only '; //Only alphabetic and accented characters. Apostrophes and hyphens are fine
+    return parsed_name
+}
+
 export const checkEmail = (email) => {
     const parsed_email = checkString(email, "email");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(parsed_email)) throw 'Error: Email address is not valid';
@@ -71,7 +95,7 @@ export const checkEmail = (email) => {
 };
 
 export const checkPhotoUrl = (photoUrl) => {
-    const parsed_url = checkString(photoUrl, "photoUrl");
+    const parsed_url = checkString(photoUrl, "photo Url");
     if (!/^https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp)$/i.test(parsed_url)) throw 'Error: Photo URL is not valid';
     return parsed_url;
 };
@@ -87,15 +111,15 @@ export const checkPassword = (password) => {
 };
 
 export const checkZipcode = (zipcode) => {
-    const parsed_zipcode = checkString(zipcode); //zipcode can be 00502
+    const parsed_zipcode = checkString(zipcode, "zipcode"); //zipcode can be 00502
     if (/^\d{5}$/.test(parsed_zipcode)) throw 'Error: Zipcode must contain exactly 5 integers';
     return parsed_zipcode;
 };
 
 export const checkRatSizeRating = (rating) => {
-    const parsed_rating = checkNumber(rating);
+    const parsed_rating = checkNumber(rating, "ratSizeRating");
     if (!Number.isInteger(parsed_rating)) throw 'Error: Rat size rating must be an integer';
-    if (parsed_rating < 1 || parsed_rating > 5) throw 'Error: Rat size rating must be between 1 and 5';
+    if (parsed_rating < 1 || parsed_rating > 10) throw 'Error: Rat size rating must be between 1 and 10';
     return parsed_rating;
 };
 
@@ -106,33 +130,31 @@ export const checkReactionType = (reactionType) => {
     return parsed_reaction;
 };
 
-export const checkReportStatus = (reportStatus) => {
-    const parsed_reportStatus = checkString(reportStatus, "reportStatus").toLowerCase();
+export const checkRestaurantStatus = (restaurantStatus) => {
+    const parsed_restaurantStatus = checkString(restaurantStatus, "restaurantStatus").toLowerCase();
     const validStatus = ['sanitary', 'unsanitary', 'inspecting'];
-    if (!validStatus.includes(parsed_reportStatus)) throw `Error: Report status must be one of the following: ${validStatus.join(', ')}`;
-    return parsed_reportStatus;
+    if (!validStatus.includes(parsed_restaurantStatus)) throw `Error: Report status must be one of the following: ${validStatus.join(', ')}`;
+    return parsed_restaurantStatus;
 };
 
-export const checkUserType = (type) => {
-    const parsed_type = checkString(type, "type").toLowerCase();
-    const validTypes = ['consumer', 'exterminator', 'inspector', 'restaurant', 'admin'];
-    if (!validTypes.includes(parsed_type)) throw `Error: User type must be one of the following: ${validTypes.join(', ')}`;
-    return parsed_type;
+export const checkRodentStatus = (rodentStatus) => {
+    const parsed_rodentStatus = checkString(rodentStatus, "rodentStatus").toLowerCase();
+    const validStatus = ['pending', 'verified', 'disputed', 'removed', 'unverified'];
+    if (!validStatus.includes(parsed_rodentStatus)) throw `Error: Report status must be one of the following: ${validStatus.join(', ')}`;
+    return parsed_rodentStatus;
 };
 
-
-
-export const checkVerifiedBy = (user) => {
-    const parsed_user = checkString(user, "verifiedBy").toLowerCase();
-    const validUser = ['exterminator', 'inspector', 'admin'];
-    if (!validUser.includes(parsed_user)) throw `Error: User must be one of the following: ${validStatus.join(', ')}`;
+export const checkUserType = (userType) => {
+    const parsed_user = checkString(userType, "userType").toLowerCase();
+    const validUsers = ['member', 'exterminator', 'inspector', 'admin'];
+    if (!validUsers.includes(parsed_user)) throw `Error: User must be one of the following: ${validUsers.join(', ')}`;
     return parsed_user;
 };
 
-export const checkRatType = (ratType) => {
-    const parsed_type = checkString(ratType, "ratType").toLowerCase();
-    const validTypes = [];
-    if (!validTypes.includes(parsed_type)) throw `Error: Rat type must be one of the following: ${validStatus.join(', ')}`;
+export const checkRodentType = (rodentType) => {
+    const parsed_type = checkString(rodentType, "rodentType").toLowerCase();
+    const validTypes = ["rat", "mouse"];
+    if (!validTypes.includes(parsed_type)) throw `Error: rodentType must be one of the following: ${validTypes.join(', ')}`;
     return parsed_type;
 };
 
