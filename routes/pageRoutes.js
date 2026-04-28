@@ -6,6 +6,7 @@ import { getAllRestaurants, getRestaurantById } from '../data/restaurants.js';
 import { getAllReports} from '../data/rodentReports.js'
 import { getUserById } from '../data/users.js';
 import { checkId } from '../helpers.js';
+import NodeGeocoder from 'node-geocoder';
 
 router.route(['/', '/home']).get(async (req, res) => { //Both of these routes will go to the homepage. Not sure if this is correct design or if should redirect - peter
     try {
@@ -224,6 +225,12 @@ router.route('/createReport').get(async (req, res) => {
         lng: lng
     };
 
+    // Docs for node-geocoder https://www.npmjs.com/package/node-geocoder
+    const geocoder = NodeGeocoder({provider: 'openstreetmap'});
+
+    const geoResult = await geocoder.reverse({ lat: 40.7, lon: -73.9 });
+    const zip = geoResult[0]?.zipcode || null;
+
     const restaurantData = [firstLocation];
     const restaurantMapData = JSON.stringify(restaurantData);
 
@@ -232,6 +239,7 @@ router.route('/createReport').get(async (req, res) => {
         restaurantMapData: restaurantMapData,
         lat: lat,
         lng: lng,
+        zip: zip,
     });
 });
 
