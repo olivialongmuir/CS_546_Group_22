@@ -6,6 +6,7 @@ import { getAllRestaurants, getRestaurantById } from '../data/restaurants.js';
 import { getAllReports} from '../data/rodentReports.js'
 import { getUserById } from '../data/users.js';
 import { checkId } from '../helpers.js';
+import NodeGeocoder from 'node-geocoder';
 
 router.route(['/', '/home']).get(async (req, res) => { //Both of these routes will go to the homepage. Not sure if this is correct design or if should redirect - peter
     try {
@@ -212,25 +213,34 @@ router.route('/profile').get(async (req, res) => {
 
 
 //DISPLAY REPORT CREAITON FORM FOR SET UP, 
-router.route('/createReport').get(async(req, res)=>{
-    
+router.route('/createReport').get(async (req, res) => {
+
+    // grab the lat and lon from the map click, default value if no map click
+    const lat = req.query.lat ? Number(req.query.lat) : 40.6940285125;
+    const lng = req.query.lng ? Number(req.query.lng) : -73.9348118964;
+
     const firstLocation = {
         name: 'userClickedHere',
-        lat: Number(40.6940285125),
-        lng: Number(-73.9348118964)
-    }
+        lat: lat,
+        lng: lng
+    };
 
-    //put object in arr since its iterated when the maps built
+    // Docs for node-geocoder https://www.npmjs.com/package/node-geocoder
+    const geocoder = NodeGeocoder({provider: 'openstreetmap'});
+
+    const geoResult = await geocoder.reverse({ lat: 40.7, lon: -73.9 });
+    const zip = geoResult[0]?.zipcode || null;
+
     const restaurantData = [firstLocation];
     const restaurantMapData = JSON.stringify(restaurantData);
-    
-    console.log("ROUTE " + restaurantMapData)
-    
-    res.render("createReport", {
-            title: 'Create Report',
-            restaurantMapData: restaurantMapData
-        });
 
+    res.render("createReport", {
+        title: 'Create Report',
+        restaurantMapData: restaurantMapData,
+        lat: lat,
+        lng: lng,
+        zip: zip,
+    });
 });
 
 

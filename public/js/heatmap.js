@@ -18,7 +18,7 @@ const restaurantPin = L.icon({
 });
 
 const ratPin = L.icon({
-    iconUrl: '/public/images/rat_pin.png',
+    iconUrl: '/public/images/rat_pin_alt.png',
     iconSize: [30, 30],
     iconAnchor: [16, 32],
     popupAnchor: [0, -32]
@@ -141,6 +141,13 @@ window.addEventListener('load', () => {
     // dynamic zoom
     map.on('zoomend', updateLayers);
     updateLayers();
+
+    // right click context menu to route to create report
+    map.on('contextmenu', function (e) {
+        const lat = e.latlng.lat;
+        const lng = e.latlng.lng;
+        window.location.href = `/createReport?lat=${lat}&lng=${lng}`;
+    });
 
     // event listeners for search bar (button click or enter)
     searchButton.addEventListener("click", searchRestaurant);
