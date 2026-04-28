@@ -142,6 +142,13 @@ window.addEventListener('load', () => {
     map.on('zoomend', updateLayers);
     updateLayers();
 
+    // right click context menu to route to create report
+    map.on('contextmenu', function (e) {
+        const lat = e.latlng.lat;
+        const lng = e.latlng.lng;
+        window.location.href = `/createReport?lat=${lat}&lng=${lng}`;
+    });
+
     // event listeners for search bar (button click or enter)
     searchButton.addEventListener("click", searchRestaurant);
     searchInput.addEventListener("keydown", (e) => {
