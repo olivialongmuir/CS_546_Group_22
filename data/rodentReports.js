@@ -1,20 +1,21 @@
-import { ObjectId, ReturnDocument } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import { rodentReports } from "../config/mongoCollections.js";
 import { 
     checkDate, 
     checkDescription, 
-    checkId, 
     checkJobId, 
     checkNote, 
-    checkNumber, 
     checkPhotoUrl, 
     checkRatSizeRating, 
     checkRodentName,
     checkRodentType, 
     checkRodentStatus, 
     checkUserType, 
-    checkZipcode 
+    checkZipcode, 
+    checkLatitude,
+    checkLongitude
 } from "../helpers.js";
+import { validateId } from './utility.js';
 
 /**
  * Gets all rodent reports from database as a list of objects
@@ -43,8 +44,7 @@ export const getAllReports = async() => {
  */
 export const getReportById = async(id) => {
     const errorSource = "getReportById";
-    const validatedId = checkId(id);
-    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
+    const validatedId = validateId(id, 'reportId', errorSource);
 
     // Get rodentReports collection from database
     const reportsCollection = await rodentReports();
@@ -58,16 +58,16 @@ export const getReportById = async(id) => {
 
 /**
  * Creates a new rodent report and inserts it into the database
- * @param {*} jobId 
- * @param {*} zipcode 
- * @param {*} latitude 
- * @param {*} longitude 
- * @param {*} inspectionDate 
- * @param {*} status 
- * @param {*} approvedDate 
- * @param {*} restaurantId 
- * @param {*} userId 
- * @param {*} description 
+ * @param {string} jobId 
+ * @param {string} zipcode 
+ * @param {number} latitude 
+ * @param {number} longitude 
+ * @param {string} inspectionDate 
+ * @param {string} status 
+ * @param {string} approvedDate 
+ * @param {string} restaurantId 
+ * @param {string} userId 
+ * @param {string} description 
  * @returns newReport
  */
 export const createReport = async(
@@ -90,15 +90,9 @@ export const createReport = async(
     const validatedStatus = checkRodentStatus(status);
     const validatedDate = checkDate(approvedDate);
     const validatedDescription = checkDescription(description);
-
     const validatedJobId = checkJobId(jobId);
-    if (!ObjectId.isValid(validatedJobId)) throw `Error {${errorSource}}: jobId is not a valid objectId`;
-
-    const validatedRestaurantId =  checkId(restaurantId);
-    if (!ObjectId.isValid(validatedRestaurantId)) throw `Error {${errorSource}}: restaurantId is not a valid objectId`;
-
-    const validatedUserId = checkId(userId);
-    if (!ObjectId.isValid(validatedUserId)) throw `Error {${errorSource}}: userId is not a valid objectId`;
+    const validatedRestaurantId =  validateId(restaurantId, 'restaurantId', errorSource);
+    const validatedUserId = validateId(userId, 'userId', errorSource);
     
     // Make sure no duplicate report exists
     const reportCollection = await rodentReports();
@@ -138,18 +132,18 @@ export const createReport = async(
 
 /**
  * Updates rodent report by objectId
- * @param {*} id
- * @param {*} jobId 
- * @param {*} zipcode 
- * @param {*} latitude 
- * @param {*} longitude 
- * @param {*} inspectionDate 
- * @param {*} status 
- * @param {*} approvedDate 
- * @param {*} restaurantId 
- * @param {*} userId 
- * @param {*} description 
- * @param {*} verifiedBy 
+ * @param {string} id
+ * @param {string} jobId 
+ * @param {string} zipcode 
+ * @param {number} latitude 
+ * @param {number} longitude 
+ * @param {string} inspectionDate 
+ * @param {string} status 
+ * @param {string} approvedDate 
+ * @param {string} restaurantId 
+ * @param {string} userId 
+ * @param {string} description 
+ * @param {string} verifiedBy 
  * @returns updateInfo
  */
 export const updateReport = async(
@@ -167,34 +161,21 @@ export const updateReport = async(
     verifiedBy
 ) => {
     const errorSource = "updateReport";
-    const validatedId = checkId(id);
-    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
+    const validatedId = validateId(id, 'reportId', errorSource);
 
     // Template for partial update
     const updateReport = {};
     if (zipcode !== undefined) updateReport["zipcode"] = checkZipcode(jobId);
-    if (latitude !== undefined) updateReport["latitude"] = checkNumber(latitude, "latitude");
-    if (longitude !== undefined) updateReport["longitude"] = checkNumber(longitude, "longitude");
+    if (latitude !== undefined) updateReport["latitude"] = checkLatitude(latitude);
+    if (longitude !== undefined) updateReport["longitude"] = checkLongitude(longitude);
     if (inspectionDate !== undefined) updateReport["inspectionDate"] = checkDate(inspectionDate);
     if (status !== undefined)  updateReport["status"] = checkReportStatus(status);
     if (approvedDate !== undefined) updateReport["approvedDate"] = checkDate(approvedDate);
     if (description !== undefined) updateReport["description"] = checkDescription(description);
     if (verifiedBy !== undefined) updateReport["verifiedBy"] = checkUserType(verifiedBy);
-
-    if (jobId !== undefined) {
-        updateReport["jobId"] = checkJobId(jobId);
-        if (!ObjectId.isValid(updateReport.jobId)) throw `Error {${errorSource}}: jobId is not a valid objectId`;
-    }
-
-    if (restaurantId !== undefined) {
-        updateReport["restaurantId"] = checkId(restaurantId);
-        if (!ObjectId.isValid(updateReport.restaurantId)) throw `Error {${errorSource}}: restaurantId is not a valid objectId`;
-    }
-
-    if (userId !== undefined) {
-        updateReport["userId"] = checkId(userId);
-        if (!ObjectId.isValid(updateReport.userId)) throw `Error {${errorSource}}: userId is not a valid objectId`;
-    }
+    if (jobId !== undefined) {updateReport["jobId"] = checkJobId(jobId);}
+    if (restaurantId !== undefined) {updateReport["restaurantId"] = validateId(restaurantId, 'restaurantId', errorSource);}
+    if (userId !== undefined) {updateReport["userId"] = validateId(userId, 'userId', errorSource);}
 
     if (Object.keys(updateReport).length === 0) throw `Error {${errorSource}}: No fields to update`;
 
@@ -203,7 +184,7 @@ export const updateReport = async(
     let updateInfo = await reportCollection.findOneAndUpdate(
         {_id: new ObjectId(validatedId)},
         {$set: {...updateReport}},
-        {ReturnDocument: "after"}
+        {returnDocument: "after"}
     );
     if (!updateInfo) throw `Error {${errorSource}}: Could update rodent report with id ${validatedId}`;
 
@@ -230,9 +211,7 @@ export const createRodent = async(
     photoUrl
 ) => {
     const errorSource = "createRodent";
-    const validatedId = checkId(id);
-    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
-
+    const validatedId = validateId(id, 'reportId', errorSource);
     const validatedName = checkRodentName(name);
     const validatedType = checkRodentType(type);
     const validatedRating = checkRatSizeRating(rating);
@@ -253,7 +232,7 @@ export const createRodent = async(
     let insertInfo = await reportCollection.findOneAndUpdate(
         {_id: new ObjectId(validatedId)},
         {$push: {rodent: newRodent}},
-        {ReturnDocument: "after"}
+        {returnDocument: "after"}
     );
     if (!insertInfo) throw `Error {${errorSource}}: Could not find and push rodent to id ${validatedId}`;
 
@@ -269,8 +248,7 @@ export const createRodent = async(
  */
 export const deleteReport = async(id) => {
     const errorSource = "deleteReport"
-    const validatedId = checkId(id);
-    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
+    const validatedId = validateId(id, 'reportId', errorSource);
 
     // Delete report from database
     const reportCollection = await rodentReports();
