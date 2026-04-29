@@ -266,6 +266,33 @@ main {
   background: #222;
 }
 
+.risk-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+
+.risk-badge--low {
+  background-color: rgba(163, 230, 53, 0.15);
+  border-color: rgba(163, 230, 53, 0.3);
+  color: var(--primary);
+}
+
+.risk-badge--medium {
+  background-color: rgba(250, 204, 21, 0.15);
+  border-color: rgba(250, 204, 21, 0.3);
+  color: #facc15;
+}
+
+.risk-badge--high {
+  background-color: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+}
 
 /* Added mini heapmap used in rodent report detail */
 #miniHeatmapSection {
@@ -321,9 +348,6 @@ main {
   font-weight: 500;
   line-height: 1;
 }
-
-
-
 
 /* Styles used for the rodent reports page */
 .leftPane {

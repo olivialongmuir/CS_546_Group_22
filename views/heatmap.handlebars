@@ -25,12 +25,13 @@
         <!-- right - hotspot feed -->
         <aside id="hotspotFeed">
             <h2>Hotspot Feed</h2>
-            {{!-- TODO - populate list with hotspot data and better styling --}}
             <ul id="hotspotList">
                 {{#each hotspotFeed}}
                     <li>
-                        <strong>{{this.name}}</strong><br>
-                        <span>{{this.status}}</span>
+                        <strong>{{this.neighborhood}}</strong><br>
+                        <span>{{this.borough}}</span><br>
+                        <span class="risk-badge risk-badge--{{this.riskKey}}">{{this.riskLabel}}</span>
+                        <i data-lucide="trending-up"></i> <span>{{this.count}} reports </span>
                     </li>
                 {{/each}}
             </ul>
