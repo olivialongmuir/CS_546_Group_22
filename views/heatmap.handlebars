@@ -28,10 +28,14 @@
             <ul id="hotspotList">
                 {{#each hotspotFeed}}
                     <li>
-                        <strong>{{this.neighborhood}}</strong><br>
-                        <span>{{this.borough}}</span><br>
-                        <span class="risk-badge risk-badge--{{this.riskKey}}">{{this.riskLabel}}</span>
-                        <i data-lucide="trending-up"></i> <span>{{this.count}} reports </span>
+                        <div class="hotspot-left">
+                            <strong>{{this.neighborhood}}</strong>
+                            <span>{{this.borough}}</span><br>
+                            <span class="risk-badge risk-badge--{{this.riskKey}}">{{this.riskLabel}}</span>
+                        </div>
+                        <div class="hotspot-right">
+                            <i data-lucide="trending-up"></i><span>{{this.count}} reports </span>
+                        </div>
                     </li>
                 {{/each}}
             </ul>

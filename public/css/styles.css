@@ -243,7 +243,7 @@ main {
 }
 
 #hotspotFeed {
-  flex: 1;
+  flex: 0.5;
   color: white;
 }
 
@@ -254,6 +254,9 @@ main {
 }
 
 #hotspotList li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 10px;
   border-bottom: 1px solid #333;
   cursor: pointer;
@@ -266,8 +269,24 @@ main {
   background: #222;
 }
 
+.hotspot-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hotspot-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
 .risk-badge {
   display: inline-flex;
+  align-self: flex-start;
   align-items: center;
   padding: 0.25rem 0.65rem;
   border-radius: 999px;
