@@ -284,6 +284,13 @@ main {
   opacity: 0.9;
 }
 
+.borough {
+  font-size: 0.75rem;
+  color: #aaa;
+  font-weight: 400;
+  margin-top: 2px;
+}
+
 .risk-badge {
   display: inline-flex;
   align-self: flex-start;
