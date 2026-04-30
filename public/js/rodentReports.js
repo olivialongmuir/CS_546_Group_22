@@ -8,7 +8,6 @@ let ratPin;
 
 
 window.addEventListener('load', () => {
-
     const mapEl = document.getElementById('miniHeatmap');
     if (!mapEl) {
         console.error('miniHeatmap element not found');
@@ -36,7 +35,7 @@ window.addEventListener('load', () => {
         doubleClickZoom: false,   //Disables zoom on double-click
         touchZoom: false,         //Disables pinch-to-zoom on mobile
         boxZoom: false            //Disables zoom by dragging with shift key
-    }).setView(nycLatLng, 14);
+    }).setView(nycLatLng, 16);
 
 
     //map layer

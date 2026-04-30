@@ -258,6 +258,7 @@ router.route('/createReport').get(async (req, res) => {
     const restaurantData = [firstLocation];
     const restaurantMapData = JSON.stringify(restaurantData);
 
+    
     res.render("createReport", {
         title: 'Create Report',
         restaurantMapData: restaurantMapData,
