@@ -46,7 +46,12 @@ router.route('/login').post(async (req, res) => {
     const match = await bcrypt.compare(password, user.hashPassword);
     if (!match) return renderError('Invalid username or password');
 
+    if (user.approved === false) {
+      return renderError('Your account is awaiting admin approval');
+    }
+
     req.session.userId = user._id.toString();
+    req.session.userType = user.type;
     return res.redirect('/profile');
   } catch (error) {
     console.error(error);
@@ -91,8 +96,12 @@ router.route('/register').post(async (req, res) => {
       password,
       type
     });
-    req.session.userId = newUser._id;
-    return res.redirect('/profile');
+    if (newUser.type === 'consumer') {
+      req.session.userId = newUser._id;
+      req.session.userType = newUser.type;
+      return res.redirect('/profile');
+    }
+    return res.redirect('/registration-submitted');
   } catch (error) {
     console.error(error);
     const message = typeof error === 'string'
@@ -100,6 +109,10 @@ router.route('/register').post(async (req, res) => {
       : (error?.message || 'Something went wrong. Please try again.');
     return renderError(message);
   }
+});
+
+router.route('/registration-submitted').get(async (req, res) => {
+  return res.render('registration-submitted', { title: 'SqueakPeek - Registration Submitted' });
 });
 
 router.route('/logout').get(async (req, res) => {

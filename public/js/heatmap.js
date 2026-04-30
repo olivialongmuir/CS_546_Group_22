@@ -4,6 +4,7 @@ let heat;
 let searchInput;
 let searchButton;
 let autocompleteList;
+let activePins = []; //Use as a global tracker for active dropped pins
 const rodentMarkers = L.layerGroup();
 const restaurantMarkers = {};
 const zoomThreshold = 16;
@@ -23,6 +24,16 @@ const ratPin = L.icon({
     iconAnchor: [16, 32],
     popupAnchor: [0, -32]
 });
+
+
+//Generic Location Pin
+const locationPin = L.icon({
+    iconUrl: '/public/images/location_pin.png',
+    iconSize: [40, 40],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32]
+});
+
 
 // dynamic way to show rodent markers when zoomed in beyond thresh
 function updateLayers() {
@@ -95,12 +106,13 @@ window.addEventListener('load', () => {
             const marker = L.marker([restaurant.lat, restaurant.lng], { icon: restaurantPin })
                 .addTo(map)
                 .bindPopup(`
-                    <div style="text-align:center;">
+                    <div class="btn-stack">
                         <a href="/restaurants/${restaurant._id}" class="popup-link">
-                            ${restaurant.name}
+                        ${restaurant.name}
+                        <button class="btn">View Restaurant</button>
                         </a>
-                    </div>
-                `);
+                    </div>`
+                );
             // store marker
             restaurantMarkers[restaurant.name.toLowerCase()] = marker;
         });
@@ -111,7 +123,13 @@ window.addEventListener('load', () => {
         rodentMapData.forEach(r => {
             const marker = L.marker([Number(r.lat), Number(r.lng)], { icon: ratPin })
             // TODO - add link to rodent report details similar to restaurant above
-                .bindPopup("Rodent Report");
+                .bindPopup(
+                        `<div class="btn-stack">
+                        TODO
+                        <button class="btn">View Report</button>
+                        </a>
+                    </div>`
+                );
 
             // add rodent layer to group
             rodentMarkers.addLayer(marker);
@@ -142,12 +160,38 @@ window.addEventListener('load', () => {
     map.on('zoomend', updateLayers);
     updateLayers();
 
-    // right click context menu to route to create report
+
+    // right click on the map to then zoom in and display a pop up for the user. 
+    //The pop up will contain prompt to make a new report
     map.on('contextmenu', function (e) {
+
+        //clear stale pins
+        removePins();
+
         const lat = e.latlng.lat;
         const lng = e.latlng.lng;
-        window.location.href = `/createReport?lat=${lat}&lng=${lng}`;
+
+        //fly and zoom into that position
+        flyToLocation(lat,lng);
+
+        //Drop a temp pin in that location
+        addPin(map, lat, lng);
+
+        
+        // window.location.href = `/createReport?lat=${lat}&lng=${lng}`;
     });
+
+
+    //Event listener to remove old pins
+    // //removes active pin if user clicked back to map outside of popup 
+    map.on('click', function () {
+        removePins();
+    });
+    map.on('popupclose', function () {
+        removePins();
+    });
+
+
 
     // event listeners for search bar (button click or enter)
     searchButton.addEventListener("click", searchRestaurant);
@@ -190,3 +234,66 @@ window.addEventListener('load', () => {
         map.invalidateSize(true);
     }, 0);
 });
+
+
+
+
+
+
+//Flys and zooms to a location from and event click
+function flyToLocation(lat,lng) {
+    // hide heatmap
+    if (heat && map.hasLayer(heat)) {
+        map.removeLayer(heat);
+    }
+
+    //make location object
+    var latlng = L.latLng(lat, lng);
+
+    map.flyTo(latlng, 17, {
+        duration: 1
+    });
+
+    // show heatmap
+    setTimeout(() => {
+        if (heat) heat.addTo(map);
+    }, flyDuration * 1000);
+}
+
+
+
+//Creates and returns a map HTML stub to use as a popup for pins
+const makePopUp=(lat,lng)=>{
+            return`
+             <div class="infoRow">
+                <span class="locationStat">Lat: ${lat}</span>
+                <span class="locationStat">Lng: ${lng}</span>
+            </div>
+            <div class="btn-stack">
+            <button class="btn">Nearby Reports</button>
+            <button class="btn">Nearby Restaurants</button>
+            <button class="btn">Create Report</button>
+            </div>`
+}
+
+
+//Adds a pin marker to a clicked location
+const addPin=(map, lat, lng)=>{
+
+    newPin = L.marker([lat, lng], { icon: locationPin })
+        .addTo(map)
+        .bindPopup(makePopUp(lat,lng)) //uses html template
+        .openPopup()
+
+    activePins.push(newPin);
+}
+
+//Removes all active pins
+const removePins=()=>{
+    for(const pin of activePins){
+        if (map.hasLayer(pin)) {
+            map.removeLayer(pin);
+        }
+    }
+}
+

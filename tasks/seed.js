@@ -2,6 +2,7 @@ import { dbConnection, closeConnection } from '../config/mongoConnection.js';
 import { restaurants, rodentReports, users } from '../config/mongoCollections.js';
 import restaurantData from '../database/restaurants.json' with { type: 'json' }
 import rodentReportData from '../database/rodents.json' with { type: 'json' }
+import { hash } from 'bcryptjs';
 
 /*
 Seed file for SquakPeek
@@ -21,15 +22,32 @@ const main = async () => {
   const rodentReportCollection = await rodentReports();
   const userCollection = await users();
 
+  const adminPassword = 'Admin123!';
+  const seededPassword = 'Password1!';
+  const adminHash = await hash(adminPassword, 10);
+  const seededHash = await hash(seededPassword, 10);
+
   //creating one example of each user type
   const userData = [
+    {
+      "type": "admin",
+      "firstName": "Site",
+      "lastName": "Admin",
+      "username": "admin",
+      "emailAddress": "admin@squeakpeek.local",
+      "hashPassword": adminHash,
+      "approved": true,
+      "timestamp": "2026-01-01T00:00:00.000Z",
+      "comments": []
+    },
     {
       "type": "consumer",
       "firstName": "John",
       "lastName": "Smith",
       "username": "smithy889",
       "emailAddress": "johnSmith643@gmail.com",
-      "hashPassword": "$2b$10$VdNkzFQk0aCjTaRRk8Sdb.BXNkQTB3ef3VHWeP1FFS583ZDWLL8UW", //password: test123
+      "hashPassword": seededHash,
+      "approved": true,
       "timestamp": "2026-03-04T01:26:32.547Z",
       "comments": []
     },
@@ -39,7 +57,8 @@ const main = async () => {
       "lastName": "Doe",
       "username": "ratProof_knight",
       "emailAddress": "themightyRat153@outlook.com",
-      "hashPassword": null,
+      "hashPassword": seededHash,
+      "approved": true,
       "timestamp": "2026-02-01T02:17:32.547Z",
       "comments": []
     },
@@ -47,9 +66,10 @@ const main = async () => {
       "type": "inspector",
       "firstName": "Alex",
       "lastName": "Willworth",
-      "username": "willworth.Alex",
+      "username": "willworthAlex",
       "emailAddress": "willworth_alex_156@gov.com",
-      "hashPassword": null,
+      "hashPassword": seededHash,
+      "approved": true,
       "timestamp": "2026-01-05T04:23:32.547Z",
       "comments": []
     },
@@ -57,20 +77,11 @@ const main = async () => {
       "type": "restaurant",
       "firstName": "Mary",
       "lastName": "Ann",
-      "username": "222bestRestaurant666",
+      "username": "bestRestaurant666",
       "emailAddress": "barAndGrillAnn@gmail.com",
-      "hashPassword": null,
+      "hashPassword": seededHash,
+      "approved": true,
       "timestamp": "2026-04-03T07:56:32.547Z",
-      "comments": []
-    },
-    {
-      "type": "admin",
-      "firstName": "John",
-      "lastName": "Smith",
-      "username": "smithy889",
-      "emailAddress": "johnSmith643@gmail.com",
-      "hashPassword": null,
-      "timestamp": "2026-04-07T08:56:32.547Z",
       "comments": []
     }
   ]
@@ -78,6 +89,10 @@ const main = async () => {
   await restaurantCollection.insertMany(restaurantData);
   await rodentReportCollection.insertMany(rodentReportData);
   await userCollection.insertMany(userData);
+
+  console.log(`Seed complete.`);
+  console.log(`  admin login - username: admin // password: ${adminPassword}`);
+  console.log(`  user logins - password for all seeded non-admin users: ${seededPassword}`);
 
   await closeConnection();
 }
