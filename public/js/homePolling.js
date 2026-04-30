@@ -29,7 +29,7 @@ $(document).ready(function() {
         });
     }
 
-    updateHomeStats();
+    setTimeout(updateHomeStats, 60000); // Adds a delay to first call. Redundant to call it immediately
 });
 
 // Helper: Fades field if changed
