@@ -76,6 +76,14 @@ export const checkRodentName = (rodentName) => {
     return parsed_rodentName;
 }
 
+export const checkRestaurantName = (restaurantName) => {
+    const parsed_restaurantName = checkString(restaurantName, 'restaurantName');
+    if (parsed_restaurantName.length < 1) throw 'Error: restaurantName must be at least 1 character';
+    if (parsed_restaurantName.length > 100) throw 'Error: restaurantName cannot exceed 20 characters';
+    if (!/^[a-zA-Z0-9_'&-]+$/.test(parsed_restaurantName)) throw 'Error: rodentName can only contain letters, numbers, underscores, apostrophes, ampersands, and hyphens';
+    return parsed_restaurantName;
+}
+
 export const checkFirstName = (firstName) => {
     const parsed_name = checkString(firstName, 'firstName');
     if (!/^[\p{L}\s'-]+$/u.test(parsed_name)) throw 'Error: First name can only '; //Only alphabetic and accented characters. Apostrophes and hyphens are fine

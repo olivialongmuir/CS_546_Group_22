@@ -2,11 +2,12 @@ import { ObjectId } from 'mongodb';
 import { comments, restaurants } from '../config/mongoCollections.js';
 import { 
     checkString, 
-    checkNumber, 
     checkWebsite, 
     checkPhone, 
     checkRestaurantStatus, 
-    checkUsername
+    checkLatitude,
+    checkLongitude,
+    checkRestaurantName
 } from '../helpers.js';
 import { validateId } from './utility.js';
 
@@ -72,10 +73,10 @@ export const createRestaurant = async(
     status
 ) => {
     const errorSource = "createRestaurant";
-    const validatedName = checkString(name, "name");
+    const validatedName = checkRestaurantName(name, "name");
     const validatedType = checkString(type, "type");
-    const validatedLatitude = checkNumber(latitude, "latitude");
-    const validatedLongitude = checkNumber(longitude, "longitude");
+    const validatedLatitude = checkLatitude(latitude);
+    const validatedLongitude = checkLongitude(longitude);
     const validatedWebsite = checkWebsite(website, "website");
     const validatedPhone = checkPhone(phone, "phone");
     const validatedPermitNumber = checkString(permit_number, "permit_number");
@@ -132,10 +133,10 @@ export const updateRestaurant = async(
 
     // Template for partial update
     const updateRestaurant = {};
-    if (name !== undefined) updateRestaurant["name"] = checkString(name, "name");
+    if (name !== undefined) updateRestaurant["name"] = checkRestaurantName(name, "name");
     if (type !== undefined) updateRestaurant["type"] = checkString(type, "type");
-    if (latitude !== undefined) updateRestaurant["latitude"] = checkNumber(latitude, "latitude");
-    if (longitude !== undefined) updateRestaurant["longitude"] = checkNumber(longitude, "longitude");
+    if (latitude !== undefined) updateRestaurant["latitude"] = checkLatitude(latitude);
+    if (longitude !== undefined) updateRestaurant["longitude"] = checkLongitude(longitude);
     if (website !== undefined) updateRestaurant["website"] = checkWebsite(website);
     if (phone !== undefined) updateRestaurant["phone"] = checkPhone(phone);
     if (permit_number !== undefined) updateRestaurant["permit_number"] = checkString(permit_number);
