@@ -103,13 +103,7 @@ export const createUser = async({
         username: validatedUsername,
         emailAddress: validatedEmail,
         hashPassword: hashPassword,
-<<<<<<< HEAD
         timestamp: timestamp
-=======
-        approved,
-        timestamp: timestamp,
-        comments: []
->>>>>>> main
     }
 
     // Save into database as a new user
