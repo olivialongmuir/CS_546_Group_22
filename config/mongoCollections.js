@@ -17,3 +17,4 @@ export const restaurants = getCollectionFn('restaurants');
 export const rodentReports = getCollectionFn('rodentReports');
 export const users = getCollectionFn('users');
 export const comments = getCollectionFn('comments');
+export const reactions = getCollectionFn('reactions');

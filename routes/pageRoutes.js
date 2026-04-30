@@ -7,17 +7,46 @@ import { getAllReports} from '../data/rodentReports.js'
 import { getUserById } from '../data/users.js';
 import { checkId } from '../helpers.js';
 import NodeGeocoder from 'node-geocoder';
+import { countStats } from '../data/utility.js';
 
+/**
+ * Homepage route
+ */
 router.route(['/', '/home']).get(async (req, res) => { //Both of these routes will go to the homepage. Not sure if this is correct design or if should redirect - peter
     try {
+        const {
+            totalRestaurants,
+            totalReports,
+            totalUsers,
+            totalVerified
+        } = await countStats();
+
         res.render("home", {
-            title: 'Homepage'
+            title: 'Homepage',
+            homeTotalRestaurants: totalRestaurants,
+            homeTotalReports: totalReports,
+            homeTotalUsers: totalUsers,
+            homeVerifiedSightings: totalVerified
         });
     } catch(error) {
         console.error(error);
         res.status(500).send("Error loading Homepage");
     }
 });
+
+/**
+ * Homepage AJAX updates statistics - homePolling.js
+ */
+router.route('/api/home-data').get(async (req, res) => {
+    try {
+        const homeStats = await countStats();
+
+        res.json(homeStats);
+    } catch(error) {
+        console.error(error);
+        res.status(500).send("Unable to retrieve Homepage statistics");
+    }
+})
 
 router.route('/heatmap').get(async (req, res) => {
     try {
@@ -97,11 +126,6 @@ router.route('/ratreports').get(async (req, res) => {
         res.status(500).send("Error loading Rat Reports");
     }
 });
-
-
-
-
-
 
 const gradeToStatus = (grade) => {
   if (grade === 'A') return { key: 'safe',      label: 'Safe' };

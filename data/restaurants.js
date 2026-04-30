@@ -1,14 +1,15 @@
-import { ObjectId, ReturnDocument } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import { comments, restaurants } from '../config/mongoCollections.js';
 import { 
-    checkId,
     checkString, 
-    checkNumber, 
     checkWebsite, 
     checkPhone, 
     checkRestaurantStatus, 
-    checkUsername
+    checkLatitude,
+    checkLongitude,
+    checkRestaurantName
 } from '../helpers.js';
+import { validateId } from './utility.js';
 
 /**
  * Gets all restaurants form database as a list of objects
@@ -37,8 +38,7 @@ export const getAllRestaurants = async() => {
  */
 export const getRestaurantById = async(id) => {
     const errorSource = "getRestaurantById";
-    const validatedId = checkId(id);
-    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
+    const validatedId = validateId(id, 'restaurantId', errorSource);
 
     // Get restaurant collection from database
     const restaurantCollection = await restaurants();
@@ -52,14 +52,14 @@ export const getRestaurantById = async(id) => {
 
 /**
  * Creates a new restaurant and inserts it into the database
- * @param {*} name 
- * @param {*} type 
- * @param {*} latitude 
- * @param {*} longitude 
- * @param {*} website 
- * @param {*} phone 
- * @param {*} permit_number 
- * @param {*} status 
+ * @param {string} name 
+ * @param {string} type 
+ * @param {number} latitude 
+ * @param {number} longitude 
+ * @param {string} website 
+ * @param {string} phone 
+ * @param {string} permit_number 
+ * @param {string} status 
  * @returns newRestaurant
  */
 export const createRestaurant = async(
@@ -73,18 +73,14 @@ export const createRestaurant = async(
     status
 ) => {
     const errorSource = "createRestaurant";
-    // Perform validation on all parameters
-    const validatedName = checkString(name, "name");
+    const validatedName = checkRestaurantName(name, "name");
     const validatedType = checkString(type, "type");
-    const validatedLatitude = checkNumber(latitude, "latitude");
-    const validatedLongitude = checkNumber(longitude, "longitude");
+    const validatedLatitude = checkLatitude(latitude);
+    const validatedLongitude = checkLongitude(longitude);
     const validatedWebsite = checkWebsite(website, "website");
     const validatedPhone = checkPhone(phone, "phone");
     const validatedPermitNumber = checkString(permit_number, "permit_number");
     const validatedStatus = checkRestaurantStatus(status, "status");
-
-    // Get restaurant collection from database
-    const restaurantCollection = await restaurants();
 
     // Create new restaurant object
     const newRestaurant = {
@@ -99,6 +95,7 @@ export const createRestaurant = async(
     };
 
     // Insert new restaurant object into database
+    const restaurantCollection = await restaurants();
     const insertInfo = await restaurantCollection.insertOne(newRestaurant);
     if (!insertInfo.acknowledged) throw `Error {${errorSource}}: Could not add restaurant to database`;
 
@@ -109,15 +106,15 @@ export const createRestaurant = async(
 
 /**
  * Updates restaurant by objectId
- * @param {*} id 
- * @param {*} name 
- * @param {*} type 
- * @param {*} latitude 
- * @param {*} longitude 
- * @param {*} website 
- * @param {*} phone 
- * @param {*} permit_number 
- * @param {*} status 
+ * @param {string} id 
+ * @param {string} name 
+ * @param {string} type 
+ * @param {number} latitude 
+ * @param {number} longitude 
+ * @param {string} website 
+ * @param {string} phone 
+ * @param {string} permit_number 
+ * @param {string} status 
  * @returns updateInfo
  */
 export const updateRestaurant = async(
@@ -132,15 +129,14 @@ export const updateRestaurant = async(
     status
 ) => {
     const errorSource = "updateRestaurant";
-    const validatedId = checkId(id);
-    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: id is not a valid objectId`;
+    const validatedId = validateId(id, 'restaurantId', errorSource);
 
     // Template for partial update
     const updateRestaurant = {};
-    if (name !== undefined) updateRestaurant["name"] = checkString(name, "name");
+    if (name !== undefined) updateRestaurant["name"] = checkRestaurantName(name, "name");
     if (type !== undefined) updateRestaurant["type"] = checkString(type, "type");
-    if (latitude !== undefined) updateRestaurant["latitude"] = checkNumber(latitude, "latitude");
-    if (longitude !== undefined) updateRestaurant["longitude"] = checkNumber(longitude, "longitude");
+    if (latitude !== undefined) updateRestaurant["latitude"] = checkLatitude(latitude);
+    if (longitude !== undefined) updateRestaurant["longitude"] = checkLongitude(longitude);
     if (website !== undefined) updateRestaurant["website"] = checkWebsite(website);
     if (phone !== undefined) updateRestaurant["phone"] = checkPhone(phone);
     if (permit_number !== undefined) updateRestaurant["permit_number"] = checkString(permit_number);
@@ -153,7 +149,7 @@ export const updateRestaurant = async(
     let updateInfo = await restaurantCollection.findOneAndUpdate(
         {_id: new ObjectId(validatedId)},
         {$set: {...updateRestaurant}},
-        {ReturnDocument: "after"}
+        {returnDocument: "after"}
     );
     if (!updateInfo) throw `Error {${errorSource}}: Could not update restaurant with id ${validatedId}`;
 
@@ -168,8 +164,7 @@ export const updateRestaurant = async(
  */
 export const deleteRestaurant = async(id) => {
     const errorSource = "deleteRestaurant";
-    const validatedId = checkId(id);
-    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
+    const validatedId = validateId(id, 'restaurantId', errorSource);
 
     // Delete restaurant from database
     const restaurantCollection = await restaurants();
@@ -186,8 +181,7 @@ export const deleteRestaurant = async(id) => {
  */
 export const getRestaurantComments = async(id) => {
     const errorSource = "getRestaurantComments";
-    const validatedId = checkId(id);
-    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
+    const validatedId = validateId(id, 'restaurantId', errorSource);
 
     // Check that this restaurant exists in restaurants database
     const restaurantCollection = await restaurants();
@@ -208,13 +202,12 @@ export const getRestaurantComments = async(id) => {
 
 /**
  * Gets a list of rodent reports associated with restaurant by objectId
- * @param {string} restaurantId 
- * @returns rodentReports
+ * @param {string} id 
+ * @returns reportItems
  */
-export const getRestaurantRodentReports = async (restaurantId) => {
+export const getRestaurantRodentReports = async (id) => {
     const errorSource = "getRestaurantRodentReports";
-    const validatedId = checkId(restaurantId);
-    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
+    const validatedId = validateId(id, 'restaurantId', errorSource);
 
     // Check restaurant exists in database
     const restaurantCollection = await restaurants();

@@ -1,15 +1,15 @@
 import { users, comments } from "../config/mongoCollections.js";
-import { ObjectId, ReturnDocument } from "mongodb";
+import { ObjectId } from "mongodb";
 import { hash, compare } from "bcryptjs";
 import { 
     checkEmail, 
     checkFirstName, 
-    checkId, 
     checkLastName, 
     checkPassword, 
     checkUsername, 
     checkUserType 
 } from "../helpers.js";
+import { validateId } from "./utility.js";
 
 /**
  * Gets all users from database as a list of objects
@@ -52,12 +52,12 @@ export const getUserById = async(id) => {
 
 /**
  * Creates a new user with selected type and inserts it into the database
- * @param {*} type 
- * @param {*} firstName 
- * @param {*} lastName 
- * @param {*} username      //Must be unique
- * @param {*} password 
- * @param {*} emailAddress  //Must be unique
+ * @param {string} type 
+ * @param {string} firstName 
+ * @param {string} lastName 
+ * @param {string} username      //Must be unique
+ * @param {string} password 
+ * @param {string} emailAddress  //Must be unique
  * @returns newUser
  */
 export const createUser = async({
@@ -103,9 +103,13 @@ export const createUser = async({
         username: validatedUsername,
         emailAddress: validatedEmail,
         hashPassword: hashPassword,
+<<<<<<< HEAD
+        timestamp: timestamp
+=======
         approved,
         timestamp: timestamp,
         comments: []
+>>>>>>> main
     }
 
     // Save into database as a new user
@@ -156,11 +160,11 @@ export const approveUser = async (id) => {
 
 /**
  * Updates user by objectId
- * @param {*} id 
- * @param {*} type 
- * @param {*} firstName 
- * @param {*} lastName 
- * @param {*} emailAddress 
+ * @param {string} id 
+ * @param {string} type 
+ * @param {string} firstName 
+ * @param {string} lastName 
+ * @param {string} emailAddress 
  * @returns updateInfo
  */
 export const updateUser = async(
@@ -171,8 +175,7 @@ export const updateUser = async(
     emailAddress
 ) => {
     const errorSource = "updateUser";
-    const validatedId = checkId(id);
-    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: id is not a valid objectId`;
+    const validatedId = validateId(id, 'userId', errorSource);
 
     // Template for partial update
     const updateUser = {};
@@ -188,7 +191,7 @@ export const updateUser = async(
     let updateInfo = await userCollection.findOneAndUpdate(
         {_id: new ObjectId(validatedId)},
         {$set: {...updateUser}},
-        {ReturnDocument: "after"}
+        {returnDocument: "after"}
     );
     if (!updateInfo) throw `Error {${errorSource}}: Could not update user with id ${validatedId}`;
 
@@ -203,8 +206,7 @@ export const updateUser = async(
  */
 export const deleteUser = async(id) => {
     const errorSource = "deleteUser";
-    const validatedId = checkId(id);
-    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
+    const validatedId = validateId(id, 'userId', errorSource);
 
     // Delete user from database
     const userCollection = await users();
@@ -216,13 +218,12 @@ export const deleteUser = async(id) => {
 
 /**
  * Gets all user comments as an array
- * @param {string} userId 
+ * @param {string} id 
  * @returns commentList
  */
-export const getUserComments = async(userId) => {
+export const getUserComments = async(id) => {
     const errorSource = "getUserComments";
-    const validatedId = checkId(userId);
-    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
+    const validatedId = validateId(id, 'userId', errorSource);
 
     // Check that this user exists in user database
     const userCollection = await users();
@@ -250,8 +251,7 @@ export const getUserComments = async(userId) => {
  */
 export const getUserRodentReports = async (id) => {
     const errorSource = "getUserRodentReports";
-    const validatedId = checkId(id);
-    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
+    const validatedId = validateId(id, 'userId', errorSource);
 
     // Check user exists in database
     const userCollection = await users();

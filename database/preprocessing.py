@@ -86,7 +86,7 @@ def main():
     }
 
     rodent_new_keys = {
-        "status": "confirmed",
+        "status": "unverified",
         "restaurantId": None,
         "userId": None,
         "description": None,
@@ -116,7 +116,6 @@ def main():
 
     restaurants_newKeys = {
         "status": None,
-        "comments": None
     }
 
     #cull_rodents(input=original_rodents, output=culled_rodents, sample_size=rodent_cull_size)
