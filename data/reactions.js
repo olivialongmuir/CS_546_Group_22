@@ -4,7 +4,7 @@ import { validateId } from "./utility.js";
 import { checkReactionType } from "../helpers.js";
 
 /**
- * Updates reaction and comments based on reaction type
+ * Updates reaction based on reaction type
  * @param {string} userId 
  * @param {string} commentId 
  * @param {string} type 
@@ -25,7 +25,7 @@ export const updateReaction = async(
         reactions(),
         comments(),
         users()
-    ])
+    ]);
 
     const [userItem, commentItem] = await Promise.all([
         userCollection.findOne({_id: new ObjectId(validatedUserId)}),
