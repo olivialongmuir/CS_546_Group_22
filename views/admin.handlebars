@@ -1,0 +1,38 @@
+{{!-- THIS FILE WILL BE WRAPPED BY MAIN.HANDLEBARS --}}
+
+<section id="adminSection">
+    <h1>Admin: Pending Approvals</h1>
+
+    {{#if hasPending}}
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Type</th>
+                    <th>Joined</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each pendingUsers}}
+                    <tr>
+                        <td>{{this.firstName}} {{this.lastName}}</td>
+                        <td>{{this.username}}</td>
+                        <td>{{this.emailAddress}}</td>
+                        <td>{{this.type}}</td>
+                        <td>{{this.timestamp}}</td>
+                        <td>
+                            <form method="POST" action="/admin/approve/{{this._id}}">
+                                <button type="submit" class="pillButton">Approve</button>
+                            </form>
+                        </td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    {{else}}
+        <p>No accounts are awaiting approval.</p>
+    {{/if}}
+</section>
