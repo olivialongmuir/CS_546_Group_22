@@ -24,6 +24,9 @@
             {{!-- TODO - add lucide icon to Report unless this is going away  --}}
             <li><a href="/createReport">Report (TEMP)</a></li> 
             {{#if isLoggedIn}}
+            {{#if isAdmin}}
+            <li><a href="/admin"><i data-lucide="shield-check"class="link-icon"></i>Requests</a></li>
+            {{/if}}
             <li><a href="/profile"><i data-lucide="user-round-pen"class="link-icon"></i>Profile</a></li>
             <li><a href="/logout"><i data-lucide="log-out"class="link-icon"></i>Logout</a></li>
             {{else}}

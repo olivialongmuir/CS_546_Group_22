@@ -4,12 +4,14 @@ import pageRoutes from './pageRoutes.js';
 import rodentReports from './rodentReports.js';
 import restaurants from './restaurants.js';
 import authRoutes from './auth.js';
+import adminRoutes from './admin.js';
 
 const constructorMethod = (app) => {
     app.use('/public', staticDir('public'));
 
     // UI Routes
     app.use('/', authRoutes);
+    app.use('/admin', adminRoutes);
     app.use('/', pageRoutes);
 
     // API Routes
