@@ -163,13 +163,8 @@ export const checkRodentStatus = (rodentStatus) => {
 };
 
 export const checkUserType = (userType) => {
-<<<<<<< HEAD
-    const parsed_user = checkString(userType, 'userType').toLowerCase();
-    const validUsers = ['member', 'exterminator', 'inspector', 'admin'];
-=======
     const parsed_user = checkString(userType, "userType").toLowerCase();
     const validUsers = ['consumer', 'restaurant', 'exterminator', 'inspector', 'admin'];
->>>>>>> main
     if (!validUsers.includes(parsed_user)) throw `Error: User must be one of the following: ${validUsers.join(', ')}`;
     return parsed_user;
 };
