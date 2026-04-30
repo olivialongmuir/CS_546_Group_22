@@ -25,7 +25,7 @@ export const getAllUsers = async() => {
 
     // Convert all object ids to string ids
     userList = userList.map(user => {
-        user.__id = user.__id.toString();
+        user._id = user._id.toString();
         return user
     })
     return userList
@@ -60,14 +60,14 @@ export const getUserById = async(id) => {
  * @param {string} emailAddress  //Must be unique
  * @returns newUser
  */
-export const createUser = async(
+export const createUser = async({
     type,
     firstName,
     lastName,
     username,
     password,
     emailAddress
-) => {
+}) => {
     const errorSource = "createUser";
     const validatedType = checkUserType(type);
     const validatedFirstName = checkFirstName(firstName);
@@ -79,11 +79,11 @@ export const createUser = async(
     // Make sure no duplicate user exists
     const userCollection = await users();
     const userInfo = await userCollection.findOne({username: validatedUsername});
-    if (userInfo) throw `Error {${errorSource}}: Unable to create user`;
+    if (userInfo) throw `Error {${errorSource}}: Username is already taken`;
 
     // Also emails have to be unique
     const emailInfo = await userCollection.findOne({emailAddress: validatedEmail});
-    if (emailInfo) throw `Error {${errorSource}}: Unable to create user`;
+    if (emailInfo) throw `Error {${errorSource}}: An account with that email already exists`;
 
     // Timestamp request
     const now = new Date();
@@ -91,6 +91,9 @@ export const createUser = async(
 
     // Hash our password and salt it
     const hashPassword = await hash(validatedPassword, 10);
+
+    // Consumers are auto-approved; everyone else requires admin approval
+    const approved = validatedType === 'consumer';
 
     // Template for new user
     const newUser = {
@@ -100,7 +103,13 @@ export const createUser = async(
         username: validatedUsername,
         emailAddress: validatedEmail,
         hashPassword: hashPassword,
+<<<<<<< HEAD
         timestamp: timestamp
+=======
+        approved,
+        timestamp: timestamp,
+        comments: []
+>>>>>>> main
     }
 
     // Save into database as a new user
@@ -109,6 +118,44 @@ export const createUser = async(
 
     const newId = insertInfo.insertedId.toString();
     return await getUserById(newId);
+};
+
+/**
+ * Returns all users currently awaiting admin approval
+ * @returns pendingUsers
+ */
+export const getPendingUsers = async () => {
+    const userCollection = await users();
+    let pending = await userCollection.find({ approved: false }).toArray();
+    pending = pending.map(user => {
+        user._id = user._id.toString();
+        delete user.hashPassword;
+        return user;
+    });
+    return pending;
+};
+
+/**
+ * Marks a user as approved
+ * @param {string} id
+ * @returns updatedUser
+ */
+export const approveUser = async (id) => {
+    const errorSource = "approveUser";
+    const validatedId = checkId(id);
+    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
+
+    const userCollection = await users();
+    const result = await userCollection.findOneAndUpdate(
+        { _id: new ObjectId(validatedId) },
+        { $set: { approved: true } },
+        { returnDocument: 'after' }
+    );
+    if (!result) throw `Error {${errorSource}}: Could not approve user with id ${validatedId}`;
+
+    result._id = result._id.toString();
+    delete result.hashPassword;
+    return result;
 };
 
 /**
