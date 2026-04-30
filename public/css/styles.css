@@ -281,6 +281,20 @@ main {
 }
 
 
+/* Heatmap popus */
+.leaflet-popup{
+  border: 2px greenyellow;
+  border-radius: 2px;
+}
+
+h2{
+  color:white;
+}
+
+
+
+
+
 
 /* css map dark mode override */
 .leaflet-tile-pane {
@@ -407,6 +421,12 @@ main {
   font-weight: 500;
   border: 1px solid transparent;
   margin: 5px;
+}
+
+.infoRow{
+    display: flex;
+    justify-content: center;
+    padding: 10px;
 }
 
 /* --- Panel --- */
@@ -553,6 +573,23 @@ main {
 .btn--outline:hover { color: var(--fg); border-color: var(--muted); }
 
 .btn--full { width: 100%; }
+
+
+
+/* //button holder */
+.btn-stack {
+  padding: 2%;
+  /* border: 1px solid grey; */
+  display: flex;
+  flex-direction: column;   /* stack vertically */
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-stack button {
+  background-color: greenyellow;
+  width: 100%;
+}
 
 /* --- Shared responsive --- */
 @media (min-width: 768px) {
