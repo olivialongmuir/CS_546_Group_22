@@ -9,7 +9,6 @@ import {
     checkPassword, 
     checkUsername, 
     checkUserType,
-    checkId
 } from "../helpers.js";
 import { validateId } from "./utility.js";
 
