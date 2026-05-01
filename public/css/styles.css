@@ -104,6 +104,11 @@ main {
   font-size: 0.875rem;
 }
 
+.pillButton:hover{
+  background-color: #3a3a3a;
+  border-color: yellow;
+}
+
 .homeH2{
     text-align: center;
 }
@@ -159,6 +164,7 @@ main {
 }
 
 #mapColumn {
+  /* max-width: 65vw; */
   flex: 2;
 }
 

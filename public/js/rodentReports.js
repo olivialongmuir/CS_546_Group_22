@@ -3,13 +3,13 @@
 //Make small and not scrollable
 
 //set map as a global var to edit 
-let map;
-let ratPin;
+let miniMap;
+// let ratPin;
 
 
 window.addEventListener('load', () => {
-    const mapEl = document.getElementById('miniHeatmap');
-    if (!mapEl) {
+    const miniMapEl = document.getElementById('miniHeatmap');
+    if (!miniMapEl) {
         console.error('miniHeatmap element not found');
         return;
     }
@@ -27,7 +27,7 @@ window.addEventListener('load', () => {
 
     
     //initialize the map and set the rules
-    map = L.map('miniHeatmap', {
+    miniMap = L.map('miniHeatmap', {
         preferCanvas: true,
         dragging: false,
         zoomControl: false,       //Removes the +/- buttons
@@ -41,28 +41,28 @@ window.addEventListener('load', () => {
     //map layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+    }).addTo(miniMap);
 
     //Define pin syle to be used will update the global var
-    ratPin = L.icon({
-            iconUrl: '/public/images/rat_pin_alt.png',
-            iconSize: [30, 30],
-            iconAnchor: [16, 32],
-            popupAnchor: [0, -32]
-        });
+    // ratPin = L.icon({
+    //         iconUrl: '/public/images/rat_pin_alt.png',
+    //         iconSize: [30, 30],
+    //         iconAnchor: [16, 32],
+    //         popupAnchor: [0, -32]
+    //     });
 
 
     // restaurant marker (only showing one since it should just be current rodent report)
     if (typeof restaurantMapData !== 'undefined') {
         restaurantMapData.forEach(restaurant => {
             L.marker([restaurant.lat, restaurant.lng], { icon: ratPin})
-                .addTo(map)
+                .addTo(miniMap)
                 .bindPopup(restaurant.name);
         });
     }
 
     setTimeout(() => {
-        map.invalidateSize(true);
+        miniMap.invalidateSize(true);
     }, 0);
 });
 
@@ -102,12 +102,12 @@ document.querySelector(".leftPane")?.addEventListener("click", async (e) => {
     //clear all old markers
 
     //set the center view (use fly to or pan to?)
-    map.panTo(lo, 14, {animate: true, duration: 0.5}); 
+    miniMap.panTo(lo, 14, {animate: true, duration: 0.5}); 
     // map.flyTo(lo, map.getZoom(), { duration: 0.3 });
     //set a marker icon to be a small rat??? use L.Icon from docs
 
     //add new marker to the map for that rodent sighting
-    L.marker([data.latitude, data.longitude], { icon: ratPin }).addTo(map).bindPopup(data._id);
+    L.marker([data.latitude, data.longitude], { icon: ratPin }).addTo(miniMap).bindPopup(data._id);
 
 });
 

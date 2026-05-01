@@ -1,13 +1,22 @@
 
 
 .cardPopup{
+
+    visibility: hidden;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 2vw;
     background: rgba(231, 228, 228, 0.188); /* Semi-transparent color */
     backdrop-filter: blur(8px);      /* Blurs content behind the overlay */
-    padding: 2%;
+    /* padding: 2%; */
+
 }
 
 .rodentReportCard{
@@ -64,4 +73,17 @@ textarea {
 
 .pillButton{
     margin: 5px;
+    border: 1px rgb(0, 0, 0) solid;
+}
+
+
+
+
+/* sets the text box */
+#description{
+    width: 20vw;
+    border-radius: 5px;
+    padding: 1px;
+    background-color: lightgray;
+    color: black;
 }

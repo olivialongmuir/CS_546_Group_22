@@ -4,7 +4,7 @@
 
 
 {{!-- Page serves as a small pop up for creating a new rodent report --}}
-<div class ="cardPopup">
+<div id="reportPopUp" class="cardPopup">
     <div class="rodentReportCard">
         <section>
         <form id="rodentForm" method="POST" action="/rodentReports">
@@ -19,7 +19,7 @@
 
                     <script>
                         {{!-- TODO - pass in rodent data --}}
-                        const restaurantMapData = {{{restaurantMapData}}};
+                        restaurantMapData = {{{restaurantMapData}}};
 
                     </script>
                     </section>
@@ -63,7 +63,8 @@
             </div>
 
             <div class="formButtonRow">
-                <button type="submit" class="pillButton">Submit</button>
+                <button id="cancelSubmit" type="button" class="pillButton">Cancel</button>
+                <button type="Submit" class="pillButton">Submit</button>
             </div>
         </form>
         </section>

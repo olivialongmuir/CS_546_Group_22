@@ -21,7 +21,11 @@
                 <button id="searchButton">Search</button>
             </div>
 
-            <div id="heatmap"></div>
+            {{!-- Heatmap --}}
+            <div id="heatmap">
+                {{!-- Pop up partial for the rodent report form --}}
+                {{> createReport}}
+            </div>
         </div>
 
         <!-- right - hotspot feed -->
@@ -43,7 +47,10 @@
             </ul>
         </aside>
 
+
     </div>
+
+
 
     <script>
         const restaurantMapData = {{{restaurantMapData}}};
@@ -52,6 +59,7 @@
     <script>
         const rodentMapData = {{{rodentMapData}}};
     </script>
+
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>

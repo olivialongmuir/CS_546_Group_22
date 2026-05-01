@@ -172,7 +172,7 @@ window.addEventListener('load', () => {
         const lng = e.latlng.lng;
 
         //fly and zoom into that position
-        flyToLocation(lat,lng);
+        flyToLocation(lat,lng, 17);
 
         //Drop a temp pin in that location
         addPin(map, lat, lng);
@@ -238,10 +238,8 @@ window.addEventListener('load', () => {
 
 
 
-
-
 //Flys and zooms to a location from and event click
-function flyToLocation(lat,lng) {
+function flyToLocation(lat,lng, zoom) {
     // hide heatmap
     if (heat && map.hasLayer(heat)) {
         map.removeLayer(heat);
@@ -250,7 +248,7 @@ function flyToLocation(lat,lng) {
     //make location object
     var latlng = L.latLng(lat, lng);
 
-    map.flyTo(latlng, 17, {
+    map.flyTo(latlng, zoom, {
         duration: 1
     });
 
@@ -271,7 +269,7 @@ const makePopUp=(lat,lng)=>{
             </div>
             <div class="btn-stack">
             <button class="btn" style="background-color: grey";>Register Restaurant</button>
-            <button class="btn">Create Rodent Report</button>
+            <button class="createReportBtn btn">Create Rodent Report</button>
             </div>`
 }
 
@@ -296,3 +294,54 @@ const removePins=()=>{
     }
 }
 
+
+//Closes all pin popups
+const closePopUps=()=>{
+    for(const pin of activePins){
+        pin.closePopUp()
+    }
+}
+
+
+//Hides the create report popup
+document.getElementById("cancelSubmit")?.addEventListener('click', ()=>{
+
+    //get the pop up form to show
+    let popUp = document.getElementById("reportPopUp");
+    const mapLayout = document.getElementById("heatmapLayout");
+
+    if(popUp){
+        popUp.style.visibility = '';
+        mapLayout.style.visibility = 'visible';
+    }
+
+    //TODO - Populate the lat long and zip of the form
+
+})
+
+
+//Opens the create report popup
+document.addEventListener('click', (e) => {
+    //listens for clicks on the entire page
+
+    //if the click occured on a create report button class then this function will fire
+    const btn = e.target.closest('.createReportBtn');
+    if (!btn) return;
+
+    //get the pop up
+    const popUp = document.getElementById("reportPopUp");
+    const mapLayout = document.getElementById("heatmapLayout");
+
+    //now set visbility of all elements
+    if(popUp){
+        //show pop up
+        popUp.style.visibility = 'visible';
+        mapLayout.style.visibility = 'hidden';
+    }
+
+    //Flys back to location without user seeing
+    //Flys back out to standard view
+    // const nycLatLng = [40.7128, -74.0060];
+    // flyToLocation(40.7128, -74.0060, 16);
+
+});
