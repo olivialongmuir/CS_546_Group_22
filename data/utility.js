@@ -11,6 +11,7 @@ import { users, rodentReports, restaurants } from '../config/mongoCollections.js
 export const validateId = (id, name, errorSource) => {
     const parsed_id = checkId(id);
     if (!ObjectId.isValid(parsed_id)) throw `Error {${errorSource}}: ${name} is not a valid objectId`;
+    return parsed_id;
 };
 
 /**
