@@ -186,4 +186,222 @@ export const checkPhone = (phone) => {
     const parsed_phone = checkString(phone, 'phone');
     if (!/^\d{3}-\d{3}-\d{4}$/.test(parsed_phone)) throw 'Error: Phone number must be in the format XXX-XXX-XXXX';
     return parsed_phone;
-}
+};
+
+const zipPrefixToBorough = {
+    "100": "Manhattan",
+    "101": "Manhattan",
+    "102": "Manhattan",
+    "112": "Brooklyn",
+    "104": "Bronx",
+    "103": "Staten Island",
+    "111": "Queens",
+    "113": "Queens",
+    "114": "Queens",
+    "116": "Queens"
+};
+
+const zipToNeighborhood = {
+    // MANHATTAN
+    "10001": "Chelsea / Midtown South",
+    "10002": "Lower East Side",
+    "10003": "East Village",
+    "10004": "Financial District",
+    "10005": "Financial District",
+    "10006": "World Trade Center",
+    "10007": "Tribeca",
+    "10009": "East Village",
+    "10010": "Flatiron District",
+    "10011": "Chelsea",
+    "10012": "SoHo / Greenwich Village",
+    "10013": "SoHo / Tribeca",
+    "10014": "West Village",
+    "10016": "Murray Hill",
+    "10017": "Midtown East",
+    "10018": "Garment District",
+    "10019": "Midtown West",
+    "10021": "Upper East Side",
+    "10022": "Midtown East",
+    "10023": "Upper West Side",
+    "10024": "Upper West Side",
+    "10025": "Upper West Side / Morningside Heights",
+    "10026": "Harlem",
+    "10027": "Harlem",
+    "10028": "Upper East Side",
+    "10029": "East Harlem",
+    "10030": "Harlem",
+    "10031": "Washington Heights",
+    "10032": "Washington Heights",
+    "10033": "Washington Heights",
+    "10034": "Inwood",
+    "10035": "East Harlem",
+    "10036": "Times Square / Midtown",
+    "10037": "Harlem",
+    "10038": "Financial District",
+    "10039": "Harlem",
+    "10040": "Inwood",
+    "10044": "Roosevelt Island",
+    "10065": "Upper East Side",
+    "10075": "Upper East Side",
+    "10128": "Upper East Side",
+
+    // BROOKLYN
+    "11201": "Brooklyn Heights / Downtown Brooklyn",
+    "11203": "East Flatbush",
+    "11204": "Bensonhurst",
+    "11205": "Clinton Hill",
+    "11206": "Bedford-Stuyvesant",
+    "11207": "East New York",
+    "11208": "Cypress Hills",
+    "11209": "Bay Ridge",
+    "11210": "Flatlands / Midwood",
+    "11211": "Williamsburg",
+    "11212": "Brownsville",
+    "11213": "Crown Heights",
+    "11214": "Bensonhurst / Bath Beach",
+    "11215": "Park Slope",
+    "11216": "Bed-Stuy / Crown Heights",
+    "11217": "Boerum Hill / Gowanus",
+    "11218": "Kensington",
+    "11219": "Borough Park",
+    "11220": "Sunset Park",
+    "11221": "Bushwick",
+    "11222": "Greenpoint",
+    "11223": "Gravesend",
+    "11224": "Coney Island",
+    "11225": "Crown Heights",
+    "11226": "Flatbush",
+    "11228": "Dyker Heights",
+    "11229": "Sheepshead Bay",
+    "11230": "Midwood",
+    "11231": "Red Hook",
+    "11232": "Sunset Park",
+    "11233": "Bed-Stuy",
+    "11234": "Marine Park",
+    "11235": "Brighton Beach / Sheepshead Bay",
+    "11236": "Canarsie",
+    "11237": "Bushwick",
+    "11238": "Prospect Heights",
+    "11249": "Williamsburg (North Edge)",
+
+    // QUEENS
+    "11101": "Long Island City",
+    "11102": "Astoria",
+    "11103": "Astoria",
+    "11104": "Sunnyside",
+    "11105": "Astoria",
+    "11106": "Astoria",
+    "11354": "Flushing",
+    "11355": "Flushing",
+    "11356": "College Point",
+    "11357": "Whitestone",
+    "11358": "Flushing / Bayside",
+    "11360": "Bayside",
+    "11361": "Bayside",
+    "11362": "Little Neck",
+    "11363": "Little Neck",
+    "11364": "Oakland Gardens",
+    "11365": "Fresh Meadows",
+    "11366": "Fresh Meadows",
+    "11367": "Kew Gardens Hills",
+    "11368": "Corona",
+    "11369": "East Elmhurst",
+    "11370": "Astoria / East Elmhurst",
+    "11372": "Jackson Heights",
+    "11373": "Elmhurst",
+    "11374": "Rego Park",
+    "11375": "Forest Hills",
+    "11377": "Woodside",
+    "11378": "Maspeth",
+    "11379": "Middle Village",
+    "11385": "Ridgewood / Glendale",
+    "11411": "Cambria Heights",
+    "11412": "St. Albans",
+    "11413": "Springfield Gardens",
+    "11414": "Howard Beach",
+    "11415": "Kew Gardens",
+    "11416": "Ozone Park",
+    "11417": "Ozone Park",
+    "11418": "Richmond Hill",
+    "11419": "South Richmond Hill",
+    "11420": "South Jamaica",
+    "11421": "Woodhaven",
+    "11422": "Rosedale",
+    "11423": "Queens Village",
+    "11426": "Bellerose",
+    "11427": "Queens Village",
+    "11428": "Queens Village",
+    "11429": "Queens Village",
+    "11432": "Jamaica",
+    "11433": "Jamaica",
+    "11434": "Jamaica",
+    "11435": "Jamaica",
+    "11436": "Jamaica",
+
+    // BRONX
+    "10451": "Mott Haven",
+    "10452": "Highbridge",
+    "10453": "University Heights",
+    "10454": "Mott Haven",
+    "10455": "Mott Haven",
+    "10456": "Morrisania",
+    "10457": "Fordham",
+    "10458": "Belmont",
+    "10459": "Longwood",
+    "10460": "West Farms",
+    "10461": "Throggs Neck",
+    "10462": "Parkchester",
+    "10463": "Riverdale",
+    "10464": "City Island",
+    "10465": "Throggs Neck",
+    "10466": "Wakefield",
+    "10467": "Norwood",
+    "10468": "Fordham / Kingsbridge",
+    "10469": "Baychester",
+    "10470": "Riverdale",
+    "10471": "Riverdale",
+    "10472": "Soundview",
+    "10473": "Soundview",
+    "10474": "Hunts Point",
+    "10475": "Co-op City",
+
+    // STATEN ISLAND
+    "10301": "St. George",
+    "10302": "Port Richmond",
+    "10303": "Mariners Harbor",
+    "10304": "Stapleton",
+    "10305": "New Dorp",
+    "10306": "New Dorp Beach",
+    "10307": "Tottenville",
+    "10308": "Great Kills",
+    "10309": "Richmond Valley",
+    "10310": "West New Brighton",
+    "10312": "Annadale",
+    "10314": "New Springville"
+};
+
+export const getLocationFromZip = (zip) => {
+    if (!zip) return { borough: "Unknown", neighborhood: "Unknown" };
+
+    const zipStr = String(zip).trim();
+    if (!/^\d{5}$/.test(zipStr)) {
+        return { borough: "Unknown", neighborhood: "Unknown" };
+    }
+
+    const prefix = zipStr.slice(0, 3);
+
+    const borough =
+        zipPrefixToBorough[prefix] || "Unknown";
+
+    // fallback to borough if neighborhood not found
+    const neighborhood =
+        zipToNeighborhood[zipStr] || borough; 
+
+    return { borough, neighborhood };
+};
+
+export const countToStatus = (count) => {
+  if (count >= 10) return { key: 'high', label: 'High Risk' };
+  if (count >= 5) return { key: 'medium', label: 'Medium Risk' };
+  return { key: 'low', label: 'Low Risk' };
+};

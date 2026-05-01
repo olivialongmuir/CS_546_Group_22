@@ -5,7 +5,7 @@ const router = Router();
 import { getAllRestaurants, getRestaurantById } from '../data/restaurants.js';
 import { getAllReports} from '../data/rodentReports.js'
 import { getUserById } from '../data/users.js';
-import { checkId } from '../helpers.js';
+import { checkId, getLocationFromZip, countToStatus } from '../helpers.js';
 import NodeGeocoder from 'node-geocoder';
 import { countStats } from '../data/utility.js';
 
@@ -67,17 +67,38 @@ router.route('/heatmap').get(async (req, res) => {
             _id: r._id,
             lat: Number(r.latitude),
             lng: Number(r.longitude),
+            zip: r.zipcode,
             status: r.status
         }));
         const rodentMapData = JSON.stringify(rodentData);
 
-        // TODO - hone in on hotspot feed
-        // potentially grab restaurants with top comments
-        // or grab rodent data with top comments
-        const hotspotFeed = restaurantList.slice(0, 9).map(r => ({
-            name: r.name,
-            status: r.status ?? "Status Unavailable"
-        }));
+        // group rodent data for hotspot list by borough and neighborhood
+        const counts = {};
+        rodentData.forEach(r => {
+            const { borough, neighborhood } = getLocationFromZip(r.zip);
+            const key = `${borough}||${neighborhood}`;
+            if (!counts[key]) {
+                counts[key] = {
+                    borough,
+                    neighborhood,
+                    count: 0
+                };
+            }
+            counts[key].count++;
+        });
+
+        const hotspotFeed = Object.values(counts)
+            .map(item => {
+                const risk = countToStatus(item.count);
+
+                return {
+                    ...item,
+                    riskKey: risk.key,
+                    riskLabel: risk.label
+                };
+            })
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 5);
 
         res.render("heatmap", {
             title: 'Heatmap',

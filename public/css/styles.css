@@ -243,7 +243,7 @@ main {
 }
 
 #hotspotFeed {
-  flex: 1;
+  flex: 0.5;
   color: white;
 }
 
@@ -254,6 +254,9 @@ main {
 }
 
 #hotspotList li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 10px;
   border-bottom: 1px solid #333;
   cursor: pointer;
@@ -266,6 +269,56 @@ main {
   background: #222;
 }
 
+.hotspot-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hotspot-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.borough {
+  font-size: 0.75rem;
+  color: #aaa;
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+.risk-badge {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+
+.risk-badge--low {
+  background-color: rgba(163, 230, 53, 0.15);
+  border-color: rgba(163, 230, 53, 0.3);
+  color: var(--primary);
+}
+
+.risk-badge--medium {
+  background-color: rgba(250, 204, 21, 0.15);
+  border-color: rgba(250, 204, 21, 0.3);
+  color: #facc15;
+}
+
+.risk-badge--high {
+  background-color: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+}
 
 /* Added mini heapmap used in rodent report detail */
 #miniHeatmapSection {
@@ -336,9 +389,6 @@ h2{
   font-weight: 500;
   line-height: 1;
 }
-
-
-
 
 /* Styles used for the rodent reports page */
 .leftPane {
