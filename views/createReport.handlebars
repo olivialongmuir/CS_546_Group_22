@@ -51,13 +51,15 @@
             {{!-- Hidden items that are derrived from map click and passed to route --}}
             <div>
                 {{!-- <label for="zipcode">Zip Code:</label> --}}
-                <input type="text" id="zipcode" name="zipcode" value="{{ zipcode }}" hidden/>
+                <input type="text" id="zipcode" name="zipcode" value="{{ zip }}" hidden/>
                 {{!-- <label for="latitude">Latitude:</label> --}}
-                <input type="text" id="latitude" name="latitude" value="{{ latitude }}" hidden/>
+                <input type="text" id="latitude" name="latitude" value="{{ lat }}" hidden/>
                 {{!-- <label for="longitude">Longitude:</label> --}}
-                <input type="text" id="longitude" name="longitude" value="{{ longitude }}" hidden/>
+                <input type="text" id="longitude" name="longitude" value="{{ lng }}" hidden/>
+
+                {{!-- restaurantID USE THIS FOR WHEN REPORTS ARE MADE AT A RESTAURANT --}}
+                <input type="text" id="restaurantId" name="restaurantId" value="{{ restuarantId }}" hidden/>
                 
-                {{!-- if (!data.restaurantId || !data.userId || !data.description || data.latitude === undefined || data.longitude === undefined) { --}}
             </div>
 
             <div class="formButtonRow">
