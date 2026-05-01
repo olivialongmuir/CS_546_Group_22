@@ -94,6 +94,7 @@ document.querySelector(".leftPane")?.addEventListener("click", async (e) => {
         <p>zipcode: ${data.zipcode}</p>
         <p>latitude: ${data.latitude}</p>
         <p>longitude: ${data.longitude}</p>
+        <p>Description: ${data.description}</p>
     `;
 
     //Heatmap update - set the heatmaps view to be the center of this elements lat and long coordinates

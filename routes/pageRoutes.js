@@ -125,6 +125,7 @@ router.route('/ratreports').get(async (req, res) => {
 
         //set the minimaps location to be first report if available
         let firstReport = reports[0]
+
         const firstLocation = {
             name: firstReport.name,
             lat: Number(firstReport.latitude),
