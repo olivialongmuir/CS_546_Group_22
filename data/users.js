@@ -2,6 +2,7 @@ import { users, comments } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import { hash, compare } from "bcryptjs";
 import { 
+    checkId,
     checkEmail, 
     checkFirstName, 
     checkLastName, 
