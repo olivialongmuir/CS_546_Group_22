@@ -7,7 +7,8 @@ import {
     checkLastName, 
     checkPassword, 
     checkUsername, 
-    checkUserType 
+    checkUserType,
+    checkId
 } from "../helpers.js";
 import { validateId } from "./utility.js";
 
@@ -103,7 +104,9 @@ export const createUser = async({
         username: validatedUsername,
         emailAddress: validatedEmail,
         hashPassword: hashPassword,
-        timestamp: timestamp
+        approved,
+        timestamp: timestamp,
+        comments: []
     }
 
     // Save into database as a new user
