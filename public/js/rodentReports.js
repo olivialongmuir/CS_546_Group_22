@@ -124,8 +124,11 @@ const getDateNow=()=>{
     return date
 } 
 
-//Auto sets the date filters to be today and last 30 days
-const today = new Date().toISOString().split('T')[0];
+//Auto sets the date filters to be today+1 and last 30 days
+let today = new Date()
+today.setDate(today.getDate() + 1)
+today = today.toISOString().split('T')[0];
+
 let monthAgo = new Date();
 monthAgo.setDate(monthAgo.getDate() - 30);
 monthAgo = monthAgo.toISOString().split('T')[0];
