@@ -270,9 +270,8 @@ const makePopUp=(lat,lng)=>{
                 <span class="locationStat">Lng: ${lng}</span>
             </div>
             <div class="btn-stack">
-            <button class="btn">Nearby Reports</button>
-            <button class="btn">Nearby Restaurants</button>
-            <button class="btn">Create Report</button>
+            <button class="btn" style="background-color: grey";>Register Restaurant</button>
+            <button class="btn">Create Rodent Report</button>
             </div>`
 }
 

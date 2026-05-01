@@ -612,7 +612,9 @@ h2{
   color: #000;
 }
 
-.btn--primary:hover { background-color: var(--primary-hover); }
+.btn--primary:hover { 
+  background-color: var(--primary-hover); 
+}
 
 .btn--outline {
   background-color: transparent;
