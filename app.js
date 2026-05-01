@@ -44,7 +44,11 @@ app.use('/register', loginRedirect);
 app.use('/profile', protectedRoute);
 app.use('/admin', adminOnly);
 
-app.engine('handlebars', exphbs.engine({defaultLayout: 'main'}));
+app.engine('handlebars', exphbs.engine({
+  defaultLayout: 'main',
+  partialsDir: 'views/partials' 
+}));
+
 app.set('view engine', 'handlebars');
 
 configRoutes(app);

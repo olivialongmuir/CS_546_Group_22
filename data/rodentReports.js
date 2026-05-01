@@ -13,7 +13,8 @@ import {
     checkUserType, 
     checkZipcode, 
     checkLatitude,
-    checkLongitude
+    checkLongitude,
+    checkNumber
 } from "../helpers.js";
 import { validateId } from './utility.js';
 
@@ -82,22 +83,43 @@ export const createReport = async(
     userId,
     description
 ) => {
+
     const errorSource = "createReport";
     const validatedZipcode = checkZipcode(zipcode);
     const validatedLatitude = checkNumber(latitude, "latitude");
     const validatedLongitude = checkNumber(longitude, "longitude");
-    const validatedInspectionDate = checkDate(inspectionDate);
     const validatedStatus = checkRodentStatus(status);
-    const validatedDate = checkDate(approvedDate);
     const validatedDescription = checkDescription(description);
-    const validatedJobId = checkJobId(jobId);
-    const validatedRestaurantId =  validateId(restaurantId, 'restaurantId', errorSource);
     const validatedUserId = validateId(userId, 'userId', errorSource);
-    
-    // Make sure no duplicate report exists
-    const reportCollection = await rodentReports();
-    const reportInfo = reportCollection.findOne({jobId: validatedJobId})
-    if (reportInfo) throw `Error {${errorSource}}: Report with this jobId already exists`;
+
+
+    let validatedJobId = null;
+    if(jobId != null){
+        validatedJobId = checkJobId(jobId);
+    }
+
+    //Allowed null values for dates. These values are null until a validation event
+    let validatedInspectionDate = null;
+    if(restaurantId != null){
+        validatedInspectionDate = checkDate(inspectionDate);
+    }
+    let validatedDate = null;
+    if(approvedDate != null){
+        validatedDate = checkDate(approvedDate);
+    }
+
+    //null restaurant id for an unassocated report
+    let validatedRestaurantId = null;
+    if(restaurantId != null){
+        validatedRestaurantId = validateId(restaurantId, 'restaurantId', errorSource);
+    }
+
+
+    //Make sure no duplicate report exists
+    //Removing this logic because JobID isnt used in our website to identify a report
+    // const reportCollection = await rodentReports();
+    // const reportInfo = await reportCollection.findOne({jobId: validatedJobId})
+    // if (reportInfo) throw `Error {${errorSource}}: Report with this jobId already exists`;
 
     // Timestamp request
     const now = new Date();
@@ -122,13 +144,16 @@ export const createReport = async(
     }
 
     // Insert new report into database
-    const insertInfo = await reportCollection.insertOne(newReport);
+    const reportsCollection = await rodentReports()
+    const insertInfo = await reportsCollection.insertOne(newReport);
     if (!insertInfo.acknowledged) throw `Error {${errorSource}}: Unable to add new report`;
 
     // Return newly created report
     const newId = insertInfo.insertedId.toString();
     return await getReportById(newId);
 };
+
+
 
 /**
  * Updates rodent report by objectId
@@ -165,7 +190,7 @@ export const updateReport = async(
 
     // Template for partial update
     const updateReport = {};
-    if (zipcode !== undefined) updateReport["zipcode"] = checkZipcode(jobId);
+    if (zipcode !== undefined) updateReport["zipcode"] = checkZipcode(zipcode);
     if (latitude !== undefined) updateReport["latitude"] = checkLatitude(latitude);
     if (longitude !== undefined) updateReport["longitude"] = checkLongitude(longitude);
     if (inspectionDate !== undefined) updateReport["inspectionDate"] = checkDate(inspectionDate);

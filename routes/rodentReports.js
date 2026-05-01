@@ -30,14 +30,46 @@ router.route('/').get(async (req, res) => {
 // creates a rodent report
 router.route('/').post(async (req, res) => {
   try {
+
     const data = req.body;
 
-    if (!data.restaurantId || !data.userId || !data.description || data.latitude === undefined || data.longitude === undefined) {
-      return res.status(400).json({ error: 'Missing required fields' });
+    //Add in the default values needed for report creation
+    let jobId = null
+
+    let zipcode = data.zipcode
+    let latitude = data.latitude
+    let longitude = data.longitude
+    //inspection date gets set to null since not related
+    let inspectionDate = null;
+    //status is unverififed as default
+    let status = 'unverified';
+    //approvedDate gets set to null since not related - This gets set when validated???
+    let approvedDate = null;
+
+    //If restaurant ID is blank then set it to null. That will be a report not associated to a report
+    let restaurantId;
+    if(data.restaurantId == ''){
+      restaurantId = null;
+    }else{
+      restaurantId = data.restaurantId
     }
+    
+    //Get the user Id 
+    let userId = '69e620a94370984bd615af92' //FAKE USER TODO
+    let description = data.description
 
-    const report = await createReport(data);
-
+    const report = await createReport(
+      jobId,
+      zipcode,
+      latitude,
+      longitude,
+      inspectionDate,
+      status,
+      approvedDate,
+      restaurantId,
+      userId,
+      description
+    );
     res.status(201).json(report);
   } catch (error) {
     res.status(500).json({ error: error.message });

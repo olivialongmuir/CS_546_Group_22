@@ -1,11 +1,8 @@
 
-Plan for adding a rodent report
+5/1/26 Action plan
 
-DONE - create new rodent report db function
-DONE - post new rodent report route
-TODO - rodent report entry form
-TODO - minimap added to entry form
-TODO - DB validation
-TODO - route validation
-TODO - client side form validation
-TODO - rodent report creation page?
+TODO - update map pop up to show create report and register restaurant
+TODO - improve the style of create rodent report form
+TODO - complete the rodent report create form so it actually submits and saves
+TODO - client side validation of the report form
+TODO - create rodent report button should make the report creation as a pop up on the heatmap screen

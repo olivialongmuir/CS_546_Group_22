@@ -3,17 +3,17 @@
 //Make small and not scrollable
 
 //set map as a global var to edit 
-let map;
-let ratPin;
+let miniMap;
 
+//using alternative name for rat pin since used across multiple pages
+let miniRatPin;
 
 window.addEventListener('load', () => {
-    const mapEl = document.getElementById('miniHeatmap');
-    if (!mapEl) {
+    const miniMapEl = document.getElementById('miniHeatmap');
+    if (!miniMapEl) {
         console.error('miniHeatmap element not found');
         return;
     }
-
 
     //get the lat and long of the current restaurant
     let temp = restaurantMapData[0];
@@ -27,7 +27,7 @@ window.addEventListener('load', () => {
 
     
     //initialize the map and set the rules
-    map = L.map('miniHeatmap', {
+    miniMap = L.map('miniHeatmap', {
         preferCanvas: true,
         dragging: false,
         zoomControl: false,       //Removes the +/- buttons
@@ -41,10 +41,10 @@ window.addEventListener('load', () => {
     //map layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+    }).addTo(miniMap);
 
     //Define pin syle to be used will update the global var
-    ratPin = L.icon({
+    miniRatPin = L.icon({
             iconUrl: '/public/images/rat_pin_alt.png',
             iconSize: [30, 30],
             iconAnchor: [16, 32],
@@ -55,14 +55,14 @@ window.addEventListener('load', () => {
     // restaurant marker (only showing one since it should just be current rodent report)
     if (typeof restaurantMapData !== 'undefined') {
         restaurantMapData.forEach(restaurant => {
-            L.marker([restaurant.lat, restaurant.lng], { icon: ratPin})
-                .addTo(map)
+            L.marker([restaurant.lat, restaurant.lng], { icon: miniRatPin})
+                .addTo(miniMap)
                 .bindPopup(restaurant.name);
         });
     }
 
     setTimeout(() => {
-        map.invalidateSize(true);
+        miniMap.invalidateSize(true);
     }, 0);
 });
 
@@ -94,6 +94,7 @@ document.querySelector(".leftPane")?.addEventListener("click", async (e) => {
         <p>zipcode: ${data.zipcode}</p>
         <p>latitude: ${data.latitude}</p>
         <p>longitude: ${data.longitude}</p>
+        <p>Description: ${data.description}</p>
     `;
 
     //Heatmap update - set the heatmaps view to be the center of this elements lat and long coordinates
@@ -101,12 +102,12 @@ document.querySelector(".leftPane")?.addEventListener("click", async (e) => {
     //clear all old markers
 
     //set the center view (use fly to or pan to?)
-    map.panTo(lo, 14, {animate: true, duration: 0.5}); 
+    miniMap.panTo(lo, 14, {animate: true, duration: 0.5}); 
     // map.flyTo(lo, map.getZoom(), { duration: 0.3 });
     //set a marker icon to be a small rat??? use L.Icon from docs
 
     //add new marker to the map for that rodent sighting
-    L.marker([data.latitude, data.longitude], { icon: ratPin }).addTo(map).bindPopup(data._id);
+    L.marker([data.latitude, data.longitude], { icon: miniRatPin }).addTo(miniMap).bindPopup(data._id);
 
 });
 
@@ -124,8 +125,11 @@ const getDateNow=()=>{
     return date
 } 
 
-//Auto sets the date filters to be today and last 30 days
-const today = new Date().toISOString().split('T')[0];
+//Auto sets the date filters to be today+1 and last 30 days
+let today = new Date()
+today.setDate(today.getDate() + 1)
+today = today.toISOString().split('T')[0];
+
 let monthAgo = new Date();
 monthAgo.setDate(monthAgo.getDate() - 30);
 monthAgo = monthAgo.toISOString().split('T')[0];

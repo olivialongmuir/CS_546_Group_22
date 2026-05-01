@@ -32,7 +32,7 @@ export const checkId = (id) => {
 
 export const checkJobId = (jobId) => {
     const parsed_jobId = checkString(jobId, 'jobId');
-    if (/^[A-Z]{2}\d{7}$/.test(parsed_jobId)) throw 'Error: jobId must be 2 capital letters followed by 7 numbers'
+    if (!(/^[A-Z]{2}\d{7}$/.test(parsed_jobId))) throw 'Error: jobId must be 2 capital letters followed by 7 numbers'
     return parsed_jobId;
 }
 
@@ -119,8 +119,11 @@ export const checkPassword = (password) => {
 };
 
 export const checkZipcode = (zipcode) => {
+
+
     const parsed_zipcode = checkString(zipcode, 'zipcode'); //zipcode can be 00502
-    if (/^\d{5}$/.test(parsed_zipcode)) throw 'Error: Zipcode must contain exactly 5 integers';
+
+    if (!(/^\d{5}$/.test(parsed_zipcode))) throw 'Error: Zipcode must contain exactly 5 integers';
     return parsed_zipcode;
 };
 
