@@ -191,6 +191,29 @@ export const checkPhone = (phone) => {
     return parsed_phone;
 };
 
+export const gradeToStatus = (grade) => {
+  if (grade === 'A') return { key: 'safe',      label: 'Safe' };
+  if (grade === 'B') return { key: 'watchlist', label: 'Watchlist' };
+  if (grade === 'C') return { key: 'danger',    label: 'Danger' };
+  return { key: 'unknown', label: 'Not Graded' };
+};
+
+// Normalizing into template
+export const normalizeRestaurant = (r) => ({
+  id: r._id?.toString(),
+  name: r.name,
+  borough: r.boro,
+  cuisine: r.type,
+  address: [r.building, r.street].filter(Boolean).join(' '),
+  zipcode: r.zipcode ? String(r.zipcode).split('.')[0] : '',
+  phone: r.phone,
+  grade: r.grade,
+  rodentScore: r.score,
+  lastVerified: r.gradeDate,
+  status: gradeToStatus(r.grade),
+  recentReports: 0 // TODO - count from rodentReports collection once linked
+});
+
 const zipPrefixToBorough = {
     "100": "Manhattan",
     "101": "Manhattan",
