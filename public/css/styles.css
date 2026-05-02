@@ -448,6 +448,15 @@ h2{
   color: #a3e635;
 }
 
+
+.restaurant-icon{
+  width: 28px;
+  height: 28px;
+  margin: 10px;
+  vertical-align: middle;
+  color: rgb(71, 130, 239);
+}
+
 .page-container {
   width: 100%;
   max-width: 72rem;

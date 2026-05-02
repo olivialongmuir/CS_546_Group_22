@@ -204,13 +204,6 @@ router.route('/ratreports/:id').get(async (req, res) => {
 
 
 
-
-
-
-
-
-
-
 const gradeToStatus = (grade) => {
   if (grade === 'A') return { key: 'safe',      label: 'Safe' };
   if (grade === 'B') return { key: 'watchlist', label: 'Watchlist' };
@@ -351,6 +344,14 @@ router.route('/createReport').get(async (req, res) => {
         zip: zip,
     });
 });
+
+
+//Restaurant Registration Form Route
+router.route('/registerRestaurant').get(async (req, res) => {
+    res.render('registerRestaurant')
+});
+
+
 
 
 export default router;

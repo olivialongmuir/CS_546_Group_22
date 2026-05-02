@@ -1,0 +1,120 @@
+
+<link rel="stylesheet" href="public/css/rodentReport.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+
+{{!-- Page serves as a small pop up for creating a new rodent report --}}
+<div id="restaurantPopUp" class="cardPopup">
+    <div class="restaurantRegisterCard">
+        <section>
+            <div class="reportCardHeader">
+            <h1><i data-lucide="utensils-crossed"class="restaurant-icon"></i>Register restaurant<i data-lucide="utensils-crossed"class="restaurant-icon"></i></h1>
+
+
+                {{!-- Coordinate displays --}}
+                <div class="reportCardInfo">
+                    {{!-- <p>Reporter: Name{{user}}</p> --}}
+                    <div class="infoRow">
+                        <span id="restaurant-latStat" class="locationStat"></span>
+                        <span id="restaurant-lngStat" class="locationStat"></span>
+                        {{!-- <span class="locationStat">Zip: {{zip}}</span> --}}
+                    </div>
+                </div>
+
+            </div>
+
+            {{!-- Form --}}
+            <form id="restaurantRegisterForm" method="POST" action="/restaurants">
+                           
+                {{!-- name --}}
+                <div>
+                    <label for="name">Name</label>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value="{{ name }}"
+                        required
+                    />
+                </div>
+
+                {{!-- type --}}
+                <div>
+                    <label for="type">Type</label>
+                    <input
+                        type="text"
+                        id="type"
+                        name="type"
+                        value="{{ type }}"
+                        required
+                    />
+                </div>
+
+                {{!-- website --}}
+                <div>
+                    <label for="website">Website</label>
+                    <input
+                        type="text"
+                        id="website"
+                        name="website"
+                        value="{{ website }}"
+                        required
+                    />
+                </div>
+
+                {{!-- phone --}}
+                <div>
+                    <label for="phone">Phone</label>
+                    <input
+                        type="text"
+                        id="phone"
+                        name="phone"
+                        value="{{ phone }}"
+                        required
+                    />
+                </div>
+
+                {{!-- phone --}}
+                <div>
+                    <label for="permit_number">Permit Number</label>
+                    <input
+                        type="text"
+                        id="permit_number"
+                        name="permit_number"
+                        value="{{ permit_number }}"
+                        required
+                    />
+                </div>
+
+                {{!-- Hidden items that are derrived from map click and passed to route --}}
+                <div>
+
+                    {{!-- <label for="latitude">Latitude:</label> --}}
+                    <input type="text" id="restaurant-latitude" name="latitude" value="{{ lat }}" hidden/>
+                    {{!-- <label for="longitude">Longitude:</label> --}}
+                    <input type="text" id="restaurant-longitude" name="longitude" value="{{ lng }}" hidden/>
+
+                    {{!-- Status will be a defaulted value --}}
+                    <input type="text" id="status" name="status" value="pending" hidden/>
+                    
+                </div>
+
+                <div class="formButtonRow">
+                    <button id="restaurantCancelSubmit" type="button" class="pillButton" style="background-color: grey">Cancel</button>
+                    <button type="Submit" class="pillButton" style="background-color: rgb(71, 130, 239);">Submit</button>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+
+
+{{!-- leaflet scripts --}}
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+{{!-- leaflet heat plugin --}}
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+
+
+{{!-- Expected restaurant form data --}}
+

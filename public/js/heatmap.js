@@ -277,7 +277,7 @@ const makePopUp=(lat,lng)=>{
                 <span class="locationStat">Lng: ${lng}</span>
             </div>
             <div class="btn-stack">
-            <button class="btn popup-btn" style="background-color: grey";>Register Restaurant</button>
+            <button class="resgisterBtn btn popup-btn" style="background-color: grey";>Register Restaurant</button>
             <button class="createReportBtn btn popup-btn">Create Rodent Report</button>
             </div>`
 }
@@ -352,10 +352,11 @@ const closePopUps=()=>{
 }
 
 
-//Shows the create report pop up
-const showReportCard=()=>{
-    //get the pop up
-    const popUp = document.getElementById("reportPopUp");
+
+//Shows a target pop up card
+const showPopUp=(popUp)=>{
+    //get the pop up by id
+    popUp = document.getElementById(popUp);
     const mapLayout = document.getElementById("heatmapLayout");
 
     //now set visbility of all elements
@@ -368,10 +369,10 @@ const showReportCard=()=>{
 
 
 //Hides the create report pop up
-const hideReportCard=()=>{
+const hidePopUp=(popUp)=>{
 
     //get the pop up form to show
-    let popUp = document.getElementById("reportPopUp");
+    popUp = document.getElementById(popUp);
     const mapLayout = document.getElementById("heatmapLayout");
 
     if(popUp){
@@ -386,16 +387,25 @@ const hideReportCard=()=>{
 
 //Hides the create report popup if the cancel button is pressed
 document.getElementById("cancelSubmit")?.addEventListener('click', ()=>{
-    hideReportCard();
+    hidePopUp("reportPopUp");
 })
 
 
-//hides the create report popup form is user clicks outside of the popup
+//hides any active pop up if user clicks outside of the popup
 document.addEventListener('click', (e)=>{
-
     if(e.target.id =='reportPopUp'){
-        hideReportCard();
+        hidePopUp("reportPopUp");
     }
+
+    if(e.target.id == "restaurantPopUp"){
+        hidePopUp("restaurantPopUp");
+    }
+});
+
+
+//Hides if the user cancels the restaurant submisison
+document.getElementById("restaurantCancelSubmit")?.addEventListener('click', ()=>{
+    hidePopUp("restaurantPopUp");
 })
 
 
@@ -408,8 +418,6 @@ document.addEventListener('click', (e)=>{
     const btn = e.target.closest('.createReportBtn');
     if (!btn) return;
 
-
-
     //Populate the lat and long pill buttons
     document.getElementById("latStat").innerText = `Lat: ${lastLat}`;
     document.getElementById("lngStat").innerText = `Lng: ${lastLng}`;
@@ -419,11 +427,30 @@ document.addEventListener('click', (e)=>{
     document.getElementById("longitude").value = lastLng;
 
     //shows the report card
-    showReportCard();
+    showPopUp("reportPopUp");
+
+});
 
 
-    //Flys back to location without user seeing
-    //Flys back out to standard view
-    // const nycLatLng = [40.7128, -74.0060];
-    // flyToLocation(40.7128, -74.0060, 16);
+
+
+//Opens the register restaurant popup and populates form
+document.addEventListener('click', (e)=>{
+    //listens for clicks on the entire page
+
+    //if the click occured on a create report button class then this function will fire
+    const btn = e.target.closest('.resgisterBtn');
+    if (!btn) return;
+
+    //Populate the lat and long pill buttons
+    document.getElementById("restaurant-latStat").innerText = `Lat: ${lastLat}`;
+    document.getElementById("restaurant-lngStat").innerText = `Lng: ${lastLng}`;
+
+    //Prepopulate the forms fiedls with user info and location
+    document.getElementById("restaurant-latitude").value = lastLat;
+    document.getElementById("restaurant-longitude").value = lastLng;
+
+    //shows the report card
+    showPopUp("restaurantPopUp");
+
 });
