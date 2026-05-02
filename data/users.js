@@ -2,7 +2,6 @@ import { users, comments } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import { hash, compare } from "bcryptjs";
 import { 
-    checkId,
     checkEmail, 
     checkFirstName, 
     checkLastName, 
@@ -13,11 +12,24 @@ import {
 import { validateId } from "./utility.js";
 
 /**
+ * User Schema:
+ * {
+ *  type:               string
+ *  firstName:          string
+ *  lastName:           string
+ *  username:           string
+ *  emailAddress:       string
+ *  hashPassword:       string
+ *  approved:           string
+ *  timestamp:          string
+ * }
+ */
+
+/**
  * Gets all users from database as a list of objects
  * @returns usersList
  */
 export const getAllUsers = async() => {
-    // Get users collection from database
     const usersCollection = await users();
     let userList = await usersCollection.find({}).toArray();
 
@@ -27,6 +39,7 @@ export const getAllUsers = async() => {
     // Convert all object ids to string ids
     userList = userList.map(user => {
         user._id = user._id.toString();
+        delete user.hashPassword; // Do not return hased password
         return user
     })
     return userList
@@ -39,8 +52,7 @@ export const getAllUsers = async() => {
  */
 export const getUserById = async(id) => {
     const errorSource = "getUserById";
-    const validatedId = checkId(id);
-    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
+    const validatedId = validateId(id, 'userId', errorSource);
 
     // Get rodentReports collection from database
     const usersCollection = await users();
@@ -104,9 +116,8 @@ export const createUser = async({
         username: validatedUsername,
         emailAddress: validatedEmail,
         hashPassword: hashPassword,
-        approved,
-        timestamp: timestamp,
-        comments: []
+        approved: approved,
+        timestamp: timestamp
     }
 
     // Save into database as a new user
@@ -124,9 +135,13 @@ export const createUser = async({
 export const getPendingUsers = async () => {
     const userCollection = await users();
     let pending = await userCollection.find({ approved: false }).toArray();
+
+    // Check if database returned anything
+    if (pending.length === 0) return [];
+
     pending = pending.map(user => {
         user._id = user._id.toString();
-        delete user.hashPassword;
+        delete user.hashPassword; // Do not return hased password
         return user;
     });
     return pending;
@@ -139,8 +154,7 @@ export const getPendingUsers = async () => {
  */
 export const approveUser = async (id) => {
     const errorSource = "approveUser";
-    const validatedId = checkId(id);
-    if (!ObjectId.isValid(validatedId)) throw `Error {${errorSource}}: ID is not a valid objectId`;
+    const validatedId = validateId(id, 'userId', errorSource);
 
     const userCollection = await users();
     const result = await userCollection.findOneAndUpdate(
@@ -193,6 +207,7 @@ export const updateUser = async(
     if (!updateInfo) throw `Error {${errorSource}}: Could not update user with id ${validatedId}`;
 
     updateInfo._id = updateInfo._id.toString();
+    delete updateInfo.hashPassword; // Do not return hased password
     return updateInfo;
 };
 
@@ -229,12 +244,11 @@ export const getUserComments = async(id) => {
 
     // Get all comments from comments database associated with this user
     const commentCollection = await comments();
-    let commentItems = await commentCollection
-        .find({userId: validatedId})
-        .toArray(); // Assuming not too many comments
+    let commentItems = await commentCollection.find({userId: validatedId}).toArray();
+    if (commentItems.length === 0) return [];
 
     // Ensure all comment IDs are in the form of a string
-    commentItems = (commentItems || []).map(item => {
+    commentItems = commentItems.map(item => {
         item._id = item._id.toString();
         return item
     })
@@ -257,9 +271,7 @@ export const getUserRodentReports = async (id) => {
 
     // Gets all rodent reports attached to a user
     const reportCollection = await rodentReports();
-    let reportItems = await reportCollection
-        .find({userId: validatedId})
-        .toArray();
+    let reportItems = await reportCollection.find({userId: validatedId}).toArray();
 
     // Ensure all rodent report IDs are in the form of a string
     reportItems = reportItems.map(report => {

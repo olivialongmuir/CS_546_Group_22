@@ -4,6 +4,17 @@ import { validateId } from "./utility.js";
 import { checkReactionType } from "../helpers.js";
 
 /**
+ * Reaction Schema:
+ * {
+ *  _id:            objectId
+ *  userId:         string
+ *  commentId:      string
+ *  reactionType:   string
+ *  timestamp:      string
+ * }
+ */
+
+/**
  * Updates reaction based on reaction type
  * @param {string} userId 
  * @param {string} commentId 
@@ -53,25 +64,32 @@ export const updateReaction = async(
             returnDocument: "before"
         }
     );
+
+    // Check if a reaction got created or is this an update
     const prevType = reactionItem ? reactionItem.reactionType : null;
 
-    // Clicked on the same request twice
+    // Clicked on the same request twice. Delete the reaction
     if (prevType === validatedReactionType) {
         await deleteReaction(reactionItem._id.toString());
-        return { removed: true };
+        return { deleted: true };
     }
 
     // Update comment like/dislike count
     let updateQuery = {};
     if (prevType === null) {
-        updateQuery = {$inc: {[`stats.${validatedReactionType}s`]: 1}};
+        updateQuery = {$inc: {[`stats.${validatedReactionType}s`]: 1}}; // Just increment it by 1 if a new reaction
     } else {
-        updateQuery = {
-            $inc: {
-                [`stats.${validatedReactionType}s`]: 1,
-                [`stats.${prevType}s`]: -1
+        updateQuery = // Otherwise properly increment or decrement the counts
+        {
+            $set: {
+                [`stats.${prevType}s`]: {
+                    $max: [0, { $subtract: [`$stats.${prevType}s`, 1] }] // $max to ensure we don't go below 0 likes/dislikes. Basically a clamp()
+                },
+                [`stats.${validatedReactionType}s`]: { 
+                    $add: [`$stats.${validatedReactionType}s`, 1] 
+                }
             }
-        };
+        }
     }
 
     const updateInfo = await commentCollection.findOneAndUpdate(

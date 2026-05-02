@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { comments, restaurants } from '../config/mongoCollections.js';
+import { comments, reactions, restaurants } from '../config/mongoCollections.js';
 import { 
     checkString, 
     checkWebsite, 
@@ -12,11 +12,25 @@ import {
 import { validateId } from './utility.js';
 
 /**
+ * Restaurant Schema:
+ * {
+ *  _id:                objectId
+ *  name:               string
+ *  type:               string
+ *  latitude:           number
+ *  longitude:          number
+ *  website:            string
+ *  phone:              string
+ *  permit_number:      string
+ *  status:             string
+ * }
+ */
+
+/**
  * Gets all restaurants form database as a list of objects
  * @returns restaurantList
  */
 export const getAllRestaurants = async() => {
-    // Get restaurant collection from database
     const restaurantCollection = await restaurants();
     let restaurantList = await restaurantCollection.find({}).toArray();
 
@@ -166,9 +180,20 @@ export const deleteRestaurant = async(id) => {
     const errorSource = "deleteRestaurant";
     const validatedId = validateId(id, 'restaurantId', errorSource);
 
+    const [restaurantCollection, reactionCollection, commentCollection] = await Promise.all([
+        restaurants(),
+        reactions(),
+        comments()
+    ])
+
+    // Delete all comments associated with restaurant. Ok to have 0 count since there might not be any comments
+    let deletionInfo = commentCollection.deleteMany({restaurantId: validatedId});
+
+    // Delete all reactions associated with restaurant. Ok to have 0 count since there might not be any reactions
+    deletionInfo = reactionCollection.deleteMany({})
+
     // Delete restaurant from database
-    const restaurantCollection = await restaurants();
-    const deletionInfo = await restaurantCollection.deleteOne({_id: new ObjectId(validatedId)});
+    deletionInfo = await restaurantCollection.deleteOne({_id: new ObjectId(validatedId)});
     if (deletionInfo.deletedCount === 0) throw `Error {${errorSource}}: Could not delete restaurant with id ${validatedId}`;
 
     return { deleted: true };
