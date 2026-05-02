@@ -27,7 +27,7 @@ import {
  */
 export const updateRestaurantReaction = async(userId, restaurantId, type) => {
     const errorSource = "updateRestaurantReaction";
-    updateReaction(userId, restaurantId, COLLECTION_IDS.RESTAURANT, type, errorSource)
+    return updateReaction(userId, restaurantId, COLLECTION_IDS.RESTAURANT, type, errorSource)
 }
 
 /**
@@ -38,7 +38,7 @@ export const updateRestaurantReaction = async(userId, restaurantId, type) => {
  */
 export const updateCommentReaction = async(userId, commentId, type) => {
     const errorSource = "updateCommentReaction";
-    updateReaction(userId, commentId, COLLECTION_IDS.COMMENT, type, errorSource)
+    return updateReaction(userId, commentId, COLLECTION_IDS.COMMENT, type, errorSource)
 }
 
 /**
@@ -49,7 +49,7 @@ export const updateCommentReaction = async(userId, commentId, type) => {
  */
 export const updateReportReaction = async(userId, reportId, type) => {
     const errorSource = "updateReportReaction";
-    updateReaction(userId, reportId, COLLECTION_IDS.REPORT, type, errorSource)
+    return updateReaction(userId, reportId, COLLECTION_IDS.REPORT, type, errorSource)
 }
 
 /**
@@ -59,7 +59,7 @@ export const updateReportReaction = async(userId, reportId, type) => {
  */
 export const deleteRestaurantReaction = async(reactionId, restaurantId) => {
     const errorSource = "deleteRestaurantReaction";
-    deleteReaction(reactionId, restaurantId, COLLECTION_IDS.RESTAURANT, errorSource);
+    return deleteReaction(reactionId, restaurantId, COLLECTION_IDS.RESTAURANT, errorSource);
 }
 
 /**
@@ -69,7 +69,7 @@ export const deleteRestaurantReaction = async(reactionId, restaurantId) => {
  */
 export const deleteCommentReaction = async(reactionId, commentId) => {
     const errorSource = "deleteCommentReaction";
-    deleteReaction(reactionId, commentId, COLLECTION_IDS.COMMENT, errorSource);
+    return deleteReaction(reactionId, commentId, COLLECTION_IDS.COMMENT, errorSource);
 }
 
 /**
@@ -79,7 +79,7 @@ export const deleteCommentReaction = async(reactionId, commentId) => {
  */
 export const deleteReportReaction = async(reactionId, reportId) => {
     const errorSource = "deletereportReaction";
-    deleteReaction(reactionId, reportId, COLLECTION_IDS.REPORT, errorSource);
+    return deleteReaction(reactionId, reportId, COLLECTION_IDS.REPORT, errorSource);
 }
 
 /**
@@ -158,7 +158,7 @@ const updateReaction = async(
     // Clicked on the same request twice. Delete the reaction
     if (prevType === validatedReactionType) {
         await deleteReaction(reactionItem._id.toString());
-        return { deleted: true };
+        return { likes: 0, dislikes: 0 };
     }
 
     // Update comment like/dislike count
@@ -184,11 +184,11 @@ const updateReaction = async(
         updateQuery,
         {returnDocument: "after"}
     );
-    return updateInfo;
+    return updateInfo.stats;
 };
 
 /**
- * Deletes reaction from database by objectId. Updates comment with correct likes/dislikes
+ * Helper: Deletes reaction from database by objectId. Updates comment likes/dislikes
  * @param {string} reactionId
  * @param {string} targetId
  * @param {string} targetKey
@@ -225,14 +225,15 @@ const deleteReaction = async(reactionId, targetId, targetKey, errorSource) => {
         ? 'stats.likes'
         : 'stats.dislikes';
 
-    await targetCollection.updateOne(
+    const updateInfo = await targetCollection.findOneAndUpdate(
         {_id: new ObjectId(deletionInfo.targetId)},
         [{
             $set: {
                 [decrementField]: {$max: [0, {$subtract: [`$${decrementField}`, 1]}]} // $max to ensure we don't go below 0 likes/dislikes. Basically a clamp()
             }
-        }]
+        }],
+        {returnDocument: "after"}
     )
 
-    return { deleted: true };
+    return updateInfo.stats;
 };

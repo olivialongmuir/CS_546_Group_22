@@ -304,20 +304,20 @@ export const getUserReactedReports = async(userId, reportId) => {
     // Get just the ids
     const reportIds = reactionsList.map(reaction => new ObjectId(reaction.targetId));
     
-    // Find matching reports by objectId
-    let reportsList = await reportsCollection.find({
+    // Find matching items by objectId
+    let itemsList = await reportsCollection.find({
         _id: {$in: reportIds}
     }).toArray();
 
     // Check if database returned anything. Return empty array if nothing
-    if (reportsList.length === 0) return [];
+    if (itemsList.length === 0) return [];
 
     // Convert all object ids to string ids
-    reportsList = reportsList.map(report => {
+    itemsList = itemsList.map(report => {
         report._id = report._id.toString();
         return report
     })
-    return reportsList
+    return itemsList
 }
 
 /**
@@ -349,20 +349,20 @@ export const getUserReactedComments = async(userID, commentId) => {
     // Get just the ids
     const reportIds = reactionsList.map(reaction => new ObjectId(reaction.targetId));
     
-    // Find matching reports by objectId
-    let reportsList = await commentCollection.find({
+    // Find matching items by objectId
+    let itemsList = await commentCollection.find({
         _id: {$in: reportIds}
     }).toArray();
 
     // Check if database returned anything. Return empty array if nothing
-    if (reportsList.length === 0) return [];
+    if (itemsList.length === 0) return [];
 
     // Convert all object ids to string ids
-    reportsList = reportsList.map(report => {
+    itemsList = itemsList.map(report => {
         report._id = report._id.toString();
         return report
     })
-    return reportsList
+    return itemsList
 }
 
 /**
@@ -394,18 +394,18 @@ export const getUserReactedRestaurants = async(userID, restaurantId) => {
     // Get just the ids
     const reportIds = reactionsList.map(reaction => new ObjectId(reaction.targetId));
     
-    // Find matching reports by objectId
-    let reportsList = await restaurantsCollection.find({
+    // Find matching items by objectId
+    let itemsList = await restaurantsCollection.find({
         _id: {$in: reportIds}
     }).toArray();
 
     // Check if database returned anything. Return empty array if nothing
-    if (reportsList.length === 0) return [];
+    if (itemsList.length === 0) return [];
 
     // Convert all object ids to string ids
-    reportsList = reportsList.map(report => {
+    itemsList = itemsList.map(report => {
         report._id = report._id.toString();
         return report
     })
-    return reportsList
+    return itemsList
 }

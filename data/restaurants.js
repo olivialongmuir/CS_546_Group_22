@@ -201,15 +201,15 @@ export const deleteRestaurant = async(id) => {
         comments()
     ])
 
+    // Delete restaurant from database
+    let deletionInfo = await restaurantCollection.deleteOne({_id: new ObjectId(validatedId)});
+    if (deletionInfo.deletedCount === 0) throw `Error {${errorSource}}: Could not delete restaurant with id ${validatedId}`;
+
     // Delete all comments associated with restaurant. Ok to have 0 count since there might not be any comments
-    let deletionInfo = commentCollection.deleteMany({restaurantId: validatedId});
+    deletionInfo = commentCollection.deleteMany({restaurantId: validatedId});
 
     // Delete all reactions associated with restaurant. Ok to have 0 count since there might not be any reactions
     deletionInfo = reactionCollection.deleteMany({targetId: validatedId, targetKey: COLLECTION_IDS.RESTAURANT});
-
-    // Delete restaurant from database
-    deletionInfo = await restaurantCollection.deleteOne({_id: new ObjectId(validatedId)});
-    if (deletionInfo.deletedCount === 0) throw `Error {${errorSource}}: Could not delete restaurant with id ${validatedId}`;
 
     return { deleted: true };
 };
