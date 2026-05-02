@@ -67,10 +67,18 @@ router.route('/').post(async (req, res) => {
       restaurantId = data.restaurantId
     }
     
-    //Get the user Id 
-    let userId = '69e620a94370984bd615af92' //FAKE USER #TODO
+    //Get the user Id from session
+    let user = req.session.userId;
+    if(user == undefined){
+      //TODO - needs to route to errror pag e if someone tries to submit report when not logged in
+      console.log("TODO - error if not logged in when creating a report")
+    }
+    let userId = user
+
+    //Get description
     let description = data.description
 
+    //Build the report
     const report = await createReport(
       jobId,
       zipcode,
