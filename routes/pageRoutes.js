@@ -5,7 +5,7 @@ const router = Router();
 import { getAllRestaurants, getRestaurantById, getRestaurantComments } from '../data/restaurants.js';
 import { getAllReports} from '../data/rodentReports.js'
 import { getUserById } from '../data/users.js';
-import { createComment} from '../data/comments.js';
+import { createComment, deleteComment, getCommentById} from '../data/comments.js';
 import { updateReaction } from "../data/reactions.js";
 import { checkId, getLocationFromZip, countToStatus, gradeToStatus, normalizeRestaurant } from '../helpers.js';
 import NodeGeocoder from 'node-geocoder';
@@ -210,12 +210,35 @@ router.route('/restaurants/:id').get(async (req, res) => {
         res.render("restaurant", {
             title: `${restaurant.name} - SqueakPeek`,
             restaurant,
-            comments: restaurantComments
+            comments: restaurantComments,
+            currentUserId: req.session.userId
         });
     } catch (error) {
         console.error(error);
         res.status(404).send("Restaurant not found");
     }
+});
+
+router.post('/comments/:id/delete', async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    if (!userId) return res.status(403).json({ error: "Not logged in" });
+
+    const commentId = checkId(req.params.id.trim());
+    const comment = await getCommentById(commentId);
+
+    if (comment.userId !== userId) {
+      return res.status(403).json({ error: "Not authorized" });
+    }
+
+    await deleteComment(commentId);
+
+    return res.json({ success: true });
+
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Error deleting comment" });
+  }
 });
 
 router.post('/restaurants/:id/comments', async (req, res) => {

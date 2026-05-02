@@ -104,22 +104,28 @@ export const updateComment = async(
  * @param {string} id 
  * @returns 
  */
-export const deleteComment = async(id) => {
-    const errorSource = "deleteComment";
-    const validatedId = validateId(id, 'commentId', errorSource);
+export const deleteComment = async (id) => {
+  const errorSource = "deleteComment";
+  const validatedId = validateId(id, 'commentId', errorSource);
 
-    // Delete comment from database
-    const [commentCollection, reactionCollection] = await Promise.all([
-        comments(),
-        reactions()
-    ])
+  const [commentCollection, reactionCollection] = await Promise.all([
+    comments(),
+    reactions()
+  ]);
 
-    const deletionInfo = await commentCollection.deleteOne({_id: new ObjectId(validatedId)});
-    if (deletionInfo.deletedCount === 0) throw `Error {${errorSource}}: Could not delete restaurant with id ${validatedId}`;
+  // delete comment
+  const deletionInfo = await commentCollection.deleteOne({
+    _id: new ObjectId(validatedId)
+  });
 
-    // Also have to delete all corresponding reactions
-    const deletionInfoMany = await reactionCollection.deleteMany({commentId: validatedId});
-    if (deletionInfoMany.deletedCount === 0) throw `Error {${errorSource}}: Could not delete all restaurant reactions with id ${validatedId}`;
+  if (deletionInfo.deletedCount === 0) {
+    throw `Error {${errorSource}}: Could not delete comment with id ${validatedId}`;
+  }
 
-    return { deleted: true };
-}
+  // delete related reactions
+  await reactionCollection.deleteMany({
+    commentId: validatedId
+  });
+
+  return { deleted: true };
+};

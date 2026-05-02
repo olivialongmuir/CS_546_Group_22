@@ -139,6 +139,14 @@
                     </span>
                   </div>
 
+                  {{#if (eq this.userId ../currentUserId)}}
+                    <button 
+                      class="delete-btn" 
+                      data-id="{{this._id}}">
+                      🗑 Delete
+                    </button>
+                  {{/if}}
+
                 </div>
               </li>
             {{/each}}
