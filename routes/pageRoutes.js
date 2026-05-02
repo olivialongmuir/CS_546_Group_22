@@ -3,10 +3,10 @@
 import { Router } from 'express';
 const router = Router();
 import { getAllRestaurants, getRestaurantById, getRestaurantComments } from '../data/restaurants.js';
-import { getAllReports} from '../data/rodentReports.js'
+import { getAllReports, getReportById} from '../data/rodentReports.js'
 import { getUserById } from '../data/users.js';
 import { createComment, deleteComment, getCommentById} from '../data/comments.js';
-import { updateReaction } from "../data/reactions.js";
+import { updateCommentReaction } from "../data/reactions.js";
 import { checkId, getLocationFromZip, countToStatus, gradeToStatus, normalizeRestaurant } from '../helpers.js';
 import NodeGeocoder from 'node-geocoder';
 import { countStats } from '../data/utility.js';
@@ -70,7 +70,8 @@ router.route('/heatmap').get(async (req, res) => {
             lat: Number(r.latitude),
             lng: Number(r.longitude),
             zip: r.zipcode,
-            status: r.status
+            status: r.status,
+            description: r.description
         }));
         const rodentMapData = JSON.stringify(rodentData);
 
@@ -102,11 +103,22 @@ router.route('/heatmap').get(async (req, res) => {
             .sort((a, b) => b.count - a.count)
             .slice(0, 5);
 
+
+        //Check if the user is authenticated or not. This will set a var flag for userAuthenticated. This controls pop up logic
+        let userAuthenticated = req.session.userId;
+        if(userAuthenticated == undefined){
+            userAuthenticated = false;
+        }else{
+            userAuthenticated = true;
+        }
+
+
         res.render("heatmap", {
             title: 'Heatmap',
             restaurantMapData: restaurantMapData,
             rodentMapData: rodentMapData,
-            hotspotFeed: hotspotFeed
+            hotspotFeed: hotspotFeed,
+            userAuthenticated: userAuthenticated
         });
 
     } catch (error) {
@@ -115,10 +127,9 @@ router.route('/heatmap').get(async (req, res) => {
     }
 });
 
+//Generic Route which is called from the nav bar route
 router.route('/ratreports').get(async (req, res) => {
     try {
-
-        //TODO - allow this route to be called with a req payload storing the rodent report to be opened? - need to check with @olivia
 
         //TODO -  error handling and invalid data checking
 
@@ -139,15 +150,54 @@ router.route('/ratreports').get(async (req, res) => {
 
         const restaurantMapData = JSON.stringify(restaurantData);
 
-        res.render("ratreports", {
-            title: 'Rat Reports',
+        res.render("rodentReports", {
+            title: 'Rodent Reports',
             reports:reports,
             restaurantMapData: restaurantMapData,
             firstReport: firstReport //passing in first report which will be the default starting data shown
         });
     } catch (error) {
         console.error(error);
-        res.status(500).send("Error loading Rat Reports");
+        res.status(500).send("Error loading Rodent Reports");
+    }
+});
+
+
+
+//Route which allows you to pre-filter to a specific report by ID. The target report will be the data used to prepopulate first shown report
+router.route('/ratreports/:id').get(async (req, res) => {
+    try {
+
+        //TODO -  error handling and invalid data checking
+
+        //Get that specific report
+        let id = req.params.id;
+        let targetReport = await getReportById(id);
+
+        //get all reports to be shown
+        let reports = await getAllReports();
+
+
+        const firstLocation = {
+            name: targetReport.name,
+            lat: Number(targetReport.latitude),
+            lng: Number(targetReport.longitude)
+        }
+
+        //put object in arr since its iterated when the maps built
+        const restaurantData = [firstLocation];
+
+        const restaurantMapData = JSON.stringify(restaurantData);
+
+        res.render("rodentReports", {
+            title: 'Rodent Reports',
+            reports:reports,
+            restaurantMapData: restaurantMapData,
+            firstReport: targetReport //passing in target report
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Error loading Rodent Reports");
     }
 });
 
@@ -299,7 +349,7 @@ router.post('/comments/:id/like', async (req, res) => {
     const userId = req.session.userId;
     if (!userId) return res.status(403).json({ error: "Not logged in" });
     const commentId = checkId(req.params.id.trim());
-    const updatedComment = await updateReaction(userId, commentId, "like");
+    const updatedComment = await updateCommentReaction(userId, commentId, "like");
 
     return res.json({
       success: true,
@@ -317,7 +367,7 @@ router.post('/comments/:id/dislike', async (req, res) => {
       return res.status(403).json({ error: "Not logged in" });
     }
     const commentId = checkId(req.params.id.trim());
-    const updatedComment = await updateReaction(userId, commentId, "dislike");
+    const updatedComment = await updateCommentReaction(userId, commentId, "dislike");
 
     return res.json({
       success: true,
@@ -357,38 +407,5 @@ router.route('/profile').get(async (req, res) => {
     return res.status(500).send('Error loading Profile');
   }
 });
-
-//DISPLAY REPORT CREAITON FORM FOR SET UP, 
-router.route('/createReport').get(async (req, res) => {
-
-    // grab the lat and lon from the map click, default value if no map click
-    const lat = req.query.lat ? Number(req.query.lat) : 40.6940285125;
-    const lng = req.query.lng ? Number(req.query.lng) : -73.9348118964;
-
-    const firstLocation = {
-        name: 'userClickedHere',
-        lat: lat,
-        lng: lng
-    };
-
-    // Docs for node-geocoder https://www.npmjs.com/package/node-geocoder
-    const geocoder = NodeGeocoder({provider: 'openstreetmap'});
-
-    const geoResult = await geocoder.reverse({ lat: 40.7, lon: -73.9 });
-    const zip = geoResult[0]?.zipcode || null;
-
-    const restaurantData = [firstLocation];
-    const restaurantMapData = JSON.stringify(restaurantData);
-
-    
-    res.render("createReport", {
-        title: 'Create Report',
-        restaurantMapData: restaurantMapData,
-        lat: lat,
-        lng: lng,
-        zip: zip,
-    });
-});
-
 
 export default router;

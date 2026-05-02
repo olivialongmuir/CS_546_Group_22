@@ -13,6 +13,17 @@ import {
   getRestaurantRodentReports
 } from '../data/restaurants.js';
 
+import { 
+    checkString, 
+    checkNumber,
+    checkWebsite, 
+    checkPhone, 
+    checkRestaurantStatus, 
+    checkLatitude,
+    checkLongitude,
+    checkRestaurantName
+} from '../helpers.js';
+
 // Error handling helper function
 const handleError = (res, error) => {
   const message = error.toString();
@@ -42,6 +53,10 @@ router.route('/').get(async (req, res) => {
 // POST /restaurants
 // Creates a restaurant
 router.route('/').post(async (req, res) => {
+  
+  console.log("hit")
+  console.log(req.body)
+  
   try {
     const {
       name,
@@ -62,7 +77,7 @@ router.route('/').post(async (req, res) => {
     const validatedWebsite = checkWebsite(website, "website");
     const validatedPhone = checkPhone(phone, "phone");
     const validatedPermitNumber = checkString(permit_number, "permit_number");
-    const validatedStatus = checkReportStatus(status, "status");
+    const validatedStatus = status;
 
     const newRestaurant = await createRestaurant(
       validatedName,

@@ -1,7 +1,28 @@
 import { ObjectId } from "mongodb";
 import { comments, reactions } from "../config/mongoCollections.js";
-import { checkComment } from "../helpers.js";
+import { checkComment, COLLECTION_IDS } from "../helpers.js";
 import { validateId } from "./utility.js";
+
+/**
+ * Comments Schema:
+ * {
+ *  _id:                objectId
+ *  userId:             string
+ *  restaurantId:       string
+ *  comment:            string
+ *  timestamp:          string
+ *  edited:             bool
+ *  stats:              subdocument
+ * }
+ */
+
+/**
+ * Subdocument {stats} Schema:
+ * {
+ *  likes:              number
+ *  dislikes:           number
+ * }
+ */
 
 /**
  * Creates a new comment and inserts it into the database. Updates all linked collections
@@ -30,7 +51,8 @@ export const createComment = async(
         restaurantId: validatedRestaurantId,
         comment: validatedComment,
         timestamp: timestamp,
-        edited: null,
+        edited: false,
+        updatedAt: null,
         stats: {
             likes: 0,
             dislikes: 0
@@ -89,7 +111,8 @@ export const updateComment = async(
         {_id: new ObjectId(validatedId)},
         {$set: {
             comment: validatedComment,
-            edited: true
+            edited: true,
+            updatedAt: timestamp
         }},
         {returnDocument: "after"}
     )
@@ -106,14 +129,15 @@ export const updateComment = async(
  */
 export const deleteComment = async (id) => {
   const errorSource = "deleteComment";
-  const validatedId = validateId(id, 'commentId', errorSource);
+
+  const validatedId = validateId(id, "commentId", errorSource);
 
   const [commentCollection, reactionCollection] = await Promise.all([
     comments(),
     reactions()
   ]);
 
-  // delete comment
+  // delete the comment
   const deletionInfo = await commentCollection.deleteOne({
     _id: new ObjectId(validatedId)
   });
@@ -122,9 +146,10 @@ export const deleteComment = async (id) => {
     throw `Error {${errorSource}}: Could not delete comment with id ${validatedId}`;
   }
 
-  // delete related reactions
+  // delete all related reactions
   await reactionCollection.deleteMany({
-    commentId: validatedId
+    targetId: validatedId,
+    targetKey: COLLECTION_IDS.COMMENT
   });
 
   return { deleted: true };

@@ -7,11 +7,10 @@
 <div id="reportPopUp" class="cardPopup">
     <div class="rodentReportCard">
         <section>
-        <form id="rodentForm" method="POST" action="/rodentReports">
-
             <div class="reportCardHeader">
             <h1><i data-lucide="triangle-alert"class="warning-icon"></i>Rodent Report<i data-lucide="triangle-alert"class="warning-icon"></i></h1>
 
+                {{!-- Mini map --}}
                 <div>
                     <section id="miniHeatmapSection">
                     {{!-- map container --}}
@@ -25,48 +24,51 @@
                     </section>
                 </div>
 
+                {{!-- Coordinate displays --}}
                 <div class="reportCardInfo">
                     {{!-- <p>Reporter: Name{{user}}</p> --}}
                     <div class="infoRow">
-                        <span class="locationStat">Lat: {{lat}}</span>
-                        <span class="locationStat">Lng: {{lng}}</span>
-                        <span class="locationStat">Zip: {{zip}}</span>
+                        <span id="latStat" class="locationStat"></span>
+                        <span id="lngStat" class="locationStat"></span>
+                        {{!-- <span class="locationStat">Zip: {{zip}}</span> --}}
                     </div>
-                    
                 </div>
 
             </div>
-            
-            <div class="reportDescription">
-                {{!-- <label for="description">Description:</label><br> --}}
-                <textarea 
-                    id="description" 
-                    name="description" 
-                    rows="4" 
-                    cols="50" 
-                    value="{{description}}"
-                    required></textarea>
-            </div>
 
-            {{!-- Hidden items that are derrived from map click and passed to route --}}
-            <div>
-                {{!-- <label for="zipcode">Zip Code:</label> --}}
-                <input type="text" id="zipcode" name="zipcode" value="{{ zip }}" hidden/>
-                {{!-- <label for="latitude">Latitude:</label> --}}
-                <input type="text" id="latitude" name="latitude" value="{{ lat }}" hidden/>
-                {{!-- <label for="longitude">Longitude:</label> --}}
-                <input type="text" id="longitude" name="longitude" value="{{ lng }}" hidden/>
-
-                {{!-- restaurantID USE THIS FOR WHEN REPORTS ARE MADE AT A RESTAURANT --}}
-                <input type="text" id="restaurantId" name="restaurantId" value="{{ restuarantId }}" hidden/>
+            {{!-- Form --}}
+            <form id="rodentForm" method="POST" action="/rodentReports">
                 
-            </div>
+                <div class="reportDescription">
+                    {{!-- <label for="description">Description:</label><br> --}}
+                    <textarea 
+                        id="description" 
+                        name="description" 
+                        rows="4" 
+                        cols="50" 
+                        value="{{description}}"
+                        required></textarea>
+                </div>
 
-            <div class="formButtonRow">
-                <button id="cancelSubmit" type="button" class="pillButton">Cancel</button>
-                <button type="Submit" class="pillButton">Submit</button>
-            </div>
-        </form>
+                {{!-- Hidden items that are derrived from map click and passed to route --}}
+                <div>
+                    {{!-- <label for="zipcode">Zip Code:</label> --}}
+                    <input type="text" id="zipcode" name="zipcode" value="{{ zip }}" hidden/>
+                    {{!-- <label for="latitude">Latitude:</label> --}}
+                    <input type="text" id="latitude" name="latitude" value="{{ lat }}" hidden/>
+                    {{!-- <label for="longitude">Longitude:</label> --}}
+                    <input type="text" id="longitude" name="longitude" value="{{ lng }}" hidden/>
+
+                    {{!-- restaurantID USE THIS FOR WHEN REPORTS ARE MADE AT A RESTAURANT --}}
+                    <input type="text" id="restaurantId" name="restaurantId" value="{{ restuarantId }}" hidden/>
+                    
+                </div>
+
+                <div class="formButtonRow">
+                    <button id="cancelSubmit" type="button" class="pillButton">Cancel</button>
+                    <button type="Submit" class="pillButton">Submit</button>
+                </div>
+            </form>
         </section>
     </div>
 </div>

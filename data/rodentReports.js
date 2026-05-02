@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { rodentReports } from "../config/mongoCollections.js";
+import { reactions, rodentReports } from "../config/mongoCollections.js";
 import { 
     checkDate, 
     checkDescription, 
@@ -14,16 +14,56 @@ import {
     checkZipcode, 
     checkLatitude,
     checkLongitude,
-    checkNumber
+    COLLECTION_IDS
 } from "../helpers.js";
 import { validateId } from './utility.js';
+
+/**
+ * Restaurant Schema:
+ * {
+ *  _id:                objectId
+ *  jobId:              string
+ *  zipcode:            string
+ *  latitude:           number
+ *  longitude:          number
+ *  inspectionDate:     string
+ *  status:             string
+ *  approvedDate:       string
+ *  restaurantId:       string
+ *  userId:             string
+ *  description:        string
+ *  rodent:             array of subdocuments
+ *  timestamp:          string
+ *  updatedAt:          string
+ *  verifiedBy:         string
+ *  stats:              subdocument
+ * }
+ */
+
+/**
+ * Subdocument {rodent} Schema:
+ * {
+ *  name:               string
+ *  type:               string
+ *  rating:             number
+ *  note:               string
+ *  photoUrl:           string
+ * }
+ */
+
+/**
+ * Subdocument {stats} Schema:
+ * {
+ *  likes:              number
+ *  dislikes:           number
+ * }
+ */
 
 /**
  * Gets all rodent reports from database as a list of objects
  * @returns reportsList
  */
 export const getAllReports = async() => {
-    // Get rodentReports collection from database
     const reportsCollection = await rodentReports();
     let reportsList = await reportsCollection.find({}).toArray();
 
@@ -83,37 +123,23 @@ export const createReport = async(
     userId,
     description
 ) => {
-
     const errorSource = "createReport";
     const validatedZipcode = checkZipcode(zipcode);
-    const validatedLatitude = checkNumber(latitude, "latitude");
-    const validatedLongitude = checkNumber(longitude, "longitude");
+    const validatedLatitude = checkLatitude(latitude);
+    const validatedLongitude = checkLongitude(longitude);
     const validatedStatus = checkRodentStatus(status);
     const validatedDescription = checkDescription(description);
     const validatedUserId = validateId(userId, 'userId', errorSource);
 
+    // Allow null values for jobId. This is an optional field, not used in project currently
+    const validatedJobId = jobId != null ? checkJobId(jobId) : null;
 
-    let validatedJobId = null;
-    if(jobId != null){
-        validatedJobId = checkJobId(jobId);
-    }
+    // Allowed null values for dates. These values are null until a validation event
+    const validatedInspectionDate = restaurantId != null ? checkDate(inspectionDate) : null;
+    const validatedDate = approvedDate != null ? checkDate(approvedDate) : null;
 
-    //Allowed null values for dates. These values are null until a validation event
-    let validatedInspectionDate = null;
-    if(restaurantId != null){
-        validatedInspectionDate = checkDate(inspectionDate);
-    }
-    let validatedDate = null;
-    if(approvedDate != null){
-        validatedDate = checkDate(approvedDate);
-    }
-
-    //null restaurant id for an unassocated report
-    let validatedRestaurantId = null;
-    if(restaurantId != null){
-        validatedRestaurantId = validateId(restaurantId, 'restaurantId', errorSource);
-    }
-
+    // null restaurant id for an unassocated report
+    const validatedRestaurantId = restaurantId != null ? validateId(restaurantId, 'restaurantId', errorSource) : null;
 
     //Make sure no duplicate report exists
     //Removing this logic because JobID isnt used in our website to identify a report
@@ -140,7 +166,11 @@ export const createReport = async(
         rodent: [],
         timestamp: timestamp,
         updatedAt: null,
-        verifiedBy: null
+        verifiedBy: null,
+        stats: {
+            likes: 0,
+            dislikes: 0
+        }
     }
 
     // Insert new report into database
@@ -152,8 +182,6 @@ export const createReport = async(
     const newId = insertInfo.insertedId.toString();
     return await getReportById(newId);
 };
-
-
 
 /**
  * Updates rodent report by objectId
@@ -198,9 +226,9 @@ export const updateReport = async(
     if (approvedDate !== undefined) updateReport["approvedDate"] = checkDate(approvedDate);
     if (description !== undefined) updateReport["description"] = checkDescription(description);
     if (verifiedBy !== undefined) updateReport["verifiedBy"] = checkUserType(verifiedBy);
-    if (jobId !== undefined) {updateReport["jobId"] = checkJobId(jobId);}
-    if (restaurantId !== undefined) {updateReport["restaurantId"] = validateId(restaurantId, 'restaurantId', errorSource);}
-    if (userId !== undefined) {updateReport["userId"] = validateId(userId, 'userId', errorSource);}
+    if (jobId !== undefined) updateReport["jobId"] = jobId != null ? checkJobId(jobId) : null; // jobId is optionally null
+    if (restaurantId !== undefined) updateReport["restaurantId"] = validateId(restaurantId, 'restaurantId', errorSource);
+    if (userId !== undefined) updateReport["userId"] = validateId(userId, 'userId', errorSource);
 
     if (Object.keys(updateReport).length === 0) throw `Error {${errorSource}}: No fields to update`;
 
@@ -218,7 +246,7 @@ export const updateReport = async(
 };
 
 /**
- * Appends new rodent to sub-field of rodent report by objectId
+ * Appends new rodent subdocument to rodent report by objectId
  * @param {string} id 
  * @param {string} name 
  * @param {string} type 
@@ -243,7 +271,7 @@ export const createRodent = async(
     const validatedNote = checkNote(note);
     const validatedPhotoUrl = checkPhotoUrl(photoUrl);
 
-    // Template for new rodent comment
+    // Template for new rodent sighting
     const newRodent = {
         name: validatedName,
         type: validatedType,
@@ -276,9 +304,16 @@ export const deleteReport = async(id) => {
     const validatedId = validateId(id, 'reportId', errorSource);
 
     // Delete report from database
-    const reportCollection = await rodentReports();
-    const deletionInfo = await reportCollection.findOneAndDelete({_id: new ObjectId(validatedId)});
+    const [reportCollection, reactionCollection] = await Promise.all([
+        rodentReports(),
+        reactions()
+    ])
+
+    let deletionInfo = await reportCollection.deleteOne({_id: new ObjectId(validatedId)});
     if (!deletionInfo.deletedCount === 0) throw `Error {${errorSource}}: Could not delete rodent report with id ${validatedId}`;
+
+    // Also have to delete all corresponding reactions. Ok to have 0 count since not all rodent reports have reactions
+    deletionInfo = await reactionCollection.deleteMany({targetId: validatedId, targetKey: COLLECTION_IDS.REPORT});
 
     return { deleted: true };
 };

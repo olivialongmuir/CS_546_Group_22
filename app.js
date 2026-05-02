@@ -39,10 +39,14 @@ app.use((req, res, next) => {
   next();
 });
 
+
+//middlewear for page hits
 app.use('/login', loginRedirect);
 app.use('/register', loginRedirect);
 app.use('/profile', protectedRoute);
 app.use('/admin', adminOnly);
+
+
 
 app.engine('handlebars', exphbs.engine({
   defaultLayout: 'main',

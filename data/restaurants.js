@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { comments, restaurants } from '../config/mongoCollections.js';
+import { comments, reactions, restaurants } from '../config/mongoCollections.js';
 import { 
     checkString, 
     checkWebsite, 
@@ -7,16 +7,40 @@ import {
     checkRestaurantStatus, 
     checkLatitude,
     checkLongitude,
-    checkRestaurantName
+    checkRestaurantName,
+    COLLECTION_IDS
 } from '../helpers.js';
 import { validateId } from './utility.js';
+
+/**
+ * Restaurant Schema:
+ * {
+ *  _id:                objectId
+ *  name:               string
+ *  type:               string
+ *  latitude:           number
+ *  longitude:          number
+ *  website:            string
+ *  phone:              string
+ *  permit_number:      string
+ *  status:             string
+ *  stats:              subdocument
+ * }
+ */
+
+/**
+ * Subdocument {stats} Schema:
+ * {
+ *  likes:              number
+ *  dislikes:           number
+ * }
+ */
 
 /**
  * Gets all restaurants form database as a list of objects
  * @returns restaurantList
  */
 export const getAllRestaurants = async() => {
-    // Get restaurant collection from database
     const restaurantCollection = await restaurants();
     let restaurantList = await restaurantCollection.find({}).toArray();
 
@@ -91,7 +115,11 @@ export const createRestaurant = async(
         website: validatedWebsite,
         phone: validatedPhone,
         permit_number: validatedPermitNumber,
-        status: validatedStatus
+        status: validatedStatus,
+        stats: {
+            likes: 0,
+            dislikes: 0
+        }
     };
 
     // Insert new restaurant object into database
@@ -167,9 +195,21 @@ export const deleteRestaurant = async(id) => {
     const validatedId = validateId(id, 'restaurantId', errorSource);
 
     // Delete restaurant from database
-    const restaurantCollection = await restaurants();
-    const deletionInfo = await restaurantCollection.deleteOne({_id: new ObjectId(validatedId)});
+    const [restaurantCollection, reactionCollection, commentCollection] = await Promise.all([
+        restaurants(),
+        reactions(),
+        comments()
+    ])
+
+    // Delete restaurant from database
+    let deletionInfo = await restaurantCollection.deleteOne({_id: new ObjectId(validatedId)});
     if (deletionInfo.deletedCount === 0) throw `Error {${errorSource}}: Could not delete restaurant with id ${validatedId}`;
+
+    // Delete all comments associated with restaurant. Ok to have 0 count since there might not be any comments
+    deletionInfo = commentCollection.deleteMany({restaurantId: validatedId});
+
+    // Delete all reactions associated with restaurant. Ok to have 0 count since there might not be any reactions
+    deletionInfo = reactionCollection.deleteMany({targetId: validatedId, targetKey: COLLECTION_IDS.RESTAURANT});
 
     return { deleted: true };
 };
@@ -216,9 +256,7 @@ export const getRestaurantRodentReports = async (id) => {
 
     // Gets all rodent reports attached to a restaurant
     const reportCollection = await rodentReports();
-    let reportItems = await reportCollection
-        .find({restaurantId: validatedId})
-        .toArray();
+    let reportItems = await reportCollection.find({restaurantId: validatedId}).toArray();
 
     // Ensure all rodent report IDs are in the form of a string
     reportItems = reportItems.map(report => {

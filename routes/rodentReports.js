@@ -5,6 +5,11 @@
 
 import { Router } from 'express';
 const router = Router();
+import NodeGeocoder from 'node-geocoder';
+
+//middleware import
+import { protectedRoute } from "../middleware.js"
+
 
 import {
   getAllReports,
@@ -28,7 +33,8 @@ router.route('/').get(async (req, res) => {
 
 // POST /rodentReports
 // creates a rodent report
-router.route('/').post(async (req, res) => {
+//middlewear is used to check if user is logged in before they can make a report
+router.route('/').post(protectedRoute, async (req, res) => {
   try {
 
     const data = req.body;
@@ -36,14 +42,25 @@ router.route('/').post(async (req, res) => {
     //Add in the default values needed for report creation
     let jobId = null
 
-    let zipcode = data.zipcode
+    //Populate the zip code if not given
+    let zipcode;
+    if(!data.zipcode){
+      // Docs for node-geocoder https://www.npmjs.com/package/node-geocoder
+      const geocoder = NodeGeocoder({provider: 'openstreetmap'});
+      
+      const geoResult = await geocoder.reverse({ lat: 40.7, lon: -73.9 });
+      zipcode = geoResult[0]?.zipcode || null;
+    }else{
+      zipcode = date.zipcode
+    }
+
     let latitude = data.latitude
     let longitude = data.longitude
     //inspection date gets set to null since not related
     let inspectionDate = null;
     //status is unverififed as default
     let status = 'unverified';
-    //approvedDate gets set to null since not related - This gets set when validated???
+    //approvedDate gets set to null since not related - This gets set when validated?
     let approvedDate = null;
 
     //If restaurant ID is blank then set it to null. That will be a report not associated to a report
@@ -54,10 +71,18 @@ router.route('/').post(async (req, res) => {
       restaurantId = data.restaurantId
     }
     
-    //Get the user Id 
-    let userId = '69e620a94370984bd615af92' //FAKE USER TODO
+    //Get the user Id from session
+    let user = req.session.userId;
+    if(user == undefined){
+      //TODO - needs to route to errror pag e if someone tries to submit report when not logged in
+      console.log("TODO - error if not logged in when creating a report. Replace this by routing to error page since they tried to bypass")
+    }
+    let userId = user
+
+    //Get description
     let description = data.description
 
+    //Build the report
     const report = await createReport(
       jobId,
       zipcode,
@@ -70,9 +95,15 @@ router.route('/').post(async (req, res) => {
       userId,
       description
     );
-    res.status(201).json(report);
+
+    //Posts the report status
+    // res.status(201).json(report);
+    //Redirects user to that report
+    res.redirect(`/ratreports/${report._id}`);
+    // res.redirect('/ratreports');
+
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error });
   }
 });
 

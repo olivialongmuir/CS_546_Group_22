@@ -72,7 +72,7 @@ window.addEventListener('load', () => {
 document.querySelector(".leftPane")?.addEventListener("click", async (e) => {
 
     // allows full card to be clicked
-    const card = e.target.closest(".ratCard");
+    const card = e.target.closest(".rodent-card");
     //ignores clicks in the pane that arent on a card
     if(!card) return;
 
@@ -88,6 +88,7 @@ document.querySelector(".leftPane")?.addEventListener("click", async (e) => {
 
     ratDetail.innerHTML = `
         <h2>Report ${data._id}</h2>
+        <p>USER: ${data.userId}</p>
         <p>Date: ${data.inspectionDate}</p>
         <p>Status: ${data.status}</p>
         <p>Timestamp: ${data.timestamp}</p>
@@ -162,7 +163,7 @@ const filterElements=()=>{
     //determine if verififed or all should show
 
     //for all elements in column
-    let cards = document.querySelectorAll(".ratCard");
+    let cards = document.querySelectorAll(".rodent-card");
     for(card of cards){
 
         //flag to track if that card should be shown
@@ -209,7 +210,7 @@ document.getElementById('clearFilters')?.addEventListener("click", function(){
     endDate.value = today
    
     //Set all cards back to show
-    let cards = document.querySelectorAll(".ratCard");
+    let cards = document.querySelectorAll(".rodent-card");
     for(card of cards){
         card.style.display = '';
     }
