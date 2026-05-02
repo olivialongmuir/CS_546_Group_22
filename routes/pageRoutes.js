@@ -6,20 +6,10 @@ import { getAllRestaurants, getRestaurantById, getRestaurantComments } from '../
 import { getAllReports} from '../data/rodentReports.js'
 import { getUserById } from '../data/users.js';
 import { createComment} from '../data/comments.js';
+import { updateReaction } from "../data/reactions.js";
 import { checkId, getLocationFromZip, countToStatus, gradeToStatus, normalizeRestaurant } from '../helpers.js';
 import NodeGeocoder from 'node-geocoder';
 import { countStats } from '../data/utility.js';
-
-// Error handling helper function
-const handleError = (res, error) => {
-  const message = error.toString();
-  // 404 error - not found
-  if (message.includes('No restaurant')) return res.status(404).json({ error: message });
-  // 400 error - bad request
-  if (message.includes('Error:')) return res.status(400).json({ error: message });
-  // 500 error - internal server error
-  return res.status(500).json({ error: error.message });
-};
 
 /**
  * Homepage route
@@ -233,24 +223,19 @@ router.post('/restaurants/:id/comments', async (req, res) => {
 
   try {
     const userId = req.session.userId;
-
     if (!userId) {
       return res.status(403).redirect('/login');
     }
 
     const { comment } = req.body;
-
     // validation
     if (!comment || typeof comment !== 'string') {
       throw 'Comment must be a string';
     }
-
     const trimmedComment = comment.trim();
-
     if (trimmedComment.length === 0) {
       throw 'Comment cannot be empty';
     }
-
     if (trimmedComment.length > 500) {
       throw 'Comment cannot exceed 500 characters';
     }
@@ -283,6 +268,42 @@ router.post('/restaurants/:id/comments', async (req, res) => {
       error: error || "Something went wrong",
       formData: req.body
     });
+  }
+});
+
+router.post('/comments/:id/like', async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    if (!userId) return res.status(403).json({ error: "Not logged in" });
+    const commentId = checkId(req.params.id.trim());
+    const updatedComment = await updateReaction(userId, commentId, "like");
+
+    return res.json({
+      success: true,
+      stats: updatedComment.stats
+    });
+  } catch (e) {
+    return res.status(500).json({ error: "Failed to like comment" });
+  }
+});
+
+router.post('/comments/:id/dislike', async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    if (!userId) {
+      return res.status(403).json({ error: "Not logged in" });
+    }
+    const commentId = checkId(req.params.id.trim());
+    const updatedComment = await updateReaction(userId, commentId, "dislike");
+
+    return res.json({
+      success: true,
+      stats: updatedComment.stats
+    });
+
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Failed to dislike comment" });
   }
 });
 

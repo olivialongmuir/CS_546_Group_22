@@ -97,7 +97,7 @@
         {{else}}
 
           <p class="login-prompt">
-            You must <a href="/login">log in</a> to add a comment.
+            You must <a href="/login">log in</a> to add a comment or reaction.
           </p>
 
         {{/if}}
@@ -106,9 +106,40 @@
           <ul class="comment-list">
             {{#each comments}}
               <li class="comment-item">
-              <p class="comment-author">{{this.userName}}</p>
-              <p class="comment-text">{{this.comment}}</p>
-              <p class="comment-time">{{this.timestamp}}</p>
+                <p class="comment-author">{{this.userName}}</p>
+                <p class="comment-text">{{this.comment}}</p>
+                <p class="comment-time">{{this.timestamp}}</p>
+                <div class="comment-actions">
+
+                  <div class="vote-group">
+                    <button
+                      class="vote-btn"
+                      data-id="{{this._id}}"
+                      data-type="like"
+                      {{#unless ../isLoggedIn}}disabled{{/unless}}
+                    >
+                      👍
+                    </button>
+                    <span class="vote-count" id="likes-{{this._id}}">
+                      {{this.stats.likes}}
+                    </span>
+                  </div>
+
+                  <div class="vote-group">
+                    <button
+                      class="vote-btn"
+                      data-id="{{this._id}}"
+                      data-type="dislike"
+                      {{#unless ../isLoggedIn}}disabled{{/unless}}
+                    >
+                      👎
+                    </button>
+                    <span class="vote-count" id="dislikes-{{this._id}}">
+                      {{this.stats.dislikes}}
+                    </span>
+                  </div>
+
+                </div>
               </li>
             {{/each}}
           </ul>
@@ -141,3 +172,4 @@
     </article>
   </div>
 </div>
+<script src="/public/js/reactions.js"></script>

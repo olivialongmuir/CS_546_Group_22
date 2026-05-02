@@ -10,76 +10,74 @@ import { checkReactionType } from "../helpers.js";
  * @param {string} type 
  * @returns 
  */
-export const updateReaction = async(
-    userId,
-    commentId,
-    type
-) => {
-    const errorSource = "updateReaction";
-    const validatedUserId = validateId(userId, 'userId', errorSource);
-    const validatedCommentId = validateId(commentId, 'commentId', errorSource);
-    const validatedReactionType = checkReactionType(type);
+export const updateReaction = async (userId, commentId, type) => {
+  const errorSource = "updateReaction";
 
-    // Check if user and comment exist
-    const [reactionCollection, commentCollection, userCollection] = await Promise.all([
-        reactions(),
-        comments(),
-        users()
-    ]);
+  const validatedUserId = validateId(userId, 'userId', errorSource);
+  const validatedCommentId = validateId(commentId, 'commentId', errorSource);
+  const validatedReactionType = checkReactionType(type);
 
-    const [userItem, commentItem] = await Promise.all([
-        userCollection.findOne({_id: new ObjectId(validatedUserId)}),
-        commentCollection.findOne({_id: new ObjectId(validatedCommentId)})
-    ]);
-    if (!userItem) throw `Error {${errorSource}}: No user found with id ${validatedUserId}`;
-    if (!commentItem) throw `Error {${errorSource}}: No comment found with id ${validatedCommentId}`;
+  const [reactionCollection, commentCollection, userCollection] =
+    await Promise.all([reactions(), comments(), users()]);
 
-    // Timestamp request
-    const now = new Date();
-    const timestamp = now.toISOString();
+  const [userItem, commentItem] = await Promise.all([
+    userCollection.findOne({ _id: new ObjectId(validatedUserId) }),
+    commentCollection.findOne({ _id: new ObjectId(validatedCommentId) })
+  ]);
 
-    // Try updating reaction. Create a new reaction if it does not exist
-    let reactionItem = await reactionCollection.findOneAndUpdate(
-        {
-            userId: validatedUserId, 
-            commentId: validatedCommentId
-        },
-        {
-            $set: {reactionType: validatedReactionType},
-            $setOnInsert: {timestamp: timestamp} // Only timestamp if creating a new reaction
-        },
-        {
-            upsert: true, //Create reaction if not found
-            returnDocument: "before"
-        }
+  if (!userItem) throw `Error {${errorSource}}: No user found`;
+  if (!commentItem) throw `Error {${errorSource}}: No comment found`;
+
+  const now = new Date().toISOString();
+
+  // find existing reaction collection
+  const existing = await reactionCollection.findOne({
+    userId: validatedUserId,
+    commentId: validatedCommentId
+  });
+
+  let updateQuery = null;
+
+  // if no reaction exists,add one
+  if (!existing) {
+    await reactionCollection.insertOne({
+      userId: validatedUserId,
+      commentId: validatedCommentId,
+      reactionType: validatedReactionType,
+      timestamp: now
+    });
+    updateQuery = {
+      $inc: { [`stats.${validatedReactionType}s`]: 1 }
+    };
+  }
+  // if same reaction, remove the reaction
+  else if (existing.reactionType === validatedReactionType) {
+    await reactionCollection.deleteOne({ _id: existing._id });
+
+    updateQuery = {
+      $inc: { [`stats.${validatedReactionType}s`]: -1 }
+    };
+  }
+  // if switching reaction, remove the old and add the new
+  else {
+    await reactionCollection.updateOne(
+      { _id: existing._id },
+      { $set: { reactionType: validatedReactionType } }
     );
-    const prevType = reactionItem ? reactionItem.reactionType : null;
-
-    // Clicked on the same request twice
-    if (prevType === validatedReactionType) {
-        await deleteReaction(reactionItem._id.toString());
-        return { removed: true };
-    }
-
-    // Update comment like/dislike count
-    let updateQuery = {};
-    if (prevType === null) {
-        updateQuery = {$inc: {[`stats.${validatedReactionType}s`]: 1}};
-    } else {
-        updateQuery = {
-            $inc: {
-                [`stats.${validatedReactionType}s`]: 1,
-                [`stats.${prevType}s`]: -1
-            }
-        };
-    }
-
-    const updateInfo = await commentCollection.findOneAndUpdate(
-        {_id: new ObjectId(validatedCommentId)},
-        updateQuery,
-        {returnDocument: "after"}
-    );
-    return updateInfo;
+    updateQuery = {
+      $inc: {
+        [`stats.${validatedReactionType}s`]: 1,
+        [`stats.${existing.reactionType}s`]: -1
+      }
+    };
+  }
+  // update stats
+  const updatedComment = await commentCollection.findOneAndUpdate(
+    { _id: new ObjectId(validatedCommentId) },
+    updateQuery,
+    { returnDocument: "after" }
+  );
+  return updatedComment;
 };
 
 /**
