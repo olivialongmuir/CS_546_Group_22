@@ -9,6 +9,8 @@ const rodentMarkers = L.layerGroup();
 const restaurantMarkers = {};
 const zoomThreshold = 16;
 const flyDuration = 3;
+let lastLat; //Tracks the last latitude position clicked
+let lastLng; //Tracks the last longitude position clicked
 
 // restaurant and rodent icons
 const restaurantPin = L.icon({
@@ -125,8 +127,15 @@ window.addEventListener('load', () => {
             // TODO - add link to rodent report details similar to restaurant above
                 .bindPopup(
                         `<div class="btn-stack">
-                        TODO
-                        <button class="btn">View Report</button>
+                        <div class="popUpText">
+                            <p class="popUp-p">${r.description}</p>
+                        </div>
+                        <div class="infoRow">
+                            <span class="locationStat">Lat: ${r.lat}</span>
+                            <span class="locationStat">Lng: ${r.lng}</span>
+                        </div>
+                         <a href="/ratreports/${r._id}" class="popup-link">
+                         <button class="btn popup-btn">View Report</button>
                         </a>
                     </div>`
                 );
@@ -268,20 +277,59 @@ const makePopUp=(lat,lng)=>{
                 <span class="locationStat">Lng: ${lng}</span>
             </div>
             <div class="btn-stack">
-            <button class="btn" style="background-color: grey";>Register Restaurant</button>
-            <button class="createReportBtn btn">Create Rodent Report</button>
+            <button class="resgisterBtn btn popup-btn" style="background-color: grey";>Register Restaurant</button>
+            <button class="createReportBtn btn popup-btn">Create Rodent Report</button>
             </div>`
 }
+
+//Created and returns an HTML stub for map pop up that can direct user to login or sign up
+const loginPopUp=(lat,lng)=>{
+            return`
+            <div class="popUpText">
+                <p class="popUp-p"
+                >Login or Sign Up today to report rodents!</p>
+            </div>
+            <div class="infoRow">
+                <span class="locationStat">Lat: ${lat}</span>
+                <span class="locationStat">Lng: ${lng}</span>
+            </div>
+            <div class="btn-stack">
+                <a href="/register" class="popup-link">
+                    <button class="btn popup-btn" style="background-color: grey">Sign Up</button>
+                </a>
+                <a href="/login" class="popup-link">
+                    <button class="btn popup-btn">Login</button>
+                </a>
+            </div>`
+}
+
 
 
 //Adds a pin marker to a clicked location
 const addPin=(map, lat, lng)=>{
 
+    //Set lat long
+    lastLat = lat;
+    lastLng = lng;
+
+    //Make new pin object
     newPin = L.marker([lat, lng], { icon: locationPin })
         .addTo(map)
-        .bindPopup(makePopUp(lat,lng)) //uses html template
-        .openPopup()
 
+    //Checks wether or not the user is logged in. 
+    //If user is not logged in the pop up will be generic and promt them to login. Else will be the report creation prompt
+    //get current user data
+
+    if(userAuthenticated){
+        newPin.bindPopup(makePopUp(lat,lng)); //uses html template
+    }else{
+        newPin.bindPopup(loginPopUp(lat,lng));
+    }
+
+    //Open the pop up for user to see
+    newPin.openPopup();
+
+    //Add to pins list
     activePins.push(newPin);
 }
 
@@ -295,6 +343,7 @@ const removePins=()=>{
 }
 
 
+
 //Closes all pin popups
 const closePopUps=()=>{
     for(const pin of activePins){
@@ -303,33 +352,11 @@ const closePopUps=()=>{
 }
 
 
-//Hides the create report popup
-document.getElementById("cancelSubmit")?.addEventListener('click', ()=>{
 
-    //get the pop up form to show
-    let popUp = document.getElementById("reportPopUp");
-    const mapLayout = document.getElementById("heatmapLayout");
-
-    if(popUp){
-        popUp.style.visibility = '';
-        mapLayout.style.visibility = 'visible';
-    }
-
-    //TODO - Populate the lat long and zip of the form
-
-})
-
-
-//Opens the create report popup
-document.addEventListener('click', (e) => {
-    //listens for clicks on the entire page
-
-    //if the click occured on a create report button class then this function will fire
-    const btn = e.target.closest('.createReportBtn');
-    if (!btn) return;
-
-    //get the pop up
-    const popUp = document.getElementById("reportPopUp");
+//Shows a target pop up card
+const showPopUp=(popUp)=>{
+    //get the pop up by id
+    popUp = document.getElementById(popUp);
     const mapLayout = document.getElementById("heatmapLayout");
 
     //now set visbility of all elements
@@ -338,10 +365,92 @@ document.addEventListener('click', (e) => {
         popUp.style.visibility = 'visible';
         mapLayout.style.visibility = 'hidden';
     }
+}
 
-    //Flys back to location without user seeing
-    //Flys back out to standard view
-    // const nycLatLng = [40.7128, -74.0060];
-    // flyToLocation(40.7128, -74.0060, 16);
+
+//Hides the create report pop up
+const hidePopUp=(popUp)=>{
+
+    //get the pop up form to show
+    popUp = document.getElementById(popUp);
+    const mapLayout = document.getElementById("heatmapLayout");
+
+    if(popUp){
+        popUp.style.visibility = '';
+        mapLayout.style.visibility = 'visible';
+    }
+
+    //Flys the user back to  map
+    flyToLocation(lastLat, lastLng, 16);
+}
+
+
+//Hides the create report popup if the cancel button is pressed
+document.getElementById("cancelSubmit")?.addEventListener('click', ()=>{
+    hidePopUp("reportPopUp");
+})
+
+
+//hides any active pop up if user clicks outside of the popup
+document.addEventListener('click', (e)=>{
+    if(e.target.id =='reportPopUp'){
+        hidePopUp("reportPopUp");
+    }
+
+    if(e.target.id == "restaurantPopUp"){
+        hidePopUp("restaurantPopUp");
+    }
+});
+
+
+//Hides if the user cancels the restaurant submisison
+document.getElementById("restaurantCancelSubmit")?.addEventListener('click', ()=>{
+    hidePopUp("restaurantPopUp");
+})
+
+
+
+//Opens the create report popup and populates form
+document.addEventListener('click', (e)=>{
+    //listens for clicks on the entire page
+
+    //if the click occured on a create report button class then this function will fire
+    const btn = e.target.closest('.createReportBtn');
+    if (!btn) return;
+
+    //Populate the lat and long pill buttons
+    document.getElementById("latStat").innerText = `Lat: ${lastLat}`;
+    document.getElementById("lngStat").innerText = `Lng: ${lastLng}`;
+
+    //Prepopulate the forms fiedls with user info and location
+    document.getElementById("latitude").value = lastLat;
+    document.getElementById("longitude").value = lastLng;
+
+    //shows the report card
+    showPopUp("reportPopUp");
+
+});
+
+
+
+
+//Opens the register restaurant popup and populates form
+document.addEventListener('click', (e)=>{
+    //listens for clicks on the entire page
+
+    //if the click occured on a create report button class then this function will fire
+    const btn = e.target.closest('.resgisterBtn');
+    if (!btn) return;
+
+    //Populate the lat and long pill buttons
+    document.getElementById("restaurant-latStat").innerText = `Lat: ${lastLat}`;
+    document.getElementById("restaurant-lngStat").innerText = `Lng: ${lastLng}`;
+
+    //Prepopulate the forms fiedls with user info and location
+    document.getElementById("restaurant-latitude").value = lastLat;
+    document.getElementById("restaurant-longitude").value = lastLng;
+
+    //shows the report card
+    showPopUp("restaurantPopUp");
 
 });
