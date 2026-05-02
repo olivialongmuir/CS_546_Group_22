@@ -7,6 +7,9 @@ import { Router } from 'express';
 const router = Router();
 import NodeGeocoder from 'node-geocoder';
 
+//middleware import
+import { protectedRoute } from "../middleware.js"
+
 
 import {
   getAllReports,
@@ -30,7 +33,8 @@ router.route('/').get(async (req, res) => {
 
 // POST /rodentReports
 // creates a rodent report
-router.route('/').post(async (req, res) => {
+//middlewear is used to check if user is logged in before they can make a report
+router.route('/').post(protectedRoute, async (req, res) => {
   try {
 
     const data = req.body;
@@ -67,10 +71,18 @@ router.route('/').post(async (req, res) => {
       restaurantId = data.restaurantId
     }
     
-    //Get the user Id 
-    let userId = '69e620a94370984bd615af92' //FAKE USER #TODO
+    //Get the user Id from session
+    let user = req.session.userId;
+    if(user == undefined){
+      //TODO - needs to route to errror pag e if someone tries to submit report when not logged in
+      console.log("TODO - error if not logged in when creating a report. Replace this by routing to error page since they tried to bypass")
+    }
+    let userId = user
+
+    //Get description
     let description = data.description
 
+    //Build the report
     const report = await createReport(
       jobId,
       zipcode,
@@ -89,9 +101,6 @@ router.route('/').post(async (req, res) => {
     //Redirects user to that report
     res.redirect(`/ratreports/${report._id}`);
     // res.redirect('/ratreports');
-
-
-    
 
   } catch (error) {
     res.status(500).json({ error: error });

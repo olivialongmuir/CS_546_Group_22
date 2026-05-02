@@ -127,6 +127,13 @@ window.addEventListener('load', () => {
             // TODO - add link to rodent report details similar to restaurant above
                 .bindPopup(
                         `<div class="btn-stack">
+                        <div class="popUpText">
+                            <p class="popUp-p">${r.description}</p>
+                        </div>
+                            <div class="infoRow">
+                                <span class="locationStat">Lat: ${r.lat}</span>
+                                <span class="locationStat">Lng: ${r.lng}</span>
+                            </div>
                          <a href="/ratreports/${r._id}" class="popup-link">
                          <button class="btn">View Report</button>
                         </a>
@@ -275,6 +282,28 @@ const makePopUp=(lat,lng)=>{
             </div>`
 }
 
+//Created and returns an HTML stub for map pop up that can direct user to login or sign up
+const loginPopUp=(lat,lng)=>{
+            return`
+            <div class="popUpText">
+                <p class="popUp-p"
+                >Login or Sign Up today to report rodents!</p>
+            </div>
+            <div class="infoRow">
+                <span class="locationStat">Lat: ${lat}</span>
+                <span class="locationStat">Lng: ${lng}</span>
+            </div>
+            <div class="btn-stack">
+                <a href="/register" class="popup-link">
+                    <button class="btn" style="background-color: grey">Sign Up</button>
+                </a>
+                <a href="/login" class="popup-link">
+                    <button class="btn">Login</button>
+                </a>
+            </div>`
+}
+
+
 
 //Adds a pin marker to a clicked location
 const addPin=(map, lat, lng)=>{
@@ -283,12 +312,22 @@ const addPin=(map, lat, lng)=>{
     lastLat = lat;
     lastLng = lng;
 
-
     //Make new pin object
     newPin = L.marker([lat, lng], { icon: locationPin })
         .addTo(map)
-        .bindPopup(makePopUp(lat,lng)) //uses html template
-        .openPopup()
+
+    //Checks wether or not the user is logged in. 
+    //If user is not logged in the pop up will be generic and promt them to login. Else will be the report creation prompt
+    //get current user data
+
+    if(userAuthenticated){
+        newPin.bindPopup(makePopUp(lat,lng)); //uses html template
+    }else{
+        newPin.bindPopup(loginPopUp(lat,lng));
+    }
+
+    //Open the pop up for user to see
+    newPin.openPopup();
 
     //Add to pins list
     activePins.push(newPin);
@@ -313,8 +352,23 @@ const closePopUps=()=>{
 }
 
 
-//Hides the create report popup
-document.getElementById("cancelSubmit")?.addEventListener('click', ()=>{
+//Shows the create report pop up
+const showReportCard=()=>{
+    //get the pop up
+    const popUp = document.getElementById("reportPopUp");
+    const mapLayout = document.getElementById("heatmapLayout");
+
+    //now set visbility of all elements
+    if(popUp){
+        //show pop up
+        popUp.style.visibility = 'visible';
+        mapLayout.style.visibility = 'hidden';
+    }
+}
+
+
+//Hides the create report pop up
+const hideReportCard=()=>{
 
     //get the pop up form to show
     let popUp = document.getElementById("reportPopUp");
@@ -327,21 +381,34 @@ document.getElementById("cancelSubmit")?.addEventListener('click', ()=>{
 
     //Flys the user back to  map
     flyToLocation(lastLat, lastLng, 16);
+}
 
+
+//Hides the create report popup if the cancel button is pressed
+document.getElementById("cancelSubmit")?.addEventListener('click', ()=>{
+    hideReportCard();
 })
 
 
-//Opens the create report popup
-document.addEventListener('click', (e) => {
+//hides the create report popup form is user clicks outside of the popup
+document.addEventListener('click', (e)=>{
+
+    if(e.target.id =='reportPopUp'){
+        hideReportCard();
+    }
+})
+
+
+
+//Opens the create report popup and populates form
+document.addEventListener('click', (e)=>{
     //listens for clicks on the entire page
 
     //if the click occured on a create report button class then this function will fire
     const btn = e.target.closest('.createReportBtn');
     if (!btn) return;
 
-    //get the pop up
-    const popUp = document.getElementById("reportPopUp");
-    const mapLayout = document.getElementById("heatmapLayout");
+
 
     //Populate the lat and long pill buttons
     document.getElementById("latStat").innerText = `Lat: ${lastLat}`;
@@ -351,13 +418,9 @@ document.addEventListener('click', (e) => {
     document.getElementById("latitude").value = lastLat;
     document.getElementById("longitude").value = lastLng;
 
+    //shows the report card
+    showReportCard();
 
-    //now set visbility of all elements
-    if(popUp){
-        //show pop up
-        popUp.style.visibility = 'visible';
-        mapLayout.style.visibility = 'hidden';
-    }
 
     //Flys back to location without user seeing
     //Flys back out to standard view

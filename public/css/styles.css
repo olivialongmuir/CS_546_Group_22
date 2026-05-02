@@ -350,7 +350,19 @@ h2{
   color:white;
 }
 
+/* Syle of paragraph text in popups */
+.popUp-p{
+  text-align: center;
+  color: black;
+}
 
+/* Stores pop up parargaph */
+.popUpText{
+  background-color: white;
+  border: 1px solid greenyellow;
+  border-radius: 6px;
+  width: 100%;
+}
 
 
 

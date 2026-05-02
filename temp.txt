@@ -1,8 +1,0 @@
-
-5/1/26 Action plan
-
-TODO - update map pop up to show create report and register restaurant
-TODO - improve the style of create rodent report form
-TODO - complete the rodent report create form so it actually submits and saves
-TODO - client side validation of the report form
-TODO - create rodent report button should make the report creation as a pop up on the heatmap screen
