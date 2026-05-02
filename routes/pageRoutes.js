@@ -100,11 +100,22 @@ router.route('/heatmap').get(async (req, res) => {
             .sort((a, b) => b.count - a.count)
             .slice(0, 5);
 
+
+        //Check if the user is authenticated or not. This will set a var flag for userAuthenticated. This controls pop up logic
+        let userAuthenticated = req.session.userId;
+        if(userAuthenticated == undefined){
+            userAuthenticated = false;
+        }else{
+            userAuthenticated = true;
+        }
+
+
         res.render("heatmap", {
             title: 'Heatmap',
             restaurantMapData: restaurantMapData,
             rodentMapData: rodentMapData,
-            hotspotFeed: hotspotFeed
+            hotspotFeed: hotspotFeed,
+            userAuthenticated: userAuthenticated
         });
 
     } catch (error) {

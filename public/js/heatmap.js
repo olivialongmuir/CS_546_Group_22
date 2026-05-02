@@ -275,6 +275,24 @@ const makePopUp=(lat,lng)=>{
             </div>`
 }
 
+//Created and returns an HTML stub for map pop up that can direct user to login or sign up
+const loginPopUp=(lat,lng)=>{
+            return`
+            <div>
+                <p style="color: white; text-align: center"
+                >Login or Sign Up today to report rodents!</p>
+            </div>
+            <div class="btn-stack">
+                <a href="/register" class="popup-link">
+                    <button class="btn" style="background-color: grey">Sign Up</button>
+                </a>
+                <a href="/login" class="popup-link">
+                    <button class="btn">Login</button>
+                </a>
+            </div>`
+}
+
+
 
 //Adds a pin marker to a clicked location
 const addPin=(map, lat, lng)=>{
@@ -283,12 +301,22 @@ const addPin=(map, lat, lng)=>{
     lastLat = lat;
     lastLng = lng;
 
-
     //Make new pin object
     newPin = L.marker([lat, lng], { icon: locationPin })
         .addTo(map)
-        .bindPopup(makePopUp(lat,lng)) //uses html template
-        .openPopup()
+
+    //Checks wether or not the user is logged in. 
+    //If user is not logged in the pop up will be generic and promt them to login. Else will be the report creation prompt
+    //get current user data
+
+    if(userAuthenticated){
+        newPin.bindPopup(makePopUp(lat,lng)); //uses html template
+    }else{
+        newPin.bindPopup(loginPopUp());
+    }
+
+    //Open the pop up for user to see
+    newPin.openPopup();
 
     //Add to pins list
     activePins.push(newPin);
