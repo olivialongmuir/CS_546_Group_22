@@ -30,6 +30,7 @@ router.route('/').get(async (req, res) => {
 
 // POST /rodentReports
 // creates a rodent report
+//middlewear is used to check if user is logged in before they can make a report
 router.route('/').post(async (req, res) => {
   try {
 
@@ -97,9 +98,6 @@ router.route('/').post(async (req, res) => {
     //Redirects user to that report
     res.redirect(`/ratreports/${report._id}`);
     // res.redirect('/ratreports');
-
-
-    
 
   } catch (error) {
     res.status(500).json({ error: error });
