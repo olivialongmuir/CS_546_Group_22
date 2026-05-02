@@ -153,7 +153,7 @@ export const checkReactionType = (reactionType) => {
 
 export const checkRestaurantStatus = (restaurantStatus) => {
     const parsed_restaurantStatus = checkString(restaurantStatus, 'restaurantStatus').toLowerCase();
-    const validStatus = ['sanitary', 'unsanitary', 'inspecting'];
+    const validStatus = ['sanitary', 'unsanitary', 'inspecting', 'pending'];
     if (!validStatus.includes(parsed_restaurantStatus)) throw `Error: Report status must be one of the following: ${validStatus.join(', ')}`;
     return parsed_restaurantStatus;
 };

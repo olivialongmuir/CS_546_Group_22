@@ -315,12 +315,5 @@ router.route('/profile').get(async (req, res) => {
 
 
 
-//Restaurant Registration Form Route
-router.route('/registerRestaurant').get(async (req, res) => {
-    res.render('registerRestaurant')
-});
-
-
-
 
 export default router;
