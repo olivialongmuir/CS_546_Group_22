@@ -3,7 +3,7 @@
 import { Router } from 'express';
 const router = Router();
 import { getAllRestaurants, getRestaurantById } from '../data/restaurants.js';
-import { getAllReports} from '../data/rodentReports.js'
+import { getAllReports, getReportById} from '../data/rodentReports.js'
 import { getUserById } from '../data/users.js';
 import { checkId, getLocationFromZip, countToStatus } from '../helpers.js';
 import NodeGeocoder from 'node-geocoder';
@@ -113,10 +113,9 @@ router.route('/heatmap').get(async (req, res) => {
     }
 });
 
+//Generic Route which is called from the nav bar route
 router.route('/ratreports').get(async (req, res) => {
     try {
-
-        //TODO - allow this route to be called with a req payload storing the rodent report to be opened? - need to check with @olivia
 
         //TODO -  error handling and invalid data checking
 
@@ -148,6 +147,57 @@ router.route('/ratreports').get(async (req, res) => {
         res.status(500).send("Error loading Rat Reports");
     }
 });
+
+
+
+//Route which allows you to pre-filter to a specific report by ID. The target report will be the data used to prepopulate first shown report
+router.route('/ratreports/:id').get(async (req, res) => {
+    try {
+
+        //TODO -  error handling and invalid data checking
+
+        //Get that specific report
+        let id = req.params.id;
+        let targetReport = await getReportById(id);
+
+        //get all reports to be shown
+        let reports = await getAllReports();
+
+
+        const firstLocation = {
+            name: targetReport.name,
+            lat: Number(targetReport.latitude),
+            lng: Number(targetReport.longitude)
+        }
+
+        //put object in arr since its iterated when the maps built
+        const restaurantData = [firstLocation];
+
+        const restaurantMapData = JSON.stringify(restaurantData);
+
+        res.render("ratreports", {
+            title: 'Rat Reports',
+            reports:reports,
+            restaurantMapData: restaurantMapData,
+            firstReport: targetReport //passing in target report
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Error loading Rat Reports");
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
 
 const gradeToStatus = (grade) => {
   if (grade === 'A') return { key: 'safe',      label: 'Safe' };

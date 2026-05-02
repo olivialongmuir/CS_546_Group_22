@@ -9,6 +9,8 @@ const rodentMarkers = L.layerGroup();
 const restaurantMarkers = {};
 const zoomThreshold = 16;
 const flyDuration = 3;
+let lastLat; //Tracks the last latitude position clicked
+let lastLng; //Tracks the last longitude position clicked
 
 // restaurant and rodent icons
 const restaurantPin = L.icon({
@@ -125,8 +127,8 @@ window.addEventListener('load', () => {
             // TODO - add link to rodent report details similar to restaurant above
                 .bindPopup(
                         `<div class="btn-stack">
-                        TODO
-                        <button class="btn">View Report</button>
+                         <a href="/ratreports/${r._id}" class="popup-link">
+                         <button class="btn">View Report</button>
                         </a>
                     </div>`
                 );
@@ -277,11 +279,18 @@ const makePopUp=(lat,lng)=>{
 //Adds a pin marker to a clicked location
 const addPin=(map, lat, lng)=>{
 
+    //Set lat long
+    lastLat = lat;
+    lastLng = lng;
+
+
+    //Make new pin object
     newPin = L.marker([lat, lng], { icon: locationPin })
         .addTo(map)
         .bindPopup(makePopUp(lat,lng)) //uses html template
         .openPopup()
 
+    //Add to pins list
     activePins.push(newPin);
 }
 
@@ -293,6 +302,7 @@ const removePins=()=>{
         }
     }
 }
+
 
 
 //Closes all pin popups
@@ -315,7 +325,8 @@ document.getElementById("cancelSubmit")?.addEventListener('click', ()=>{
         mapLayout.style.visibility = 'visible';
     }
 
-    //TODO - Populate the lat long and zip of the form
+    //Flys the user back to  map
+    flyToLocation(lastLat, lastLng, 16);
 
 })
 
@@ -332,6 +343,15 @@ document.addEventListener('click', (e) => {
     const popUp = document.getElementById("reportPopUp");
     const mapLayout = document.getElementById("heatmapLayout");
 
+    //Populate the lat and long pill buttons
+    document.getElementById("latStat").innerText = `Lat: ${lastLat}`;
+    document.getElementById("lngStat").innerText = `Lng: ${lastLng}`;
+
+    //Prepopulate the forms fiedls with user info and location
+    document.getElementById("latitude").value = lastLat;
+    document.getElementById("longitude").value = lastLng;
+
+
     //now set visbility of all elements
     if(popUp){
         //show pop up
@@ -343,5 +363,4 @@ document.addEventListener('click', (e) => {
     //Flys back out to standard view
     // const nycLatLng = [40.7128, -74.0060];
     // flyToLocation(40.7128, -74.0060, 16);
-
 });
