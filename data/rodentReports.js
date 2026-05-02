@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { rodentReports } from "../config/mongoCollections.js";
+import { reactions, rodentReports } from "../config/mongoCollections.js";
 import { 
     checkDate, 
     checkDescription, 

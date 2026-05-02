@@ -1,4 +1,4 @@
-import { users, comments } from "../config/mongoCollections.js";
+import { users, comments, reactions, restaurants } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import { hash, compare } from "bcryptjs";
 import { 
@@ -8,6 +8,7 @@ import {
     checkPassword, 
     checkUsername, 
     checkUserType,
+    COLLECTION_IDS,
 } from "../helpers.js";
 import { validateId } from "./utility.js";
 
@@ -237,11 +238,6 @@ export const getUserComments = async(id) => {
     const errorSource = "getUserComments";
     const validatedId = validateId(id, 'userId', errorSource);
 
-    // Check that this user exists in user database
-    const userCollection = await users();
-    const userItems = await userCollection.findOne({_id: new ObjectId(validatedId)});
-    if (!userItems) `Error {${errorSource}} No user found with id ${validatedId}`;
-
     // Get all comments from comments database associated with this user
     const commentCollection = await comments();
     let commentItems = await commentCollection.find({userId: validatedId}).toArray();
@@ -264,14 +260,12 @@ export const getUserRodentReports = async (id) => {
     const errorSource = "getUserRodentReports";
     const validatedId = validateId(id, 'userId', errorSource);
 
-    // Check user exists in database
-    const userCollection = await users();
-    const userItems = await userCollection.findOne({_id: new ObjectId(validatedId)});
-    if (!userItems) `Error {${errorSource}} No user found with id ${validatedId}`;
-
     // Gets all rodent reports attached to a user
     const reportCollection = await rodentReports();
     let reportItems = await reportCollection.find({userId: validatedId}).toArray();
+
+    // Check if database returned anything. Return empty array if nothing
+    if (reportItems.length === 0) return [];
 
     // Ensure all rodent report IDs are in the form of a string
     reportItems = reportItems.map(report => {
@@ -280,3 +274,138 @@ export const getUserRodentReports = async (id) => {
     })
     return reportItems;
 };
+
+/**
+ * Gets all reports that user have reacted to
+ * @param {string} userId 
+ * @param {string} reportId 
+ * @returns reportsList
+ */
+export const getUserReactedReports = async(userId, reportId) => {
+    const errorSource = 'getAllReactedReports';
+    const validatedReportId = validateId(reportId, 'reportId', errorSource);
+    const validatedUserId = validateId(userId, 'userId', errorSource);
+
+    const [reportsCollection, reactionCollection] = await Promise.all([
+        rodentReports(),
+        reactions()
+    ]);
+
+    // Find all reactions by user on a report
+    const reactionsList = await reactionCollection.find({
+        userId: validatedUserId, 
+        targetId: validatedReportId,
+        targetKey: COLLECTION_IDS.REPORT
+    }).toArray();
+
+    // Check if database returned anything. Return empty array if nothing
+    if (reactionsList.length === 0) return [];
+
+    // Get just the ids
+    const reportIds = reactionsList.map(reaction => new ObjectId(reaction.targetId));
+    
+    // Find matching reports by objectId
+    let reportsList = await reportsCollection.find({
+        _id: {$in: reportIds}
+    }).toArray();
+
+    // Check if database returned anything. Return empty array if nothing
+    if (reportsList.length === 0) return [];
+
+    // Convert all object ids to string ids
+    reportsList = reportsList.map(report => {
+        report._id = report._id.toString();
+        return report
+    })
+    return reportsList
+}
+
+/**
+ * Gets all comments that user have reacted to
+ * @param {string} userId 
+ * @param {string} commentId 
+ * @returns commentsList
+ */
+export const getUserReactedComments = async(userID, commentId) => {
+    const errorSource = 'getUserReactedComments';
+    const validatedCommentId = validateId(commentId, 'commentId', errorSource);
+    const validatedUserId = validateId(userID, 'userId', errorSource);
+
+    const [commentCollection, reactionCollection] = await Promise.all([
+        comments(),
+        reactions()
+    ]);
+
+    // Find all reactions by user on a report
+    const reactionsList = await reactionCollection.find({
+        userId: validatedUserId, 
+        targetId: validatedCommentId,
+        targetKey: COLLECTION_IDS.COMMENT
+    }).toArray();
+
+    // Check if database returned anything. Return empty array if nothing
+    if (reactionsList.length === 0) return [];
+
+    // Get just the ids
+    const reportIds = reactionsList.map(reaction => new ObjectId(reaction.targetId));
+    
+    // Find matching reports by objectId
+    let reportsList = await commentCollection.find({
+        _id: {$in: reportIds}
+    }).toArray();
+
+    // Check if database returned anything. Return empty array if nothing
+    if (reportsList.length === 0) return [];
+
+    // Convert all object ids to string ids
+    reportsList = reportsList.map(report => {
+        report._id = report._id.toString();
+        return report
+    })
+    return reportsList
+}
+
+/**
+ * Gets all restaurants that user have reacted to
+ * @param {string} userId 
+ * @param {string} restaurantId 
+ * @returns restaurantsList
+ */
+export const getUserReactedRestaurants = async(userID, restaurantId) => {
+    const errorSource = 'getAllReactedReports';
+    const validatedCommentId = validateId(restaurantId, 'restaurantId', errorSource);
+    const validatedUserId = validateId(userID, 'userId', errorSource);
+
+    const [restaurantsCollection, reactionCollection] = await Promise.all([
+        restaurants(),
+        reactions()
+    ]);
+
+    // Find all reactions by user on a report
+    const reactionsList = await reactionCollection.find({
+        userId: validatedUserId, 
+        targetId: validatedCommentId,
+        targetKey: COLLECTION_IDS.RESTAURANT
+    }).toArray();
+
+    // Check if database returned anything. Return empty array if nothing
+    if (reactionsList.length === 0) return [];
+
+    // Get just the ids
+    const reportIds = reactionsList.map(reaction => new ObjectId(reaction.targetId));
+    
+    // Find matching reports by objectId
+    let reportsList = await restaurantsCollection.find({
+        _id: {$in: reportIds}
+    }).toArray();
+
+    // Check if database returned anything. Return empty array if nothing
+    if (reportsList.length === 0) return [];
+
+    // Convert all object ids to string ids
+    reportsList = reportsList.map(report => {
+        report._id = report._id.toString();
+        return report
+    })
+    return reportsList
+}
