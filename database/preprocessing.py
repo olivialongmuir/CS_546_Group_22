@@ -93,7 +93,11 @@ def main():
         "rodent": None,
         "timestamp": timestamp,
         "updatedAt": None,
-        "verifiedBy": "inspector"
+        "verifiedBy": "inspector",
+        "stats": {
+            "likes": 0,
+            "dislikes": 0
+        }
     }
 
     #----------------------------------------------------------------------------
@@ -116,6 +120,10 @@ def main():
 
     restaurants_newKeys = {
         "status": None,
+        "stats": {
+            "likes": 0,
+            "dislikes": 0
+        }
     }
 
     #cull_rodents(input=original_rodents, output=culled_rodents, sample_size=rodent_cull_size)

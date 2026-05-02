@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import { comments, reactions } from "../config/mongoCollections.js";
-import { checkComment } from "../helpers.js";
+import { checkComment, COLLECTION_IDS } from "../helpers.js";
 import { validateId } from "./utility.js";
 
 /**
@@ -137,11 +137,11 @@ export const deleteComment = async(id) => {
         reactions()
     ])
 
-    const deletionInfo = await commentCollection.deleteOne({_id: new ObjectId(validatedId)});
+    let deletionInfo = await commentCollection.deleteOne({_id: new ObjectId(validatedId)});
     if (deletionInfo.deletedCount === 0) throw `Error {${errorSource}}: Could not delete comment with id ${validatedId}`;
 
     // Also have to delete all corresponding reactions. Ok to have 0 count since not all comments have reactions
-    const deletionInfoMany = await reactionCollection.deleteMany({commentId: validatedId});
+    deletionInfo = await reactionCollection.deleteMany({targetId: validatedId, targetKey: COLLECTION_IDS.COMMENT});
 
     return { deleted: true };
 }

@@ -154,15 +154,22 @@ export const checkReactionType = (reactionType) => {
 export const checkRestaurantStatus = (restaurantStatus) => {
     const parsed_restaurantStatus = checkString(restaurantStatus, 'restaurantStatus').toLowerCase();
     const validStatus = ['sanitary', 'unsanitary', 'inspecting'];
-    if (!validStatus.includes(parsed_restaurantStatus)) throw `Error: Report status must be one of the following: ${validStatus.join(', ')}`;
+    if (!validStatus.includes(parsed_restaurantStatus)) throw `Error: Restaurant status must be one of the following: ${validStatus.join(', ')}`;
     return parsed_restaurantStatus;
 };
 
 export const checkRodentStatus = (rodentStatus) => {
     const parsed_rodentStatus = checkString(rodentStatus, 'rodentStatus').toLowerCase();
     const validStatus = ['pending', 'verified', 'disputed', 'removed', 'unverified'];
-    if (!validStatus.includes(parsed_rodentStatus)) throw `Error: Report status must be one of the following: ${validStatus.join(', ')}`;
+    if (!validStatus.includes(parsed_rodentStatus)) throw `Error: Rodent status must be one of the following: ${validStatus.join(', ')}`;
     return parsed_rodentStatus;
+};
+
+export const checkTargetKeyType = (targetKey) => {
+    const parsed_keyType = checkString(targetKey, 'rodentStatus').toLowerCase();
+    const validTypes = Object.values(COLLECTION_IDS);
+    if (!validTypes.includes(parsed_keyType)) throw `Error: Target type must be one of the following: ${validTypes.join(', ')}`;
+    return parsed_keyType;
 };
 
 export const checkUserType = (userType) => {
@@ -190,6 +197,12 @@ export const checkPhone = (phone) => {
     if (!/^\d{3}-\d{3}-\d{4}$/.test(parsed_phone)) throw 'Error: Phone number must be in the format XXX-XXX-XXXX';
     return parsed_phone;
 };
+
+export const COLLECTION_IDS = Object.freeze({
+    RESTAURANT: 'restaurantId',
+    COMMENT: 'commentId',
+    REPORT: 'reportId'
+});
 
 const zipPrefixToBorough = {
     "100": "Manhattan",

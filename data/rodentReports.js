@@ -13,7 +13,8 @@ import {
     checkUserType, 
     checkZipcode, 
     checkLatitude,
-    checkLongitude
+    checkLongitude,
+    COLLECTION_IDS
 } from "../helpers.js";
 import { validateId } from './utility.js';
 
@@ -35,6 +36,7 @@ import { validateId } from './utility.js';
  *  timestamp:          string
  *  updatedAt:          string
  *  verifiedBy:         string
+ *  stats:              subdocument
  * }
  */
 
@@ -46,6 +48,14 @@ import { validateId } from './utility.js';
  *  rating:             number
  *  note:               string
  *  photoUrl:           string
+ * }
+ */
+
+/**
+ * Subdocument {stats} Schema:
+ * {
+ *  likes:              number
+ *  dislikes:           number
  * }
  */
 
@@ -156,7 +166,11 @@ export const createReport = async(
         rodent: [],
         timestamp: timestamp,
         updatedAt: null,
-        verifiedBy: null
+        verifiedBy: null,
+        stats: {
+            likes: 0,
+            dislikes: 0
+        }
     }
 
     // Insert new report into database
@@ -290,9 +304,16 @@ export const deleteReport = async(id) => {
     const validatedId = validateId(id, 'reportId', errorSource);
 
     // Delete report from database
-    const reportCollection = await rodentReports();
-    const deletionInfo = await reportCollection.deleteOne({_id: new ObjectId(validatedId)});
+    const [reportCollection, reactionCollection] = await Promise.all([
+        rodentReports(),
+        reactions()
+    ])
+
+    let deletionInfo = await reportCollection.deleteOne({_id: new ObjectId(validatedId)});
     if (!deletionInfo.deletedCount === 0) throw `Error {${errorSource}}: Could not delete rodent report with id ${validatedId}`;
+
+    // Also have to delete all corresponding reactions. Ok to have 0 count since not all rodent reports have reactions
+    deletionInfo = await reactionCollection.deleteMany({targetId: validatedId, targetKey: COLLECTION_IDS.REPORT});
 
     return { deleted: true };
 };

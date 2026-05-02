@@ -7,7 +7,8 @@ import {
     checkRestaurantStatus, 
     checkLatitude,
     checkLongitude,
-    checkRestaurantName
+    checkRestaurantName,
+    COLLECTION_IDS
 } from '../helpers.js';
 import { validateId } from './utility.js';
 
@@ -23,6 +24,15 @@ import { validateId } from './utility.js';
  *  phone:              string
  *  permit_number:      string
  *  status:             string
+ *  stats:              subdocument
+ * }
+ */
+
+/**
+ * Subdocument {stats} Schema:
+ * {
+ *  likes:              number
+ *  dislikes:           number
  * }
  */
 
@@ -105,7 +115,11 @@ export const createRestaurant = async(
         website: validatedWebsite,
         phone: validatedPhone,
         permit_number: validatedPermitNumber,
-        status: validatedStatus
+        status: validatedStatus,
+        stats: {
+            likes: 0,
+            dislikes: 0
+        }
     };
 
     // Insert new restaurant object into database
@@ -180,6 +194,7 @@ export const deleteRestaurant = async(id) => {
     const errorSource = "deleteRestaurant";
     const validatedId = validateId(id, 'restaurantId', errorSource);
 
+    // Delete restaurant from database
     const [restaurantCollection, reactionCollection, commentCollection] = await Promise.all([
         restaurants(),
         reactions(),
@@ -190,7 +205,7 @@ export const deleteRestaurant = async(id) => {
     let deletionInfo = commentCollection.deleteMany({restaurantId: validatedId});
 
     // Delete all reactions associated with restaurant. Ok to have 0 count since there might not be any reactions
-    deletionInfo = reactionCollection.deleteMany({})
+    deletionInfo = reactionCollection.deleteMany({targetId: validatedId, targetKey: COLLECTION_IDS.RESTAURANT});
 
     // Delete restaurant from database
     deletionInfo = await restaurantCollection.deleteOne({_id: new ObjectId(validatedId)});
@@ -241,9 +256,7 @@ export const getRestaurantRodentReports = async (id) => {
 
     // Gets all rodent reports attached to a restaurant
     const reportCollection = await rodentReports();
-    let reportItems = await reportCollection
-        .find({restaurantId: validatedId})
-        .toArray();
+    let reportItems = await reportCollection.find({restaurantId: validatedId}).toArray();
 
     // Ensure all rodent report IDs are in the form of a string
     reportItems = reportItems.map(report => {
