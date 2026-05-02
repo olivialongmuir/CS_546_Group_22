@@ -1,7 +1,28 @@
 import { ObjectId } from "mongodb";
 import { comments, reactions } from "../config/mongoCollections.js";
-import { checkComment } from "../helpers.js";
+import { checkComment, COLLECTION_IDS } from "../helpers.js";
 import { validateId } from "./utility.js";
+
+/**
+ * Comments Schema:
+ * {
+ *  _id:                objectId
+ *  userId:             string
+ *  restaurantId:       string
+ *  comment:            string
+ *  timestamp:          string
+ *  edited:             bool
+ *  stats:              subdocument
+ * }
+ */
+
+/**
+ * Subdocument {stats} Schema:
+ * {
+ *  likes:              number
+ *  dislikes:           number
+ * }
+ */
 
 /**
  * Creates a new comment and inserts it into the database. Updates all linked collections
@@ -30,7 +51,8 @@ export const createComment = async(
         restaurantId: validatedRestaurantId,
         comment: validatedComment,
         timestamp: timestamp,
-        edited: null,
+        edited: false,
+        updatedAt: null,
         stats: {
             likes: 0,
             dislikes: 0
@@ -89,7 +111,8 @@ export const updateComment = async(
         {_id: new ObjectId(validatedId)},
         {$set: {
             comment: validatedComment,
-            edited: true
+            edited: true,
+            updatedAt: timestamp
         }},
         {returnDocument: "after"}
     )
@@ -114,12 +137,11 @@ export const deleteComment = async(id) => {
         reactions()
     ])
 
-    const deletionInfo = await commentCollection.deleteOne({_id: new ObjectId(validatedId)});
-    if (deletionInfo.deletedCount === 0) throw `Error {${errorSource}}: Could not delete restaurant with id ${validatedId}`;
+    let deletionInfo = await commentCollection.deleteOne({_id: new ObjectId(validatedId)});
+    if (deletionInfo.deletedCount === 0) throw `Error {${errorSource}}: Could not delete comment with id ${validatedId}`;
 
-    // Also have to delete all corresponding reactions
-    const deletionInfoMany = await reactionCollection.deleteMany({commentId: validatedId});
-    if (deletionInfoMany.deletedCount === 0) throw `Error {${errorSource}}: Could not delete all restaurant reactions with id ${validatedId}`;
+    // Also have to delete all corresponding reactions. Ok to have 0 count since not all comments have reactions
+    deletionInfo = await reactionCollection.deleteMany({targetId: validatedId, targetKey: COLLECTION_IDS.COMMENT});
 
     return { deleted: true };
 }
