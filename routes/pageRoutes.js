@@ -68,7 +68,8 @@ router.route('/heatmap').get(async (req, res) => {
             lat: Number(r.latitude),
             lng: Number(r.longitude),
             zip: r.zipcode,
-            status: r.status
+            status: r.status,
+            description: r.description
         }));
         const rodentMapData = JSON.stringify(rodentData);
 
