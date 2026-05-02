@@ -130,12 +130,12 @@ window.addEventListener('load', () => {
                         <div class="popUpText">
                             <p class="popUp-p">${r.description}</p>
                         </div>
-                            <div class="infoRow">
-                                <span class="locationStat">Lat: ${r.lat}</span>
-                                <span class="locationStat">Lng: ${r.lng}</span>
-                            </div>
+                        <div class="infoRow">
+                            <span class="locationStat">Lat: ${r.lat}</span>
+                            <span class="locationStat">Lng: ${r.lng}</span>
+                        </div>
                          <a href="/ratreports/${r._id}" class="popup-link">
-                         <button class="btn">View Report</button>
+                         <button class="btn popup-btn">View Report</button>
                         </a>
                     </div>`
                 );
@@ -277,8 +277,8 @@ const makePopUp=(lat,lng)=>{
                 <span class="locationStat">Lng: ${lng}</span>
             </div>
             <div class="btn-stack">
-            <button class="btn" style="background-color: grey";>Register Restaurant</button>
-            <button class="createReportBtn btn">Create Rodent Report</button>
+            <button class="btn popup-btn" style="background-color: grey";>Register Restaurant</button>
+            <button class="createReportBtn btn popup-btn">Create Rodent Report</button>
             </div>`
 }
 
@@ -295,10 +295,10 @@ const loginPopUp=(lat,lng)=>{
             </div>
             <div class="btn-stack">
                 <a href="/register" class="popup-link">
-                    <button class="btn" style="background-color: grey">Sign Up</button>
+                    <button class="btn popup-btn" style="background-color: grey">Sign Up</button>
                 </a>
                 <a href="/login" class="popup-link">
-                    <button class="btn">Login</button>
+                    <button class="btn popup-btn">Login</button>
                 </a>
             </div>`
 }

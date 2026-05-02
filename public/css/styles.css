@@ -365,6 +365,12 @@ h2{
 }
 
 
+.popup-btn:hover{
+  background-color: var(--primary-hover);
+  border-color: yellow;
+}
+
+
 
 
 /* css map dark mode override */
