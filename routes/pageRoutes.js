@@ -148,15 +148,15 @@ router.route('/ratreports').get(async (req, res) => {
 
         const restaurantMapData = JSON.stringify(restaurantData);
 
-        res.render("ratreports", {
-            title: 'Rat Reports',
+        res.render("rodentReports", {
+            title: 'Rodent Reports',
             reports:reports,
             restaurantMapData: restaurantMapData,
             firstReport: firstReport //passing in first report which will be the default starting data shown
         });
     } catch (error) {
         console.error(error);
-        res.status(500).send("Error loading Rat Reports");
+        res.status(500).send("Error loading Rodent Reports");
     }
 });
 
@@ -187,24 +187,17 @@ router.route('/ratreports/:id').get(async (req, res) => {
 
         const restaurantMapData = JSON.stringify(restaurantData);
 
-        res.render("ratreports", {
-            title: 'Rat Reports',
+        res.render("rodentReports", {
+            title: 'Rodent Reports',
             reports:reports,
             restaurantMapData: restaurantMapData,
             firstReport: targetReport //passing in target report
         });
     } catch (error) {
         console.error(error);
-        res.status(500).send("Error loading Rat Reports");
+        res.status(500).send("Error loading Rodent Reports");
     }
 });
-
-
-
-
-
-
-
 
 
 
@@ -320,37 +313,7 @@ router.route('/profile').get(async (req, res) => {
 
 
 
-//DISPLAY REPORT CREAITON FORM FOR SET UP, 
-router.route('/createReport').get(async (req, res) => {
 
-    // grab the lat and lon from the map click, default value if no map click
-    const lat = req.query.lat ? Number(req.query.lat) : 40.6940285125;
-    const lng = req.query.lng ? Number(req.query.lng) : -73.9348118964;
-
-    const firstLocation = {
-        name: 'userClickedHere',
-        lat: lat,
-        lng: lng
-    };
-
-    // Docs for node-geocoder https://www.npmjs.com/package/node-geocoder
-    const geocoder = NodeGeocoder({provider: 'openstreetmap'});
-
-    const geoResult = await geocoder.reverse({ lat: 40.7, lon: -73.9 });
-    const zip = geoResult[0]?.zipcode || null;
-
-    const restaurantData = [firstLocation];
-    const restaurantMapData = JSON.stringify(restaurantData);
-
-    
-    res.render("createReport", {
-        title: 'Create Report',
-        restaurantMapData: restaurantMapData,
-        lat: lat,
-        lng: lng,
-        zip: zip,
-    });
-});
 
 
 export default router;

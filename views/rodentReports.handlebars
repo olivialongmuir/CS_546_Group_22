@@ -1,31 +1,67 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
+<link rel="stylesheet" href="/public/css/rodentReport.css">
+
+<link rel="stylesheet" href="/public/css/restaurants.css">
+
+
+
 <section>
     <div class="container">
     <div class="leftPane">
 
 
         {{!-- Filter Panel --}}
-        <div>
-            <h2>Filter Reports</h2>
+        <div class="filterPanel">
+        <h2>Filter Reports</h2>
+            <div class="filterBlock">
+                    <div class="filterItem">
+                    <p class="filterLabel">Report Date:</p>
+                    <div class="dateRange">
+                        <input id="startDate" type="date" name="startDate">
+                        <input id="endDate" type="date" name="endDate">
+                    </div>
+                </div>
 
-            <p>Report Date:</p>
-            <input id="startDate" type="date" id="reportDate" name="reportDate">
-            <input id="endDate" type="date" id="reportDate" name="reportDate"><br>
-            <label for="verifiedStatus">Verified Only:</label>
-            <input type="checkbox" id="verifiedStatus" name="verifiedStatus"><br>
-            <button id="clearFilters">Clear Filters</button>
+            <div class="filterItem checkboxItem">
+                <span>
+                    <p class="filterLabel">Verified Only:</p>
+                    <input type="checkbox" id="verifiedStatus" name="verifiedStatus">
+                </span>
+            </div>
+
+                <button type="button" class="btn btn--outline" id="clearFilters">
+                Clear Filters
+                </button>
+            </div>
         </div>
 
         <!-- Cards list -->
+        <ul class="rodent-list"></ul>
         {{#each reports}}
-            <div class="ratCard" data-id="{{this._id}}" status-id="{{this.status}}" data-timestamp="{{this.timestamp}}">
+
+            {{!-- <div class="ratCard" data-id="{{this._id}}" status-id="{{this.status}}" data-timestamp="{{this.timestamp}}">
                 <p>Report: {{this.jobId}}</p>
                 <p>Time: {{this.timestamp}}</p>
                 <p>Location: {{this.latitude}} {{this.longitude}}</p>
                 <p>{{this.status}}</p>
-            </div>
+            </div> --}}
+                <div class="rodent-card panel" data-id="{{this._id}}" status-id="{{this.status}}" data-timestamp="{{this.timestamp}}">
+                <div class="rodent-card-main">
+                    {{!-- <h3 class="rodent-name">{{this._id}}</h3> --}}
+                        <div class="rodent-meta">
+                            <span class="meta-item"><span class="meta-icon">📍</span>Location: {{this.latitude}} {{this.longitude}}</span>
+                            {{!-- <span>{{this.status}}</span> --}}
+                        </div>
+                    <p class="restaurant-address">{{this.timestamp}}</p>
+                </div>
+                  <div class="restaurant-card-side">
+                    {{!-- <span class="status-badge status-badge--{{this.status.key}}">{{this.status.label}}</span> --}}
+                      <span class="grade-pill">{{this.status}}</span>
+                  </div>
+                </div>
         {{/each}}
+        </ul>
     </div>
 
     <div class="rightPane">
@@ -63,7 +99,6 @@
             <button>Like</button>
             <p>Rat Report Commments go here</p>
         </div>
-
     </div>
 </section>
 
@@ -93,3 +128,6 @@
     "timestamp": "2026-04-07T05:56:32.547Z",
     "updatedAt": null,
     "verifiedBy": "inspector" --}}
+
+
+

@@ -192,19 +192,6 @@ main {
   color: #888;
 }
 
-#searchButton {
-  padding: 10px 16px;
-
-  background-color: #2c2c2c;
-  color: white;
-
-  border: 1px solid #333;
-  border-radius: 10px;
-
-  cursor: pointer;
-
-  transition: background 0.2s ease, transform 0.1s ease;
-}
 
 #searchButton:hover {
   background-color: #3a3a3a;
@@ -365,6 +352,12 @@ h2{
 }
 
 
+.popup-btn:hover{
+  background-color: var(--primary-hover);
+  border-color: yellow;
+}
+
+
 
 
 /* css map dark mode override */
@@ -453,6 +446,15 @@ h2{
   height: 24px;
   align-items: center;
   color: #a3e635;
+}
+
+
+.restaurant-icon{
+  width: 28px;
+  height: 28px;
+  margin: 10px;
+  vertical-align: middle;
+  color: rgb(71, 130, 239);
 }
 
 .page-container {
