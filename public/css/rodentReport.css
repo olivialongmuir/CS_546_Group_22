@@ -87,3 +87,99 @@ textarea {
     background-color: lightgray;
     color: black;
 }
+
+
+/* Filter styles */
+.filterBlock {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+    margin-bottom: 1rem;
+}
+
+.filterItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.dateRange {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.filterItem input{
+    padding: 0.4rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+.filterItem select {
+    padding: 0.4rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+#clearFilters {
+    height: fit-content;
+}
+
+
+/* Clear filter button */
+#clearFilters:hover {
+  border-color: white;
+}
+
+
+
+
+
+
+/* Styles replicated from restaurant page */
+.rodent-list {
+  list-style: none;
+  margin: 0;
+  padding: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.rodent-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s, transform 0.1s;
+  margin: 2px;
+
+}
+
+.rodent-card:hover {
+  border-color: var(--primary);
+}
+
+.rodent-card-main {
+  min-width: 0; 
+  flex: 1;
+}
+
+.rodent-name {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--fg);
+  margin: 0 0 0.35rem 0;
+}
+
+.rodent-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
