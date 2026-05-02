@@ -148,15 +148,15 @@ router.route('/ratreports').get(async (req, res) => {
 
         const restaurantMapData = JSON.stringify(restaurantData);
 
-        res.render("ratreports", {
-            title: 'Rat Reports',
+        res.render("rodentReports", {
+            title: 'Rodent Reports',
             reports:reports,
             restaurantMapData: restaurantMapData,
             firstReport: firstReport //passing in first report which will be the default starting data shown
         });
     } catch (error) {
         console.error(error);
-        res.status(500).send("Error loading Rat Reports");
+        res.status(500).send("Error loading Rodent Reports");
     }
 });
 
@@ -187,15 +187,15 @@ router.route('/ratreports/:id').get(async (req, res) => {
 
         const restaurantMapData = JSON.stringify(restaurantData);
 
-        res.render("ratreports", {
-            title: 'Rat Reports',
+        res.render("rodentReports", {
+            title: 'Rodent Reports',
             reports:reports,
             restaurantMapData: restaurantMapData,
             firstReport: targetReport //passing in target report
         });
     } catch (error) {
         console.error(error);
-        res.status(500).send("Error loading Rat Reports");
+        res.status(500).send("Error loading Rodent Reports");
     }
 });
 

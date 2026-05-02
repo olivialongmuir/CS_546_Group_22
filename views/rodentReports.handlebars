@@ -16,8 +16,7 @@
         <h2>Filter Reports</h2>
             <div class="filterBlock">
                     <div class="filterItem">
-                    <label>Report Date:</label>
-
+                    <p class="filterLabel">Report Date:</p>
                     <div class="dateRange">
                         <input id="startDate" type="date" name="startDate">
                         <input id="endDate" type="date" name="endDate">
@@ -25,8 +24,10 @@
                 </div>
 
             <div class="filterItem checkboxItem">
-                <label for="verifiedStatus">Verified Only:</label>
-                <input type="checkbox" id="verifiedStatus" name="verifiedStatus">
+                <span>
+                    <p class="filterLabel">Verified Only:</p>
+                    <input type="checkbox" id="verifiedStatus" name="verifiedStatus">
+                </span>
             </div>
 
                 <button type="button" class="btn btn--outline" id="clearFilters">
@@ -47,7 +48,7 @@
             </div> --}}
                 <div class="rodent-card panel" data-id="{{this._id}}" status-id="{{this.status}}" data-timestamp="{{this.timestamp}}">
                 <div class="rodent-card-main">
-                    <h3 class="rodent-name">{{this._id}}</h3>
+                    {{!-- <h3 class="rodent-name">{{this._id}}</h3> --}}
                         <div class="rodent-meta">
                             <span class="meta-item"><span class="meta-icon">📍</span>Location: {{this.latitude}} {{this.longitude}}</span>
                             {{!-- <span>{{this.status}}</span> --}}
@@ -56,7 +57,7 @@
                 </div>
                   <div class="restaurant-card-side">
                     {{!-- <span class="status-badge status-badge--{{this.status.key}}">{{this.status.label}}</span> --}}
-                      <span class="grade-pill">Status: {{this.status}}</span>
+                      <span class="grade-pill">{{this.status}}</span>
                   </div>
                 </div>
         {{/each}}

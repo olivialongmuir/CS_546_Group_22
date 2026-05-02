@@ -13,8 +13,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: rgba(231, 228, 228, 0.188); /* Semi-transparent color */
-    backdrop-filter: blur(8px);      /* Blurs content behind the overlay */
+    background: rgba(231, 228, 228, 0.091); /* Semi-transparent color */
+    backdrop-filter: blur(6px);      /* Blurs content behind the overlay */
     /* padding: 2%; */
 
 }
@@ -89,13 +89,23 @@ textarea {
 }
 
 
+
+/* Filter selection area */
+.filterPanel{
+  transition: border-color 0.2s, transform 0.1s;
+  margin: 2px;
+}
+
 /* Filter styles */
 .filterBlock {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    align-items: flex-end;
-    margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s, transform 0.1s;
+  margin: 2px;
 }
 
 .filterItem {
@@ -125,14 +135,16 @@ textarea {
     height: fit-content;
 }
 
+.filterLabel{
+    font-size: 0.8rem;
+    color: var(--muted);   
+}
+
 
 /* Clear filter button */
 #clearFilters:hover {
   border-color: white;
 }
-
-
-
 
 
 
