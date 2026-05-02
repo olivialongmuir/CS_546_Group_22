@@ -166,7 +166,7 @@ export const checkRodentStatus = (rodentStatus) => {
 };
 
 export const checkTargetKeyType = (targetKey) => {
-    const parsed_keyType = checkString(targetKey, 'rodentStatus').toLowerCase();
+    const parsed_keyType = checkString(targetKey, 'rodentStatus');
     const validTypes = Object.values(COLLECTION_IDS);
     if (!validTypes.includes(parsed_keyType)) throw `Error: Target type must be one of the following: ${validTypes.join(', ')}`;
     return parsed_keyType;
@@ -197,6 +197,29 @@ export const checkPhone = (phone) => {
     if (!/^\d{3}-\d{3}-\d{4}$/.test(parsed_phone)) throw 'Error: Phone number must be in the format XXX-XXX-XXXX';
     return parsed_phone;
 };
+
+export const gradeToStatus = (grade) => {
+  if (grade === 'A') return { key: 'safe',      label: 'Safe' };
+  if (grade === 'B') return { key: 'watchlist', label: 'Watchlist' };
+  if (grade === 'C') return { key: 'danger',    label: 'Danger' };
+  return { key: 'unknown', label: 'Not Graded' };
+};
+
+// Normalizing into template
+export const normalizeRestaurant = (r) => ({
+  id: r._id?.toString(),
+  name: r.name,
+  borough: r.boro,
+  cuisine: r.type,
+  address: [r.building, r.street].filter(Boolean).join(' '),
+  zipcode: r.zipcode ? String(r.zipcode).split('.')[0] : '',
+  phone: r.phone,
+  grade: r.grade,
+  rodentScore: r.score,
+  lastVerified: r.gradeDate,
+  status: gradeToStatus(r.grade),
+  recentReports: 0 // TODO - count from rodentReports collection once linked
+});
 
 export const COLLECTION_IDS = Object.freeze({
     RESTAURANT: 'restaurantId',

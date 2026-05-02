@@ -50,7 +50,8 @@ app.use('/admin', adminOnly);
 
 app.engine('handlebars', exphbs.engine({
   defaultLayout: 'main',
-  partialsDir: 'views/partials' 
+  partialsDir: 'views/partials', 
+  helpers: { eq: (a, b) => a === b }
 }));
 
 app.set('view engine', 'handlebars');

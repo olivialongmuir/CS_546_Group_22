@@ -2,10 +2,12 @@
 
 import { Router } from 'express';
 const router = Router();
-import { getAllRestaurants, getRestaurantById } from '../data/restaurants.js';
+import { getAllRestaurants, getRestaurantById, getRestaurantComments } from '../data/restaurants.js';
 import { getAllReports, getReportById} from '../data/rodentReports.js'
 import { getUserById } from '../data/users.js';
-import { checkId, getLocationFromZip, countToStatus } from '../helpers.js';
+import { createComment, deleteComment, getCommentById} from '../data/comments.js';
+import { updateCommentReaction } from "../data/reactions.js";
+import { checkId, getLocationFromZip, countToStatus, gradeToStatus, normalizeRestaurant } from '../helpers.js';
 import NodeGeocoder from 'node-geocoder';
 import { countStats } from '../data/utility.js';
 
@@ -199,34 +201,6 @@ router.route('/ratreports/:id').get(async (req, res) => {
     }
 });
 
-
-
-
-
-
-const gradeToStatus = (grade) => {
-  if (grade === 'A') return { key: 'safe',      label: 'Safe' };
-  if (grade === 'B') return { key: 'watchlist', label: 'Watchlist' };
-  if (grade === 'C') return { key: 'danger',    label: 'Danger' };
-  return { key: 'unknown', label: 'Not Graded' };
-};
-
-// Normalizing into template
-const normalizeRestaurant = (r) => ({
-  id: r._id?.toString(),
-  name: r.name,
-  borough: r.boro,
-  cuisine: r.type,
-  address: [r.building, r.street].filter(Boolean).join(' '),
-  zipcode: r.zipcode ? String(r.zipcode).split('.')[0] : '',
-  phone: r.phone,
-  grade: r.grade,
-  rodentScore: r.score,
-  lastVerified: r.gradeDate,
-  status: gradeToStatus(r.grade),
-  recentReports: 0 // TODO - count from rodentReports collection once linked
-});
-
 router.route('/restaurants').get(async (req, res) => {
     try {
         const search   = (req.query.search || '').trim();
@@ -273,16 +247,139 @@ router.route('/restaurants/:id').get(async (req, res) => {
         const validatedId = checkId(id);
         const raw = await getRestaurantById(validatedId);
         const restaurant = normalizeRestaurant(raw);
+        const comments = await getRestaurantComments(validatedId);
+        const restaurantComments = await Promise.all(
+            comments.map(async (c) => {
+                const user = await getUserById(c.userId);
+                return {
+                    ...c,
+                    userName: user.username
+                };
+            })
+        );
         res.render("restaurant", {
             title: `${restaurant.name} - SqueakPeek`,
             restaurant,
-            comments: [] // TODO:load from getRestaurantComments(id)
+            comments: restaurantComments,
+            currentUserId: req.session.userId
         });
     } catch (error) {
         console.error(error);
         res.status(404).send("Restaurant not found");
     }
 });
+
+router.post('/comments/:id/delete', async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    if (!userId) return res.status(403).json({ error: "Not logged in" });
+
+    const commentId = checkId(req.params.id.trim());
+    const comment = await getCommentById(commentId);
+
+    if (comment.userId !== userId) {
+      return res.status(403).json({ error: "Not authorized" });
+    }
+
+    await deleteComment(commentId);
+
+    return res.json({ success: true });
+
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Error deleting comment" });
+  }
+});
+
+router.post('/restaurants/:id/comments', async (req, res) => {
+  const restaurantId = checkId(req.params.id.trim());
+
+  try {
+    const userId = req.session.userId;
+    if (!userId) {
+      return res.status(403).redirect('/login');
+    }
+
+    const { comment } = req.body;
+    // validation
+    if (!comment || typeof comment !== 'string') {
+      throw 'Comment must be a string';
+    }
+    const trimmedComment = comment.trim();
+    if (trimmedComment.length === 0) {
+      throw 'Comment cannot be empty';
+    }
+    if (trimmedComment.length > 500) {
+      throw 'Comment cannot exceed 500 characters';
+    }
+
+    await createComment(userId, restaurantId, trimmedComment);
+
+    // if no error was caught reload the page
+    return res.redirect(`/restaurants/${restaurantId}`);
+
+  } catch (error) {
+    // if error was caught load page with error to display
+    const raw = await getRestaurantById(restaurantId);
+    const restaurant = normalizeRestaurant(raw);
+    const comments = await getRestaurantComments(restaurantId);
+
+    const restaurantComments = await Promise.all(
+      comments.map(async (c) => {
+        const user = await getUserById(c.userId);
+        return {
+          ...c,
+          userName: user.username
+        };
+      })
+    );
+
+    return res.status(400).render("restaurant", {
+      title: `${restaurant.name} - SqueakPeek`,
+      restaurant,
+      comments: restaurantComments,
+      error: error || "Something went wrong",
+      formData: req.body
+    });
+  }
+});
+
+router.post('/comments/:id/like', async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    if (!userId) return res.status(403).json({ error: "Not logged in" });
+    const commentId = checkId(req.params.id.trim());
+    const updatedComment = await updateCommentReaction(userId, commentId, "like");
+
+    return res.json({
+      success: true,
+      stats: updatedComment.stats
+    });
+  } catch (e) {
+    return res.status(500).json({ error: "Failed to like comment" });
+  }
+});
+
+router.post('/comments/:id/dislike', async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    if (!userId) {
+      return res.status(403).json({ error: "Not logged in" });
+    }
+    const commentId = checkId(req.params.id.trim());
+    const updatedComment = await updateCommentReaction(userId, commentId, "dislike");
+
+    return res.json({
+      success: true,
+      stats: updatedComment.stats
+    });
+
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Failed to dislike comment" });
+  }
+});
+
 router.route('/profile').get(async (req, res) => {
   try {
     const dbUser = await getUserById(req.session.userId);
@@ -310,10 +407,5 @@ router.route('/profile').get(async (req, res) => {
     return res.status(500).send('Error loading Profile');
   }
 });
-
-
-
-
-
 
 export default router;

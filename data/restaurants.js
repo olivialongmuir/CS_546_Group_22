@@ -226,7 +226,7 @@ export const getRestaurantComments = async(id) => {
     // Check that this restaurant exists in restaurants database
     const restaurantCollection = await restaurants();
     const restaurantItem = await restaurantCollection.findOne({_id: new ObjectId(validatedId)});
-    if (!restaurantItem) `Error {${errorSource}} No restaurant found with id ${validatedId}`;
+    if (!restaurantItem) throw `Error {${errorSource}} No restaurant found with id ${validatedId}`;
 
     // Get all comments from comments database associated with this restaurant
     const commentCollection = await comments();

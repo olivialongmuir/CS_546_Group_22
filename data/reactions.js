@@ -90,101 +90,110 @@ export const deleteReportReaction = async(reactionId, reportId) => {
  * @param {string} type - like, dislike
  * @returns 
  */
-const updateReaction = async(
-    userId,
-    targetId,
-    targetKey,
-    type,
-    errorSource
+export const updateReaction = async (
+  userId,
+  targetId,
+  targetKey,
+  type
 ) => {
-    const validatedUserId = validateId(userId, 'userId', errorSource);
-    const validatedTargetId = validateId(targetId, `${targetKey}`, errorSource);
-    const validatedTargetKey = checkTargetKeyType(targetKey);
-    const validatedReactionType = checkReactionType(type);
 
-    // Check if user and comment exist
-    const [reactionCollection, userCollection] = await Promise.all([
-        reactions(),
-        users()
-    ]);
+  const errorSource = "updateReaction";
 
-    //Check that the user exists
-    const userItem = await userCollection.findOne({_id: new ObjectId(validatedUserId)});
-    if (!userItem) throw `Error {${errorSource}}: No user found with id ${validatedUserId}`;
+  const validatedUserId = validateId(userId, 'userId', errorSource);
+  const validatedTargetId = validateId(targetId, 'targetId', errorSource);
+  const validatedReactionType = checkReactionType(type);
+  const validatedTargetKey = checkTargetKeyType(targetKey);
 
-    // Decide on which collection we are looking for
-    let targetCollection = null;
-    switch (validatedTargetKey) {
-        case COLLECTION_IDS.RESTAURANT:
-            targetCollection = await restaurants();
-            break;
-        case COLLECTION_IDS.COMMENT:
-            targetCollection = await comments();
-            break;
-        case COLLECTION_IDS.REPORT:
-            targetCollection = await rodentReports();
-            break;
-        default:
-            throw `Error {${errorSource}}: TargetKey ${targetKey} is not a valid option. How did you get to this point?`;
-    }
+  const [reactionCollection, userCollection] = await Promise.all([
+    reactions(),
+    users()
+  ]);
 
-    const targetItem = await targetCollection.findOne({_id: new ObjectId(validatedTargetId)})
-    if (!targetItem) throw `Error {${errorSource}}: No ${validatedTargetKey} found with id ${validatedTargetId}`;
+  // check user exists
+  const userItem = await userCollection.findOne({
+    _id: new ObjectId(validatedUserId)
+  });
+  if (!userItem) throw `Error {${errorSource}}: No user found`;
 
-    // Timestamp request
-    const now = new Date();
-    const timestamp = now.toISOString();
+  // decide collection
+  let targetCollection;
+  switch (validatedTargetKey) {
+    case COLLECTION_IDS.COMMENT:
+      targetCollection = await comments();
+      break;
+    case COLLECTION_IDS.RESTAURANT:
+      targetCollection = await restaurants();
+      break;
+    case COLLECTION_IDS.REPORT:
+      targetCollection = await rodentReports();
+      break;
+    default:
+      throw `Invalid targetKey`;
+  }
 
-    // Try updating reaction. Create a new reaction if it does not exist
-    let reactionItem = await reactionCollection.findOneAndUpdate(
-        {
-            userId: validatedUserId, 
-            targetId: validatedTargetId,
-            targetKey: validatedTargetKey
-        },
-        {
-            $set: {reactionType: validatedReactionType},
-            $setOnInsert: {timestamp: timestamp} 
-        },
-        {
-            upsert: true, //Create reaction if not found
-            returnDocument: "before"
-        }
+  // check if target exists
+  const targetItem = await targetCollection.findOne({
+    _id: new ObjectId(validatedTargetId)
+  });
+  if (!targetItem) throw `Target not found`;
+
+  const now = new Date().toISOString();
+
+  const existing = await reactionCollection.findOne({
+    userId: validatedUserId,
+    targetId: validatedTargetId,
+    targetKey: validatedTargetKey
+  });
+
+  let updateQuery;
+
+  // create a new reaction if one doesnt exist
+  if (!existing) {
+    await reactionCollection.insertOne({
+      userId: validatedUserId,
+      targetId: validatedTargetId,
+      targetKey: validatedTargetKey,
+      reactionType: validatedReactionType,
+      timestamp: now
+    });
+
+    updateQuery = {
+      $inc: { [`stats.${validatedReactionType}s`]: 1 }
+    };
+  }
+
+  // if the same reaction, remove the reaction
+  else if (existing.reactionType === validatedReactionType) {
+    await reactionCollection.deleteOne({ _id: existing._id });
+
+    updateQuery = {
+      $inc: { [`stats.${validatedReactionType}s`]: -1 }
+    };
+  }
+
+  // if reaction changes, remove the old and update new
+  else {
+    await reactionCollection.updateOne(
+      { _id: existing._id },
+      { $set: { reactionType: validatedReactionType } }
     );
 
-    // Check if a reaction got created or is this an update
-    const prevType = reactionItem ? reactionItem.reactionType : null;
+    updateQuery = {
+      $inc: {
+        [`stats.${validatedReactionType}s`]: 1,
+        [`stats.${existing.reactionType}s`]: -1
+      }
+    };
+  }
 
-    // Clicked on the same request twice. Delete the reaction
-    if (prevType === validatedReactionType) {
-        await deleteReaction(reactionItem._id.toString());
-        return { likes: 0, dislikes: 0 };
-    }
+  // update stats on target
+  const updatedTarget = await targetCollection.findOneAndUpdate(
+    { _id: new ObjectId(validatedTargetId) },
+    updateQuery,
+    { returnDocument: "after" }
+  );
 
-    // Update comment like/dislike count
-    let updateQuery = {};
-    if (prevType === null) {
-        updateQuery = {$inc: {[`stats.${validatedReactionType}s`]: 1}}; // Just increment it by 1 if a new reaction
-    } else {
-        updateQuery = // Otherwise properly increment or decrement the counts
-        [{
-            $set: {
-                [`stats.${prevType}s`]: {
-                    $max: [0, {$subtract: [`$stats.${prevType}s`, 1]}] // $max to ensure we don't go below 0 likes/dislikes. Basically a clamp()
-                },
-                [`stats.${validatedReactionType}s`]: { 
-                    $add: [`$stats.${validatedReactionType}s`, 1] 
-                }
-            }
-        }];
-    }
-
-    const updateInfo = await targetCollection.findOneAndUpdate(
-        {_id: new ObjectId(validatedTargetId)},
-        updateQuery,
-        {returnDocument: "after"}
-    );
-    return updateInfo.stats;
+  return updatedTarget;
 };
 
 /**
