@@ -88,6 +88,7 @@ document.querySelector(".leftPane")?.addEventListener("click", async (e) => {
 
     ratDetail.innerHTML = `
         <h2>Report ${data._id}</h2>
+        <p>USER: ${data.userId}</p>
         <p>Date: ${data.inspectionDate}</p>
         <p>Status: ${data.status}</p>
         <p>Timestamp: ${data.timestamp}</p>

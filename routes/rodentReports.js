@@ -5,6 +5,8 @@
 
 import { Router } from 'express';
 const router = Router();
+import NodeGeocoder from 'node-geocoder';
+
 
 import {
   getAllReports,
@@ -36,14 +38,25 @@ router.route('/').post(async (req, res) => {
     //Add in the default values needed for report creation
     let jobId = null
 
-    let zipcode = data.zipcode
+    //Populate the zip code if not given
+    let zipcode;
+    if(!data.zipcode){
+      // Docs for node-geocoder https://www.npmjs.com/package/node-geocoder
+      const geocoder = NodeGeocoder({provider: 'openstreetmap'});
+      
+      const geoResult = await geocoder.reverse({ lat: 40.7, lon: -73.9 });
+      zipcode = geoResult[0]?.zipcode || null;
+    }else{
+      zipcode = date.zipcode
+    }
+
     let latitude = data.latitude
     let longitude = data.longitude
     //inspection date gets set to null since not related
     let inspectionDate = null;
     //status is unverififed as default
     let status = 'unverified';
-    //approvedDate gets set to null since not related - This gets set when validated???
+    //approvedDate gets set to null since not related - This gets set when validated?
     let approvedDate = null;
 
     //If restaurant ID is blank then set it to null. That will be a report not associated to a report
@@ -55,7 +68,7 @@ router.route('/').post(async (req, res) => {
     }
     
     //Get the user Id 
-    let userId = '69e620a94370984bd615af92' //FAKE USER TODO
+    let userId = '69e620a94370984bd615af92' //FAKE USER #TODO
     let description = data.description
 
     const report = await createReport(
@@ -70,9 +83,18 @@ router.route('/').post(async (req, res) => {
       userId,
       description
     );
-    res.status(201).json(report);
+
+    //Posts the report status
+    // res.status(201).json(report);
+    //Redirects user to that report
+    res.redirect(`/ratreports/${report._id}`);
+    // res.redirect('/ratreports');
+
+
+    
+
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error });
   }
 });
 
