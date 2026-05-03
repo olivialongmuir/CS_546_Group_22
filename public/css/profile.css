@@ -211,6 +211,14 @@
   background-color: #c084fc;
 }
 
+.activity-dot--red {
+  background-color: #ff0000;
+}
+
+.activity-dot--orange {
+  background-color: #ffa600;
+}
+
 .activity-content {
   flex: 1;
 }
