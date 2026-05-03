@@ -57,12 +57,15 @@
 
 
     {{!-- Comments Section Partial. All values passed in came from the route and are just being sent down into the parial as vars--}}
+    {{!-- target is the object that will be rcecieving a comment. In this case it will be the restaurant object --}}
+    {{!-- The collection is used in the request url to detemrine which route the form hits--}}
      {{> commentSection 
       comments=comments
       isLoggedIn=isLoggedIn
       error=error
-      restaurant=restaurant
       formData=formData
+      target=restaurant
+      collection="restaurants" 
      }}
       {{!-- End of comments section --}}
 
