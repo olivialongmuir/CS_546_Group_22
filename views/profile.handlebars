@@ -155,13 +155,27 @@
 
             <ul class="activity-list" aria-label="Recent activity">
               {{#each user.activity}}
-              <li class="activity-item">
-                <span class="activity-dot activity-dot--{{this.color}}"></span>
-                <div class="activity-content">
-                  <p class="activity-text">{{this.text}}</p>
-                  <p class="activity-time">{{this.time}}</p>
-                </div>
-              </li>
+                <li class="activity-item">
+                  <span class="activity-dot activity-dot--{{this.color}}"></span>
+
+                  <div class="activity-content">
+                    <p class="activity-text">
+                      {{#if this.link}}
+                        <a href="{{this.link}}">{{this.text}}</a>
+                      {{else}}
+                        {{this.text}}
+                      {{/if}}
+                    </p>
+
+                    {{#if this.status}}
+                      <span class="status-badge status-badge--{{this.status}}">
+                        {{this.status}}
+                      </span>
+                    {{/if}}
+
+                    <p class="activity-time">{{this.time}}</p>
+                  </div>
+                </li>
               {{/each}}
             </ul>
           </section>

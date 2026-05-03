@@ -3,8 +3,8 @@
 import { Router } from 'express';
 const router = Router();
 import { getAllRestaurants, getRestaurantById, getRestaurantComments } from '../data/restaurants.js';
-import { getAllReports, getReportById} from '../data/rodentReports.js'
-import { getUserById } from '../data/users.js';
+import { getAllReports, getReportById} from '../data/rodentReports.js';
+import { getUserById, getUserActivity } from '../data/users.js';
 import { createComment, deleteComment, getCommentById} from '../data/comments.js';
 import { updateCommentReaction } from "../data/reactions.js";
 import { checkId, getLocationFromZip, countToStatus, gradeToStatus, normalizeRestaurant } from '../helpers.js';
@@ -389,6 +389,8 @@ router.route('/profile').get(async (req, res) => {
       year: 'numeric'
     });
 
+    const activity = await getUserActivity(req.session.userId);
+
     const user = {
       avatar: '🐭',
       name: `${dbUser.firstName} ${dbUser.lastName}`,
@@ -398,7 +400,7 @@ router.route('/profile').get(async (req, res) => {
       savedRestaurants: 0,
       notifications: 0,
       joinedDate,
-      activity: []
+      activity: activity
     };
 
     return res.render('profile', { title: 'SqueakPeek - Profile', user });

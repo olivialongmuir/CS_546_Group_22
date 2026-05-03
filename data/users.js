@@ -11,6 +11,8 @@ import {
     COLLECTION_IDS,
 } from "../helpers.js";
 import { validateId } from "./utility.js";
+import { rodentReports } from "../config/mongoCollections.js";
+import { getRestaurantById } from "./restaurants.js";
 
 /**
  * User Schema:
@@ -409,3 +411,75 @@ export const getUserReactedRestaurants = async(userID, restaurantId) => {
     })
     return itemsList
 }
+/**
+ * Aggregate user activity
+ * @param {string} userId 
+ * @returns activity(10)
+ */
+export const getUserActivity = async (userId) => {
+  const [comments, reports] = await Promise.all([
+    getUserComments(userId),
+    getUserRodentReports(userId)
+  ]);
+
+  // store activity
+  const activity = [];
+
+  // comments
+  for (let c of comments) {
+    const restaurant = await getRestaurantById(c.restaurantId);
+
+    activity.push({
+      type: "comment",
+      text: `You commented on "${restaurant.name}"`,
+      time: c.timestamp,
+      color: "blue",
+      link: `/restaurants/${restaurant._id}`,
+      status: restaurant.status?.key
+    });
+  }
+
+  // reports
+  for (let r of reports) {
+    activity.push({
+      type: "report",
+      text: `You submitted a rodent report`,
+      time: r.timestamp,
+      color: "orange"
+    });
+  }
+
+  // find reactions
+  const reactionCollection = await reactions();
+  const userReactions = await reactionCollection
+    .find({ userId })
+    .toArray();
+
+  for (let r of userReactions) {
+    if (r.targetKey === COLLECTION_IDS.COMMENT) {
+      activity.push({
+        type: "reaction",
+        text: `You ${r.reactionType}d a comment`,
+        time: r.timestamp,
+        color: r.reactionType === "like" ? "green" : "red"
+      });
+    }
+
+    if (r.targetKey === COLLECTION_IDS.RESTAURANT) {
+      const restaurant = await getRestaurantById(r.targetId);
+
+      activity.push({
+        type: "reaction",
+        text: `You ${r.reactionType}d "${restaurant.name}"`,
+        time: r.timestamp,
+        color: r.reactionType === "like" ? "green" : "red",
+        link: `/restaurants/${restaurant._id}`,
+        status: restaurant.status?.key
+      });
+    }
+  }
+  activity.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+  // return top 10
+  return activity.slice(0, 10);
+};
