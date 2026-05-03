@@ -1,4 +1,4 @@
-import { users, comments, reactions, restaurants } from "../config/mongoCollections.js";
+import { users, comments, reactions, restaurants, rodentReports } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import { hash, compare } from "bcryptjs";
 import { 
@@ -11,7 +11,6 @@ import {
     COLLECTION_IDS,
 } from "../helpers.js";
 import { validateId } from "./utility.js";
-import { rodentReports } from "../config/mongoCollections.js";
 import { getRestaurantById } from "./restaurants.js";
 
 /**
@@ -417,7 +416,7 @@ export const getUserReactedRestaurants = async(userID, restaurantId) => {
  * @returns activity(10)
  */
 export const getUserActivity = async (userId) => {
-  const [comments, reports] = await Promise.all([
+  const [userComments, reports] = await Promise.all([
     getUserComments(userId),
     getUserRodentReports(userId)
   ]);
@@ -426,7 +425,7 @@ export const getUserActivity = async (userId) => {
   const activity = [];
 
   // comments
-  for (let c of comments) {
+  for (let c of userComments) {
     const restaurant = await getRestaurantById(c.restaurantId);
 
     activity.push({
@@ -442,14 +441,16 @@ export const getUserActivity = async (userId) => {
   // reports
   for (let r of reports) {
     activity.push({
-      type: "report",
-      text: `You submitted a rodent report`,
-      time: r.timestamp,
-      color: "orange"
+    type: "report",
+    text: `You submitted a rodent report`,
+    time: r.timestamp,
+    color: "orange",
+    link: `/ratreports/${r._id}`
     });
   }
 
   // find reactions
+  const commentsCollection = await comments();
   const reactionCollection = await reactions();
   const userReactions = await reactionCollection
     .find({ userId })
@@ -457,29 +458,27 @@ export const getUserActivity = async (userId) => {
 
   for (let r of userReactions) {
     if (r.targetKey === COLLECTION_IDS.COMMENT) {
-      activity.push({
-        type: "reaction",
-        text: `You ${r.reactionType}d a comment`,
-        time: r.timestamp,
-        color: r.reactionType === "like" ? "green" : "red"
-      });
-    }
 
-    if (r.targetKey === COLLECTION_IDS.RESTAURANT) {
-      const restaurant = await getRestaurantById(r.targetId);
+        const comment = await commentsCollection.findOne({
+        _id: new ObjectId(r.targetId)
+        });
 
-      activity.push({
-        type: "reaction",
-        text: `You ${r.reactionType}d "${restaurant.name}"`,
-        time: r.timestamp,
-        color: r.reactionType === "like" ? "green" : "red",
-        link: `/restaurants/${restaurant._id}`,
-        status: restaurant.status?.key
-      });
+        if (!comment) continue;
+
+        const preview = comment.comment.length > 60
+            ? comment.comment.slice(0, 60) + "..."
+            : comment.comment;
+
+        activity.push({
+            type: "reaction",
+            text: `You ${r.reactionType}d: "${preview}"`,
+            time: r.timestamp,
+            color: r.reactionType === "like" ? "green" : "red"
+        });
     }
   }
   activity.sort((a, b) => new Date(b.time) - new Date(a.time));
 
-  // return top 10
-  return activity.slice(0, 10);
+  // return most recent 5
+  return activity.slice(0, 5);
 };
