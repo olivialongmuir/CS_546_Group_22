@@ -51,7 +51,11 @@
 }
 
 .reportDescription{
-    text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  padding: 5%;
 }
 
 .warning-icon {
@@ -206,3 +210,8 @@ textarea {
   color: var(--muted);
   margin-bottom: 0.35rem;
 }
+
+
+
+
+
