@@ -27,7 +27,11 @@ app.use(session({
   secret: 'squeakpeek_secret_key',
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 1000 * 60 * 60 * 8 }
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 8,
+    httpOnly: true,
+    sameSite: 'lax'
+  }
 }));
 app.use(rewriteUnsupportedBrowserMethods);
 
@@ -50,8 +54,20 @@ app.use('/admin', adminOnly);
 
 app.engine('handlebars', exphbs.engine({
   defaultLayout: 'main',
-  partialsDir: 'views/partials', 
-  helpers: { eq: (a, b) => a === b }
+  partialsDir: 'views/partials',
+  helpers: {
+    eq: (a, b) => a === b,
+    // Embed a value as JSON inside an inline <script> block.
+    // Escapes characters that could break out of the script tag or confuse HTML parsers, without breaking JSON validity.
+    jsonForScript: (value) => {
+      const json = JSON.stringify(value);
+      if (json === undefined) return 'null';
+      return json
+        .replace(/</g, '\\u003c')
+        .replace(/>/g, '\\u003e')
+        .replace(/&/g, '\\u0026');
+    }
+  }
 }));
 
 app.set('view engine', 'handlebars');

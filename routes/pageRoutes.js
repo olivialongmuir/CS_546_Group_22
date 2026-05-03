@@ -61,7 +61,6 @@ router.route('/heatmap').get(async (req, res) => {
             lat: Number(r.latitude),
             lng: Number(r.longitude)
         }));
-        const restaurantMapData = JSON.stringify(restaurantData);
 
         // get rodent data
         const rodentList = await getAllReports();
@@ -73,7 +72,6 @@ router.route('/heatmap').get(async (req, res) => {
             status: r.status,
             description: r.description
         }));
-        const rodentMapData = JSON.stringify(rodentData);
 
         // group rodent data for hotspot list by borough and neighborhood
         const counts = {};
@@ -115,8 +113,8 @@ router.route('/heatmap').get(async (req, res) => {
 
         res.render("heatmap", {
             title: 'Heatmap',
-            restaurantMapData: restaurantMapData,
-            rodentMapData: rodentMapData,
+            restaurantMapData: restaurantData,
+            rodentMapData: rodentData,
             hotspotFeed: hotspotFeed,
             userAuthenticated: userAuthenticated
         });
@@ -148,12 +146,10 @@ router.route('/ratreports').get(async (req, res) => {
         //put object in arr since its iterated when the maps built
         const restaurantData = [firstLocation];
 
-        const restaurantMapData = JSON.stringify(restaurantData);
-
         res.render("rodentReports", {
             title: 'Rodent Reports',
             reports:reports,
-            restaurantMapData: restaurantMapData,
+            restaurantMapData: restaurantData,
             firstReport: firstReport //passing in first report which will be the default starting data shown
         });
     } catch (error) {
@@ -187,12 +183,10 @@ router.route('/ratreports/:id').get(async (req, res) => {
         //put object in arr since its iterated when the maps built
         const restaurantData = [firstLocation];
 
-        const restaurantMapData = JSON.stringify(restaurantData);
-
         res.render("rodentReports", {
             title: 'Rodent Reports',
             reports:reports,
-            restaurantMapData: restaurantMapData,
+            restaurantMapData: restaurantData,
             firstReport: targetReport //passing in target report
         });
     } catch (error) {
