@@ -2,6 +2,14 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import { users } from '../config/mongoCollections.js';
 import { createUser } from '../data/users.js';
+import { 
+    checkEmail, 
+    checkFirstName, 
+    checkLastName, 
+    checkPassword, 
+    checkUsername, 
+    checkUserType,
+} from '../helpers.js';
 
 const router = Router();
 
@@ -12,107 +20,119 @@ const USER_TYPE_OPTIONS = [
   { value: 'exterminator', label: 'Exterminator' }
 ];
 
-const buildTypeOptions = (selected) =>
-  USER_TYPE_OPTIONS.map(o => ({ ...o, selected: o.value === selected }));
+const buildTypeOptions = (selected) => {
+  return USER_TYPE_OPTIONS.map(o => ({ ...o, selected: o.value === selected }));
+};
 
-router.route('/login').get(async (req, res) => {
-  return res.render('login', { title: 'SqueakPeek - Login' });
-});
+router
+  .route('/login')
+  .get(async (req, res) => {
+    return res.render('login', { title: 'SqueakPeek - Login' });
+  })
+  .post(async (req, res) => {
+    let user = null;
 
-router.route('/login').post(async (req, res) => {
-  const { username, password } = req.body;
+    try {
+      const { 
+        username, 
+        password 
+      } = req.body;
 
-  const renderError = (message) =>
-    res.status(400).render('login', {
-      title: 'SqueakPeek - Login',
-      error: message,
-      username
-    });
+      // Project requirement - 3 stage validation in client, route, server
+      const validatedUsername = checkUsername(username);
+      const validatedPassword = checkPassword(password);
 
-  if (typeof username !== 'string' || username.trim().length === 0) {
-    return renderError('Username is required');
-  }
-  if (typeof password !== 'string' || password.length === 0) {
-    return renderError('Password is required');
-  }
+      const usersCollection = await users();
+      user = await usersCollection.findOne({ username: validatedUsername });
 
-  try {
-    const usersCollection = await users();
-    const user = await usersCollection.findOne({ username: username.trim() });
+      if (!user) throw 'Invalid username or password';
+      if (!user.hashPassword) throw 'No password set for this account';
 
-    if (!user) return renderError('Invalid username or password');
-    if (!user.hashPassword) return renderError('No password set for this account');
+      const match = await bcrypt.compare(validatedPassword, user.hashPassword);
+      if (!match) throw 'Invalid username or password';
 
-    const match = await bcrypt.compare(password, user.hashPassword);
-    if (!match) return renderError('Invalid username or password');
-
-    if (user.approved === false) {
-      return renderError('Your account is awaiting admin approval');
+      if (!user.approved) throw 'Your account is awaiting admin approval';
+    } catch(error) {
+      console.error(error);
+      return res.status(400).render('login', {
+        title: 'SqueakPeek - Login',
+        error: error
+      });
     }
 
-    req.session.userId = user._id.toString();
-    req.session.userType = user.type;
-    return res.redirect('/profile');
-  } catch (error) {
-    console.error(error);
-    return res.status(500).render('login', {
-      title: 'SqueakPeek - Login',
-      error: 'Something went wrong. Please try again.'
-    });
-  }
-});
-
-router.route('/register').get(async (req, res) => {
-  return res.render('register', {
-    title: 'SqueakPeek - Register',
-    typeOptions: buildTypeOptions()
-  });
-});
-
-router.route('/register').post(async (req, res) => {
-  const { firstName, lastName, username, emailAddress, password, confirmPassword, type } = req.body;
-
-  const renderError = (message) =>
-    res.status(400).render('register', {
-      title: 'SqueakPeek - Register',
-      error: message,
-      firstName,
-      lastName,
-      username,
-      emailAddress,
-      typeOptions: buildTypeOptions(type)
-    });
-
-  if (password !== confirmPassword) {
-    return renderError('Passwords do not match');
-  }
-
-  try {
-    const newUser = await createUser({
-      firstName,
-      lastName,
-      username,
-      emailAddress,
-      password,
-      type
-    });
-    if (newUser.type === 'consumer') {
-      req.session.userId = newUser._id;
-      req.session.userType = newUser.type;
+    try {
+      req.session.userId = user._id.toString();
+      req.session.userType = user.type;
       return res.redirect('/profile');
+    } catch (error) {
+      console.error(error);
+      return res.status(500).render('login', {
+        title: 'SqueakPeek - Login',
+        error: 'Something went wrong. Please try again.'
+      });
     }
-    return res.redirect('/registration-submitted');
-  } catch (error) {
-    console.error(error);
-    const message = typeof error === 'string'
-      ? error.replace(/^Error:\s*/, '')
-      : (error?.message || 'Something went wrong. Please try again.');
-    return renderError(message);
-  }
-});
+  });
+
+router
+  .route('/register')
+  .get(async (req, res) => {
+    return res.render('register', {
+      title: 'SqueakPeek - Register',
+      typeOptions: buildTypeOptions()
+    });
+  })
+  .post(async (req, res) => {
+    try {
+      const { 
+        firstName, 
+        lastName, 
+        username, 
+        emailAddress, 
+        password, 
+        confirmPassword, 
+        type 
+      } = req.body;
+
+      // Project requirement - 3 stage validation in client, route, server
+      const validatedFirstName = checkFirstName(firstName);
+      const validatedLastName = checkLastName(lastName);
+      const validatedUsername = checkUsername(username);
+      const validatedPassword = checkPassword(password);
+      const validatedEmail = checkEmail(emailAddress);
+      const validatedType = checkUserType(type);
+
+      if (validatedPassword !== confirmPassword) throw 'Passwords do not match';
+
+      const newUser = await createUser(
+        validatedFirstName,
+        validatedLastName,
+        validatedUsername,
+        validatedPassword,
+        validatedEmail,
+        validatedType
+      );
+
+      // Regular users are automatically approved
+      if (newUser.type === 'consumer') {
+        req.session.userId = newUser._id;
+        req.session.userType = newUser.type;
+        return res.redirect('/profile');
+      }
+
+      // Special users need to be approved first
+      return res.redirect('/registration-submitted');
+    } catch(error) {
+      return res.status(400).render('register', {
+        title: 'SqueakPeek - Register',
+        error: error
+      });
+    }
+  });
 
 router.route('/registration-submitted').get(async (req, res) => {
-  return res.render('registration-submitted', { title: 'SqueakPeek - Registration Submitted' });
+  return res.render('registration-submitted', {
+    title: 'SqueakPeek - Registration Submitted'
+  });
 });
 
 router.route('/logout').get(async (req, res) => {

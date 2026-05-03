@@ -162,8 +162,6 @@ router.route('/ratreports').get(async (req, res) => {
     }
 });
 
-
-
 //Route which allows you to pre-filter to a specific report by ID. The target report will be the data used to prepopulate first shown report
 router.route('/ratreports/:id').get(async (req, res) => {
     try {

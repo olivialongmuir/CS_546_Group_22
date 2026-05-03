@@ -1,13 +1,13 @@
 {{!-- THIS FILE WILL BE WRAPPED BY MAIN.HANDLEBARS --}}
 
-<section id="registerSection">
+<section class="register-page" id="registerSection">
     <h1>Create Account</h1>
 
     {{#if error}}
         <p class="registerError" style="color: #c0392b;">{{ error }}</p>
     {{/if}}
 
-    <form id="registerForm" method="POST" action="/register">
+    <form class="register-form" id="registerForm" method="POST" action="/register">
         <div>
             <label for="firstName">First Name</label>
             <input

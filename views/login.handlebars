@@ -1,13 +1,13 @@
 {{!-- THIS FILE WILL BE WRAPPED BY MAIN.HANDLEBARS --}}
 
-<section id="loginSection">
+<section class="login-page" id="loginSection">
     <h1>Login</h1>
 
     {{#if error}}
         <p class="loginError" style="color: #c0392b;">{{ error }}</p>
     {{/if}}
 
-    <form id="loginForm" method="POST" action="/login">
+    <form class="login-form" id="loginForm" method="POST" action="/login">
         <div>
             <label for="username">Username</label>
             <input

@@ -78,7 +78,7 @@ export const deleteCommentReaction = async(reactionId, commentId) => {
  * @param {string} reportId 
  */
 export const deleteReportReaction = async(reactionId, reportId) => {
-    const errorSource = "deletereportReaction";
+    const errorSource = "deleteReportReaction";
     return deleteReaction(reactionId, reportId, COLLECTION_IDS.REPORT, errorSource);
 }
 

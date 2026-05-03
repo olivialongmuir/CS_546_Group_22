@@ -86,13 +86,13 @@ export const checkRestaurantName = (restaurantName) => {
 
 export const checkFirstName = (firstName) => {
     const parsed_name = checkString(firstName, 'firstName');
-    if (!/^[\p{L}\s'-]+$/u.test(parsed_name)) throw 'Error: First name can only '; //Only alphabetic and accented characters. Apostrophes and hyphens are fine
+    if (!/^[\p{L}\s'-]+$/u.test(parsed_name)) throw 'Error: First name can only be alphabetic'; //Only alphabetic and accented characters. Apostrophes and hyphens are fine
     return parsed_name
 }
 
 export const checkLastName = (lastName) => {
     const parsed_name = checkString(lastName, 'lastName');
-    if (!/^[\p{L}\s'-]+$/u.test(parsed_name)) throw 'Error: Last name can only '; //Only alphabetic and accented characters. Apostrophes and hyphens are fine
+    if (!/^[\p{L}\s'-]+$/u.test(parsed_name)) throw 'Error: Last name can only be alphabetic'; //Only alphabetic and accented characters. Apostrophes and hyphens are fine
     return parsed_name
 }
 

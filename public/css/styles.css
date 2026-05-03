@@ -432,6 +432,69 @@ h2{
   height: 100vh;
 }
 
+/* Styles used for Login page */
+.login-page {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.login-form {
+  display: grid;
+  align-items: center;
+  grid-template-columns: max-content 1fr;
+}
+.login-form div {
+  display: contents;
+}
+.login-form label {
+  grid-column: 1;
+  margin: 8px;
+}
+.login-form input {
+  grid-column: 2;
+  margin: 8px;
+  margin-right: 90px;
+}
+.login-form button {
+  grid-column: 1 / -1;
+  justify-self: center;
+  margin-top: 15px;
+}
+.login-page > p {
+  margin-top: 20px;
+}
+
+/* Styles used for Register page */
+.register-page {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.register-form {
+  display: grid;
+  align-items: center;
+  grid-template-columns: max-content 1fr;
+}
+.register-form div {
+  display: contents;
+}
+.register-form label {
+  grid-column: 1;
+  margin: 8px;
+}
+.register-form input {
+  grid-column: 2;
+  margin: 8px;
+}
+.register-form button {
+  grid-column: 1 / -1;
+  justify-self: center;
+  margin-top: 15px;
+}
+.register-page > p {
+  margin-top: 20px;
+}
+
 /* Shared utilities — used across multiple pages*/
 
 .link-icon {
