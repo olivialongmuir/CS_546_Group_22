@@ -30,6 +30,7 @@ export const updateRestaurantReaction = async(userId, restaurantId, type) => {
     return updateReaction(userId, restaurantId, COLLECTION_IDS.RESTAURANT, type, errorSource)
 }
 
+
 /**
  * Wrapper: Updates comment reaction
  * @param {string} userId 
@@ -40,6 +41,7 @@ export const updateCommentReaction = async(userId, commentId, type) => {
     const errorSource = "updateCommentReaction";
     return updateReaction(userId, commentId, COLLECTION_IDS.COMMENT, type, errorSource)
 }
+
 
 /**
  * Wrapper: Updates rodent report reaction

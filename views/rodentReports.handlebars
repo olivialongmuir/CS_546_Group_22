@@ -10,7 +10,6 @@
     <div class="container">
     <div class="leftPane">
 
-
         {{!-- Filter Panel --}}
         <div class="filterPanel">
         <h2>Filter Reports</h2>
@@ -89,141 +88,28 @@
                 </div>
 
                 {{!-- Report Section --}}
-                <div>
+                <div class="panel">
                     {{!-- <h2>Report {{firstReport._id}}</h2> --}}
                     <p>User: {{firstReport.userId}}</p>
                     <p>{{firstReport.timestamp}}</p>
                     <p>{{firstReport.description}}</p>
+
+                    {{!-- Reactions Section --}}
+                    <div class="reactionsBlock">
+                        <button>👍</button>
+                        <button>👎</button>
+                    </div>
                 </div>
 
-                {{!-- Reactions Section --}}
-                <button>LIKE THIS</button>
-                <button>DISLIKE THIS</button>
-
-
                 {{!-- Comment and Reaction Setting --}}
-                <section class="detail-comments" aria-labelledby="comments-heading">
-                    <div class="comments-header">
-                    <span class="comments-icon">💬</span>
-                    <h2 id="comments-heading">Comments</h2>
-                    <span class="comments-count">({{comments.length}})</span>
-                    </div>
-
-                    {{#if isLoggedIn}}
-
-                    {{#if error}}
-                        <div class="error-banner">
-                        {{error}}
-                        </div>
-                    {{/if}}
-
-                    <button id="showCommentBtn" class="add-comment-btn">
-                        + Add Comment
-                    </button>
-
-                    <section id="commentFormContainer" class="add-comment" style="display: none;">
-                        <form method="POST" action="/restaurants/{{restaurant.id}}/comments">
-                        
-                        <textarea
-                            id="commentTextarea"
-                            name="comment"
-                            rows="3"
-                            placeholder="Write your comment..."
-                            required>{{formData.comment}}
-                        </textarea>
-
-                        <div class="comment-actions">
-                            <button type="submit">Post Comment</button>
-                            <button type="button" id="cancelCommentBtn">Cancel</button>
-                        </div>
-
-                        </form>
-                    </section>
-
-                    {{else}}
-
-                    <p class="login-prompt">
-                        You must <a href="/login">log in</a> to add a comment or reaction.
-                    </p>
-
-                    {{/if}}
-
-                    {{#if comments.length}}
-                    <ul class="comment-list">
-                        {{#each comments}}
-                        <li class="comment-item">
-                            <p class="comment-author">{{this.userName}}</p>
-                            <p class="comment-text">{{this.comment}}</p>
-                            <p class="comment-time">{{this.timestamp}}</p>
-                            <div class="comment-actions">
-
-                            <div class="vote-group">
-                                <button
-                                class="vote-btn"
-                                data-id="{{this._id}}"
-                                data-type="like"
-                                {{#unless ../isLoggedIn}}disabled{{/unless}}
-                                >
-                                👍
-                                </button>
-                                <span class="vote-count" id="likes-{{this._id}}">
-                                {{this.stats.likes}}
-                                </span>
-                            </div>
-
-                            <div class="vote-group">
-                                <button
-                                class="vote-btn"
-                                data-id="{{this._id}}"
-                                data-type="dislike"
-                                {{#unless ../isLoggedIn}}disabled{{/unless}}
-                                >
-                                👎
-                                </button>
-                                <span class="vote-count" id="dislikes-{{this._id}}">
-                                {{this.stats.dislikes}}
-                                </span>
-                            </div>
-
-                            {{#if (eq this.userId ../currentUserId)}}
-                                <button 
-                                class="delete-btn" 
-                                data-id="{{this._id}}">
-                                🗑 Delete
-                                </button>
-                            {{/if}}
-
-                            </div>
-                        </li>
-                        {{/each}}
-                    </ul>
-                    {{else}}
-                    <div class="empty-comments">
-                        <p>No comments yet.</p>
-                    </div>
-                    {{/if}}
-                </section>
-                <script>
-                    const showBtn = document.getElementById('showCommentBtn');
-                    const formContainer = document.getElementById('commentFormContainer');
-                    const cancelBtn = document.getElementById('cancelCommentBtn');
-                    const textarea = document.getElementById('commentTextarea');
-
-                    showBtn.addEventListener('click', () => {
-                    formContainer.style.display = 'block';
-                    showBtn.style.display = 'none';
-                    textarea.focus();
-                    });
-
-                    cancelBtn.addEventListener('click', () => {
-                    formContainer.style.display = 'none';
-                    showBtn.style.display = 'inline-block';
-                    textarea.value = '';
-                    });
-                </script>
-
-
-
+                {{!-- #TODO populate with actual data for this rodent report --}}
+                {{> commentSection
+                    comments=comments
+                    isLoggedIn=isLoggedIn
+                    error=error
+                    restaurant=restaurant
+                    formData=formData
+                }}
 
             {{/if}}
             {{!-- Data for that report gets written into here when a card is clicked --}}
@@ -239,7 +125,6 @@
 
 {{!-- leaflet heat plugin --}}
 <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
-
 
 
     {{!-- "_id": "69dcc7b4cc0c22fba23864b1",
