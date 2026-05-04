@@ -79,8 +79,8 @@ export const checkRodentName = (rodentName) => {
 export const checkRestaurantName = (restaurantName) => {
     const parsed_restaurantName = checkString(restaurantName, 'restaurantName');
     if (parsed_restaurantName.length < 1) throw 'Error: restaurantName must be at least 1 character';
-    if (parsed_restaurantName.length > 100) throw 'Error: restaurantName cannot exceed 20 characters';
-    if (!/^[a-zA-Z0-9_'&-]+$/.test(parsed_restaurantName)) throw 'Error: rodentName can only contain letters, numbers, underscores, apostrophes, ampersands, and hyphens';
+    if (parsed_restaurantName.length > 100) throw 'Error: restaurantName cannot exceed 100 characters';
+    if (!/^[a-zA-Z0-9_'&\-\s]+$/.test(parsed_restaurantName)) throw 'Error: restaurantName can only contain letters, numbers, spaces, underscores, apostrophes, ampersands, and hyphens';
     return parsed_restaurantName;
 }
 
