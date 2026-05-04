@@ -471,6 +471,14 @@ h2{
   color: #a3e635;
 }
 
+.verified-icon{
+  color: white;
+  width: 15px;
+  height: 15px;
+  align-items: center;
+  left: 2%;
+}
+
 
 .restaurant-icon{
   width: 28px;

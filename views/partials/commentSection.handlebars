@@ -60,50 +60,48 @@
     {{#if comments.length}}
         <ul class="comment-list">
         {{#each comments}}
-            <li class="comment-item">
+        <li class="comment-item">
             <p class="comment-author">{{this.userName}}</p>
             <p class="comment-text">{{this.comment}}</p>
             <p class="comment-time">{{this.timestamp}}</p>
             <div class="comment-actions">
-
                 <div class="vote-group">
-                <button
-                    class="vote-btn"
-                    data-id="{{this._id}}"
-                    data-type="like"
-                    {{#unless ../isLoggedIn}}disabled{{/unless}}
-                >
-                    👍
-                </button>
-                <span class="vote-count" id="likes-{{this._id}}">
-                    {{this.stats.likes}}
-                </span>
-                </div>
+                    <button
+                        class="vote-btn"
+                        data-id="{{this._id}}"
+                        data-type="like"
+                        {{#unless ../isLoggedIn}}disabled{{/unless}}
+                    >
+                        👍
+                    </button>
+                    <span class="vote-count" id="likes-{{this._id}}">
+                        {{this.stats.likes}}
+                    </span>
+                    </div>
 
-                <div class="vote-group">
-                <button
-                    class="vote-btn"
-                    data-id="{{this._id}}"
-                    data-type="dislike"
-                    {{#unless ../isLoggedIn}}disabled{{/unless}}
-                >
-                    👎
-                </button>
-                <span class="vote-count" id="dislikes-{{this._id}}">
-                    {{this.stats.dislikes}}
-                </span>
-                </div>
+                    <div class="vote-group">
+                    <button
+                        class="vote-btn"
+                        data-id="{{this._id}}"
+                        data-type="dislike"
+                        {{#unless ../isLoggedIn}}disabled{{/unless}}
+                    >
+                        👎
+                    </button>
+                    <span class="vote-count" id="dislikes-{{this._id}}">
+                        {{this.stats.dislikes}}
+                    </span>
+                    </div>
 
-                {{#if (eq this.userId ../currentUserId)}}
-                <button 
-                    class="delete-btn" 
-                    data-id="{{this._id}}">
-                    🗑 Delete
-                </button>
+                    {{#if (eq this.userId ../currentUserId)}}
+                    <button 
+                        class="delete-btn" 
+                        data-id="{{this._id}}">
+                        🗑 Delete
+                    </button>
                 {{/if}}
-
             </div>
-            </li>
+        </li>
         {{/each}}
         </ul>
     {{else}}
