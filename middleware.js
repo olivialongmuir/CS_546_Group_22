@@ -4,6 +4,7 @@
  * If further organization is required, consider grouping middleware by page
  */
 
+
 const constructorMethod = (app) => {
   /**
    * Default middlware - runs every time any route is requested
@@ -34,7 +35,9 @@ const constructorMethod = (app) => {
    * Redirects to profile page if already logged in
    */
   app.use(['/login', '/register'], (req, res, next) => {
-    if (req.session.userId) res.redirect('/profile');
+    if (req.session.userId) {
+      res.redirect('/profile');
+    }
 
     next();
   });
@@ -43,10 +46,12 @@ const constructorMethod = (app) => {
    * Redirects to login page if not logged in
    */
   app.use('/profile', (req, res, next) => {
-    if (!req.session.userId) res.redirect('/login');
+    if (!req.session.userId) {
+      return res.redirect('/login');
+    }
 
     next();
-  })
+  });
 
   /**
    * Redirects to login if not logged in. If access level is not admin, throw error
@@ -54,24 +59,50 @@ const constructorMethod = (app) => {
   app.use('/admin', (res, req, next) => {
     if (!req.session.userId) res.redirect('/login');
     if (req.session.userType !== 'admin') {
-      res.status(403).render('error', {title: 'Forbidden'});
+      return res.status(403).render('error', {title: 'Forbidden'});
     }
 
     next();
-  })
+  });
 
   /**
    * Only logged in users can create a rodent report
    */
   app.use('/rodentReports', (res, req, next) => {
     if (req.method === 'POST') {
-      if (!req.session.userId) res.status(403).render('error', {title: 'Forbiddent'});
+      if (!req.session.userId) {
+        return res.status(403).render('error', {title: 'Forbiddent'});
+      }
+    }
+
+    next();
+  });
+  
+  /**
+   * Stops route if attempting to interact while not logged in
+   */
+  app.use([
+    '/comments/:id/delete',
+    '/comments/:id/like',
+    '/comments/:id/dislike'
+  ], (res, req, next) => {
+    if (!req.session.userId) {
+      return res.status(401).json({error: 'Must be logged in'});
+    }
+
+    next();
+  });
+
+  /**
+   * Sends user to login page if trying to comment while not logged in
+   */
+  app.use('/restaurants/:id/comments', (res, req, next) => {
+    if (!req.session.userId) {
+      return res.status(401).redirect('/login');
     }
 
     next();
   })
-
-
 
 }
 
