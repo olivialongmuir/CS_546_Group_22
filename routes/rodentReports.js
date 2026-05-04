@@ -8,7 +8,7 @@ const router = Router();
 import NodeGeocoder from 'node-geocoder';
 
 //middleware import
-import { protectedRoute } from "../middleware.js"
+import { protectedRoute, adminOnly } from "../middleware.js"
 
 
 import {
@@ -125,7 +125,7 @@ router.route('/:id').get(async (req, res) => {
 
 // PATCH /rodentReports/:id
 // updates a rodent report by id
-router.route('/:id').patch(async (req, res) => {
+router.route('/:id').patch(adminOnly, async (req, res) => {
   try {
     const updated = await updateReport(req.params.id, req.body);
 
@@ -137,7 +137,7 @@ router.route('/:id').patch(async (req, res) => {
 
 // DELETE /rodentReports/:id
 // deletes a rodent report by id
-router.route('/:id').delete(async (req, res) => {
+router.route('/:id').delete(adminOnly, async (req, res) => {
   try {
     await deleteReport(req.params.id);
 
