@@ -167,6 +167,7 @@ export const createReport = async(
         timestamp: timestamp,
         updatedAt: null,
         verifiedBy: null,
+        comments:[],
         stats: {
             likes: 0,
             dislikes: 0

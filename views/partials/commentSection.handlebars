@@ -1,0 +1,133 @@
+    
+    {{!-- Comment Section Stub 
+    
+    Must pass in the folling Vars from parent page
+
+    comments, (obj)
+    isLoggedIn,
+    error,
+    restaurant, (obj)
+    formData, (obj)
+    --}}
+
+
+    <section class="detail-comments" aria-labelledby="comments-heading">
+    <div class="comments-header">
+        <span class="comments-icon">💬</span>
+        <h2 id="comments-heading">Comments</h2>
+        <span class="comments-count">({{comments.length}})</span>
+    </div>
+
+    {{#if isLoggedIn}}
+
+        {{#if error}}
+        <div class="error-banner">
+            {{error}}
+        </div>
+        {{/if}}
+
+        <button id="showCommentBtn" class="add-comment-btn">
+        + Add Comment
+        </button>
+
+        <section id="commentFormContainer" class="add-comment" style="display: none;">
+        <form method="POST" action="/{{collection}}/{{target.id}}/comments">
+            
+            <textarea
+            id="commentTextarea"
+            name="comment"
+            rows="3"
+            placeholder="Write your comment..."
+            required>{{formData.comment}}
+            </textarea>
+
+            <div class="comment-actions">
+            <button type="submit">Post Comment</button>
+            <button type="button" id="cancelCommentBtn">Cancel</button>
+            </div>
+
+        </form>
+        </section>
+
+    {{else}}
+
+        <p class="login-prompt">
+        You must <a href="/login">log in</a> to add a comment or reaction.
+        </p>
+
+    {{/if}}
+
+    {{#if comments.length}}
+        <ul class="comment-list">
+        {{#each comments}}
+            <li class="comment-item">
+            <p class="comment-author">{{this.userName}}</p>
+            <p class="comment-text">{{this.comment}}</p>
+            <p class="comment-time">{{this.timestamp}}</p>
+            <div class="comment-actions">
+
+                <div class="vote-group">
+                <button
+                    class="vote-btn"
+                    data-id="{{this._id}}"
+                    data-type="like"
+                    {{#unless ../isLoggedIn}}disabled{{/unless}}
+                >
+                    👍
+                </button>
+                <span class="vote-count" id="likes-{{this._id}}">
+                    {{this.stats.likes}}
+                </span>
+                </div>
+
+                <div class="vote-group">
+                <button
+                    class="vote-btn"
+                    data-id="{{this._id}}"
+                    data-type="dislike"
+                    {{#unless ../isLoggedIn}}disabled{{/unless}}
+                >
+                    👎
+                </button>
+                <span class="vote-count" id="dislikes-{{this._id}}">
+                    {{this.stats.dislikes}}
+                </span>
+                </div>
+
+                {{#if (eq this.userId ../currentUserId)}}
+                <button 
+                    class="delete-btn" 
+                    data-id="{{this._id}}">
+                    🗑 Delete
+                </button>
+                {{/if}}
+
+            </div>
+            </li>
+        {{/each}}
+        </ul>
+    {{else}}
+        <div class="empty-comments">
+        <p>No comments yet.</p>
+        </div>
+    {{/if}}
+    </section>
+
+    <script>
+    const showBtn = document.getElementById('showCommentBtn');
+    const formContainer = document.getElementById('commentFormContainer');
+    const cancelBtn = document.getElementById('cancelCommentBtn');
+    const textarea = document.getElementById('commentTextarea');
+
+    showBtn.addEventListener('click', () => {
+        formContainer.style.display = 'block';
+        showBtn.style.display = 'none';
+        textarea.focus();
+    });
+
+    cancelBtn.addEventListener('click', () => {
+        formContainer.style.display = 'none';
+        showBtn.style.display = 'inline-block';
+        textarea.value = '';
+    });
+    </script>
