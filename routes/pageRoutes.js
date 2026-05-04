@@ -173,7 +173,6 @@ router.route('/ratreports/:id').get(async (req, res) => {
 
         //Load in the comments from that report
         //const comments = await getRestaurantComments(id);
-
         res.render("rodentReports", {
             title: 'Rodent Reports',
             reports:reports,
@@ -278,7 +277,9 @@ router.post('/comments/:id/delete', async (req, res) => {
   }
 });
 
+//Posts a comment for a restuarant
 router.post('/restaurants/:id/comments', async (req, res) => {
+
   const restaurantId = checkId(req.params.id.trim());
 
   try {
@@ -300,7 +301,7 @@ router.post('/restaurants/:id/comments', async (req, res) => {
       throw 'Comment cannot exceed 500 characters';
     }
 
-    await createComment(userId, restaurantId, trimmedComment);
+    await createComment(userId, 'restaurant', restaurantId, trimmedComment);
 
     // if no error was caught reload the page
     return res.redirect(`/restaurants/${restaurantId}`);
@@ -330,6 +331,50 @@ router.post('/restaurants/:id/comments', async (req, res) => {
     });
   }
 });
+
+
+
+//Posts a comment for a rodent report
+router.post('/rodentReports/:id/comments', async (req, res) => {
+
+    //use rodent report id insteaf of a restaurant
+    const reportId = checkId(req.params.id.trim());
+
+  try {
+    const userId = req.session.userId;
+    if (!userId) {
+      return res.status(403).redirect('/login');
+    }
+
+    const { comment } = req.body;
+    // validation
+    if (!comment || typeof comment !== 'string') {
+      throw 'Comment must be a string';
+    }
+    const trimmedComment = comment.trim();
+    if (trimmedComment.length === 0) {
+      throw 'Comment cannot be empty';
+    }
+    if (trimmedComment.length > 500) {
+      throw 'Comment cannot exceed 500 characters';
+    }
+
+    //Creates a comment using a rodent ID
+    await createComment(userId, 'rodent', reportId, trimmedComment);
+
+    // if no error was caught reload the page
+    return res.redirect(`/ratreports/${reportId}`);
+
+  } catch (error) {
+    //TODO - just sending them to a generic error page 
+    res.status(404).render('error adding comment to rodent report');
+  }
+});
+
+
+
+
+
 
 router.post('/comments/:id/like', async (req, res) => {
   try {

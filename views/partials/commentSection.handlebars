@@ -2,7 +2,8 @@
     {{!-- Comment Section Stub 
     
     Must pass in the folling Vars from parent page
-
+    target. object you are commenting on (ex: comment on a restaurant or rodent report. Use that objects)
+    targetId. this is the id of the object you are commenting on. 
     comments, (obj)
     isLoggedIn,
     error,
@@ -31,7 +32,7 @@
         </button>
 
         <section id="commentFormContainer" class="add-comment" style="display: none;">
-        <form method="POST" action="/{{collection}}/{{target.id}}/comments">
+        <form method="POST" action="/{{collection}}/{{targetId}}/comments">
             
             <textarea
             id="commentTextarea"

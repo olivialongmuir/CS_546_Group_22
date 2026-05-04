@@ -114,7 +114,7 @@
                                 <div class="vote-group">
                                     <button
                                         class="vote-btn"
-                                        data-id="{{this._id}}"
+                                        data-id="{{firstReport._id}}"
                                         data-type="like"
                                         {{#unless isLoggedIn}}disabled{{/unless}}
                                     >
@@ -149,7 +149,8 @@
                     isLoggedIn=isLoggedIn
                     error=error
                     formData=formData
-                    target=firstReport._id
+                    target=firstReport
+                    targetId=firstReport._id
                     collection="rodentreports" 
                 }}
 
@@ -161,6 +162,8 @@
 
 
 <script src="/js/rodentReports.js"></script>
+
+<script src="/js/reactions.js"></script>
 
 {{!-- leaflet scripts --}}
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>

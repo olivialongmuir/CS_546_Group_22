@@ -6,6 +6,7 @@ document.addEventListener("click", async (e) => {
   const id = btn.dataset.id;
   const type = btn.dataset.type;
 
+
   try {
     const res = await fetch(`/comments/${id}/${type}`, {
       method: "POST"
