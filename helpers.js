@@ -207,6 +207,7 @@ export const gradeToStatus = (grade) => {
 
 // Normalizing into template
 export const normalizeRestaurant = (r) => ({
+  _id: r._id?.toString(),
   id: r._id?.toString(),
   name: r.name,
   borough: r.boro,
@@ -218,7 +219,11 @@ export const normalizeRestaurant = (r) => ({
   rodentScore: r.score,
   lastVerified: r.gradeDate,
   status: gradeToStatus(r.grade),
-  recentReports: 0 // TODO - count from rodentReports collection once linked
+  recentReports: 0, // TODO - count from rodentReports collection once linked
+  stats: r.stats || {
+    likes: 0,
+    dislikes: 0
+  },
 });
 
 export const COLLECTION_IDS = Object.freeze({

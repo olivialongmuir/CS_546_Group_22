@@ -5,9 +5,10 @@ document.addEventListener("click", async (e) => {
 
   const id = btn.dataset.id;
   const type = btn.dataset.type;
+  const target = btn.dataset.target;
 
   try {
-    const res = await fetch(`/comments/${id}/${type}`, {
+    const res = await fetch(`/${target}/${id}/${type}`, {
       method: "POST"
     });
 
@@ -18,9 +19,8 @@ document.addEventListener("click", async (e) => {
       return;
     }
 
-    // update the app with the new stats
-    document.getElementById(`likes-${id}`).textContent = data.stats.likes;
-    document.getElementById(`dislikes-${id}`).textContent = data.stats.dislikes;
+    document.getElementById(`likes-${id}`).textContent = data.stats.likes ?? 0;
+    document.getElementById(`dislikes-${id}`).textContent = data.stats.dislikes ?? 0;
 
   } catch (err) {
     console.error(err);
