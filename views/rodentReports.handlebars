@@ -62,7 +62,11 @@
 
     <div class="rightPane">
         <!-- render the individual rodent report page -->
-        {{> rodentReport}}
+        {{#if report}}
+            {{> rodentReport}}
+        {{else}}
+            <p class="panel ratDetailPanel">No Rodent Reports Yet!</p>
+        {{/if}}
     </div>
 </section>
 
