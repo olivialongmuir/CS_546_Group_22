@@ -437,12 +437,14 @@ router.post('/comments/:id/dislike', async (req, res) => {
 
 router.route('/profile').get(async (req, res) => {
   try {
+
     const dbUser = await getUserById(req.session.userId);
 
     const joinedDate = new Date(dbUser.timestamp).toLocaleDateString('en-US', {
       month: 'short',
       year: 'numeric'
     });
+
 
     const activity = await getUserActivity(req.session.userId);
 
