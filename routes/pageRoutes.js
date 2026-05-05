@@ -139,7 +139,7 @@ router.route('/ratreports').get(async (req, res) => {
         //route user to first report
         let firstReport = reports[0]
         res.redirect(`/ratreports/${firstReport._id}`);
-        
+
     } catch (error) {
         console.error(error);
         res.status(500).send("Error loading Rodent Reports");
@@ -177,6 +177,16 @@ router.route('/ratreports/:id').get(async (req, res) => {
 
         //Load in the comments from that report
         //const comments = await getRestaurantComments(id);
+
+
+        //Set name of user using their ID. Otherwise is "Unknown User"
+        if(targetReport.userId == null){
+            targetReport.reporter = "Unknown Reporter";
+        }else{
+            let user = await getUserById(targetReport.userId);
+            targetReport.reporter = user.username
+        }
+
         res.render("rodentReports", {
             title: 'Rodent Reports',
             reports:reports,
