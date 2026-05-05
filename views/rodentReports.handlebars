@@ -10,7 +10,6 @@
     <div class="container">
     <div class="leftPane">
 
-
         {{!-- Filter Panel --}}
         <div class="filterPanel">
         <h2>Filter Reports</h2>
@@ -66,38 +65,55 @@
 
     <div class="rightPane">
         <!-- this part will be edited by client side js -->
-        <h2 class="homeH2">Rodent Report</h2>
+        <div id="ratReportDetail" class="panel ratDetailPanel">
+            <div class="minimapPanel">
+                <section id="miniHeatmapSection">
+                    {{!-- map container --}}
+                    <div id="miniHeatmap" class="miniHeatmap"></div>
+                    <script>
+                        {{!-- TODO - pass in rodent data --}}
+                        const restaurantMapData = {{{restaurantMapData}}};
+                    </script>
+                </section>
+            </div>
 
-        <div>
-            <section id="miniHeatmapSection">
-            {{!-- map container --}}
-            <div id="miniHeatmap" class="miniHeatmap"></div>
-
-            <script>
-                {{!-- TODO - pass in rodent data --}}
-                const restaurantMapData = {{{jsonForScript restaurantMapData}}};
-            </script>
-            </section>
-        </div>
-        <div id="ratReportDetail">
             {{#if firstReport}}
-                <h2>Report {{firstReport._id}}</h2>
-                <p>USER: {{firstReport.userId}}</p>
-                <p>Date: {{firstReport.inspectionDate}}</p>
-                <p>Status: {{firstReport.status}}</p>
-                <p>Timestamp: {{firstReport.timestamp}}</p>
-                <p>zipcode: {{firstReport.zipcode}}</p>
-                <p>latitude: {{firstReport.latitude}}</p>
-                <p>longitude: {{firstReport.longitude}}</p>
-                <p>Description: {{firstReport.description}}</p>
+
+                {{!-- Info Section --}}
+                <div class="infoRow">
+                    <span id="zipcode" class="locationStat largeStat">Zipcode: {{firstReport.zipcode}}</span>
+                    <span id="latitude" class="locationStat largeStat">Lat: {{firstReport.latitude}}</span>
+                    <span id="longitude" class="locationStat largeStat">Lng: {{firstReport.longitude}}</span>
+                    <span id="status" class="locationStat largeStat">Status: {{firstReport.status}}</span>
+                </div>
+
+                {{!-- Report Section --}}
+                <div class="panel">
+                    {{!-- <h2>Report {{firstReport._id}}</h2> --}}
+                    <p>User: {{firstReport.userId}}</p>
+                    <p>{{firstReport.timestamp}}</p>
+                    <p>{{firstReport.description}}</p>
+
+                    {{!-- Reactions Section --}}
+                    <div class="reactionsBlock">
+                        <button>👍</button>
+                        <button>👎</button>
+                    </div>
+                </div>
+
+                {{!-- Comment and Reaction Setting --}}
+                {{!-- #TODO populate with actual data for this rodent report --}}
+                {{> commentSection
+                    comments=comments
+                    isLoggedIn=isLoggedIn
+                    error=error
+                    formData=formData
+                    target=firstReport._id
+                    collection="rodentreports" 
+                }}
+
             {{/if}}
             {{!-- Data for that report gets written into here when a card is clicked --}}
-        </div>
-
-        <div>
-            <button>Comment</button>
-            <button>Like</button>
-            <p>Rat Report Commments go here</p>
         </div>
     </div>
 </section>
@@ -110,7 +126,6 @@
 
 {{!-- leaflet heat plugin --}}
 <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
-
 
 
     {{!-- "_id": "69dcc7b4cc0c22fba23864b1",

@@ -1,6 +1,12 @@
 {{!-- THIS FILE WILL BE WRAPPED BY MAIN.HANDLEBARS --}}
 
 <section id="adminSection">
+    <nav class="admin-nav">
+        <a class="pillButton" href="/admin">Pending Approvals</a>
+        <a class="pillButton" href="/admin/restaurants">Manage Restaurants</a>
+        <a class="pillButton" href="/admin/rodent-reports">Manage Rodent Reports</a>
+    </nav>
+
     <h1>Admin: Pending Approvals</h1>
 
     {{#if hasPending}}

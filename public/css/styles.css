@@ -351,9 +351,20 @@ main {
 }
 
 /* Added mini heapmap used in rodent report detail */
-#miniHeatmapSection {
+/* Minimap shown as pop up for reporting */
+#miniHeatmapPopUp {
   width: min(200, 50vw);
   margin: 0 auto;
+  place-items: center;
+}
+
+/* minimap shown in report detail page */
+#rodentReportSection {
+  width: min(200, 50vw);
+  border-radius: 12px;
+  padding: 2%;
+  border: 2px solid var(--card-border);
+  margin-bottom: 4px;
   place-items: center;
 }
 
@@ -361,7 +372,19 @@ main {
   width: 30vw;
   height: 40vh;
   border-radius: 12px;
+  border: 1px solid var(--card-border);
 }
+
+.wideHeatmap{
+  width: 80%;
+  margin-bottom: 2%;
+  height: 40vh;
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+}
+
+
+
 
 
 /* Heatmap popus */
@@ -531,11 +554,17 @@ h2{
   margin: 5px;
 }
 
+.largeStat{
+  background-color: var(--background);
+  border-color: var(--primary-darker);
+}
+
 .infoRow{
     display: flex;
     justify-content: center;
     padding: 10px;
 }
+
 
 /* --- Panel --- */
 .panel {
@@ -544,6 +573,25 @@ h2{
   border-radius: var(--radius);
   padding: 1.5rem;
   backdrop-filter: blur(4px);
+}
+
+.widePanel{
+  width: 80%;
+}
+
+.minimapPanel{
+  border-bottom-left-radius: 0%;
+  border-bottom-right-radius: 0%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 1%;
+  border-bottom: none;
+  background-color: var(--background);
+}
+
+.ratDetailPanel{
+  background-color: var(--background);
 }
 
 /* --- Card Header --- */
@@ -714,4 +762,11 @@ h2{
   .btn--full {
     flex: 1;
   }
+}
+
+
+/* Rection styles */
+.reactionsBlock{
+  display: flex;
+  justify-content: right;
 }

@@ -87,6 +87,13 @@ const main = async () => {
   ]
 
   await restaurantCollection.insertMany(restaurantData);
+
+
+  //Appends a blank comment array to all rodentReprot objes
+  for(const obj of rodentReportData){
+    obj.comments = [];
+  }
+
   await rodentReportCollection.insertMany(rodentReportData);
   await userCollection.insertMany(userData);
 

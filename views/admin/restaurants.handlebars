@@ -1,0 +1,51 @@
+{{!-- WRAPPED BY MAIN.HANDLEBARS --}}
+
+<section id="adminSection">
+    <nav class="admin-nav">
+        <a class="pillButton" href="/admin">Pending Approvals</a>
+        <a class="pillButton" href="/admin/restaurants">Manage Restaurants</a>
+        <a class="pillButton" href="/admin/rodent-reports">Manage Rodent Reports</a>
+    </nav>
+
+    <h1>Admin: Restaurants</h1>
+
+    <p>
+        <a class="pillButton" href="/admin/restaurants/new">+ New Restaurant</a>
+    </p>
+
+    {{#if hasRestaurants}}
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Phone</th>
+                    <th>Permit #</th>
+                    <th>Lat / Lng</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each restaurants}}
+                    <tr>
+                        <td>{{this.name}}</td>
+                        <td>{{this.type}}</td>
+                        <td>{{this.status}}</td>
+                        <td>{{this.phone}}</td>
+                        <td>{{this.permit_number}}</td>
+                        <td>{{this.latitude}}, {{this.longitude}}</td>
+                        <td>
+                            <a class="pillButton" href="/admin/restaurants/{{this._id}}/edit">Edit</a>
+                            <form method="POST" action="/admin/restaurants/{{this._id}}/delete" style="display:inline" onsubmit="return confirm('Delete this restaurant? This will also remove its comments and reactions.');">
+                                <button type="submit" class="pillButton">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    {{else}}
+        <p>No restaurants in the database.</p>
+    {{/if}}
+</section>
