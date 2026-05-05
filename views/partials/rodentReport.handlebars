@@ -33,7 +33,11 @@
 
                     {{!-- Report Detail --}}
                     <div class="reportDescription">
+                        {{#if report.description}}
                         <p>{{report.description}}</p>
+                        {{else}}
+                        <p>A rodent was reported!!!</p>
+                        {{/if}}
                     </div>
 
                     {{!-- Reactions Section --}}
