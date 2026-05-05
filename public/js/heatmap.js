@@ -123,12 +123,19 @@ window.addEventListener('load', () => {
     if (typeof rodentMapData !== 'undefined') {
         // markers
         rodentMapData.forEach(r => {
+
+            //Set null descriptions to say a geenric message!
+            let description = r.description
+            if(description == null){
+                description = "A rodent was reported here!!!";
+            }
+
             const marker = L.marker([Number(r.lat), Number(r.lng)], { icon: ratPin })
             // TODO - add link to rodent report details similar to restaurant above
                 .bindPopup(
                         `<div class="btn-stack">
                         <div class="popUpText">
-                            <p class="popUp-p">${r.description}</p>
+                            <p class="popUp-p">${description}</p>
                         </div>
                         <div class="infoRow">
                             <span class="locationStat">Lat: ${r.lat}</span>
