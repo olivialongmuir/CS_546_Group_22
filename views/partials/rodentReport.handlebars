@@ -1,0 +1,87 @@
+        <div id="ratReportDetail" class="panel ratDetailPanel">
+            <div class="minimapPanel">
+                <section id="miniHeatmapSection">
+                    {{!-- map container --}}
+                    <div id="miniHeatmap" class="miniHeatmap"></div>
+                    <script>
+                        {{!-- TODO - pass in rodent data --}}
+                        const restaurantMapData = {{{restaurantMapData}}};
+                    </script>
+                </section>
+            </div>
+
+            {{#if report}}
+
+                {{!-- Info Section --}}
+                <div class="infoRow">
+                    <span id="zipcode" class="locationStat largeStat">Zipcode: {{report.zipcode}}</span>
+                    <span id="latitude" class="locationStat largeStat">Lat: {{report.latitude}}</span>
+                    <span id="longitude" class="locationStat largeStat">Lng: {{report.longitude}}</span>
+                    <span id="status" class="locationStat largeStat">Status: {{report.status}}</span>
+                </div>
+
+                {{!-- Report Section --}}
+                <div class="panel">
+                    {{!-- report info --}}
+                    <div class="detail-meta">
+                        <i data-lucide="circle-user" class="verified-icon"></i>
+                        <p>{{report.userId}}</p>
+                        <span class="meta-sep">•</span>
+                        <i data-lucide="clock" class="verified-icon"></i>
+                        <p>{{report.timestamp}}</p>
+                    </div>
+
+                    {{!-- Report Detail --}}
+                    <div class="reportDescription">
+                        <p>{{report.description}}</p>
+                    </div>
+
+                    {{!-- Reactions Section --}}
+                    <div class="reactionsBlock">
+                            <div class="comment-actions">
+                                <div class="vote-group">
+                                    <button
+                                        class="vote-btn"
+                                        data-id="{{report._id}}"
+                                        data-type="like"
+                                        {{#unless isLoggedIn}}disabled{{/unless}}
+                                    >
+                                        👍
+                                    </button>
+                                    <span class="vote-count" id="likes-{{this._id}}">
+                                        {{this.stats.likes}}
+                                    </span>
+                                    </div>
+
+                                    <div class="vote-group">
+                                    <button
+                                        class="vote-btn"
+                                        data-id="{{this._id}}"
+                                        data-type="dislike"
+                                        {{#unless isLoggedIn}}disabled{{/unless}}
+                                    >
+                                        👎
+                                    </button>
+                                    <span class="vote-count" id="dislikes-{{this._id}}">
+                                        {{this.stats.dislikes}}
+                                    </span>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+
+                {{!-- Comment and Reaction Setting --}}
+                {{!-- #TODO populate with actual data for this rodent report --}}
+                {{> commentSection
+                    comments=comments
+                    isLoggedIn=isLoggedIn
+                    error=error
+                    formData=formData
+                    target=report
+                    targetId=report._id
+                    collection="rodentreports" 
+                }}
+
+            {{/if}}
+            {{!-- Data for that report gets written into here when a card is clicked --}}
+        </div>

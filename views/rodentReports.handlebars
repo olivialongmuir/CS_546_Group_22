@@ -5,7 +5,6 @@
 <link rel="stylesheet" href="/public/css/restaurants.css">
 
 
-
 <section>
     <div class="container">
     <div class="leftPane">
@@ -38,14 +37,7 @@
         <!-- Cards list -->
         <ul class="rodent-list"></ul>
         {{#each reports}}
-
-            {{!-- <div class="ratCard" data-id="{{this._id}}" status-id="{{this.status}}" data-timestamp="{{this.timestamp}}">
-                <p>Report: {{this.jobId}}</p>
-                <p>Time: {{this.timestamp}}</p>
-                <p>Location: {{this.latitude}} {{this.longitude}}</p>
-                <p>{{this.status}}</p>
-            </div> --}}
-                <div class="rodent-card panel" data-id="{{this._id}}" status-id="{{this.status}}" data-timestamp="{{this.timestamp}}">
+            <a href="/ratreports/{{this._id}}" class="rodent-card panel" data-id="{{this._id}}" status-id="{{this.status}}" data-timestamp="{{this.timestamp}}">
                 <div class="rodent-card-main">
                     {{!-- <h3 class="rodent-name">{{this._id}}</h3> --}}
                         <div class="rodent-meta">
@@ -54,7 +46,7 @@
                         </div>
                     <p class="restaurant-address">{{this.timestamp}}</p>
                 </div>
-                  <div class="restaurant-card-side">
+                <div class="restaurant-card-side">
                     {{#if (eq this.status "verified")}}
                     <span class="status-badge verified">{{this.status}} 
                         <i data-lucide="shield-check"class="verified-icon"></i>
@@ -62,104 +54,17 @@
                     {{else}}
                     <span class="status-badge unverified">{{this.status}}</span>
                     {{/if}}
-                  </div>
                 </div>
+            </a>
         {{/each}}
         </ul>
     </div>
 
     <div class="rightPane">
-        <!-- this part will be edited by client side js -->
-        <div id="ratReportDetail" class="panel ratDetailPanel">
-            <div class="minimapPanel">
-                <section id="miniHeatmapSection">
-                    {{!-- map container --}}
-                    <div id="miniHeatmap" class="miniHeatmap"></div>
-                    <script>
-                        {{!-- TODO - pass in rodent data --}}
-                        const restaurantMapData = {{{restaurantMapData}}};
-                    </script>
-                </section>
-            </div>
-
-            {{#if firstReport}}
-
-                {{!-- Info Section --}}
-                <div class="infoRow">
-                    <span id="zipcode" class="locationStat largeStat">Zipcode: {{firstReport.zipcode}}</span>
-                    <span id="latitude" class="locationStat largeStat">Lat: {{firstReport.latitude}}</span>
-                    <span id="longitude" class="locationStat largeStat">Lng: {{firstReport.longitude}}</span>
-                    <span id="status" class="locationStat largeStat">Status: {{firstReport.status}}</span>
-                </div>
-
-                {{!-- Report Section --}}
-                <div class="panel">
-                    {{!-- report info --}}
-                    <div class="detail-meta">
-                        <i data-lucide="circle-user" class="verified-icon"></i>
-                        <p>{{firstReport.userId}}</p>
-                        <span class="meta-sep">•</span>
-                        <i data-lucide="clock" class="verified-icon"></i>
-                        <p>{{firstReport.timestamp}}</p>
-                    </div>
-
-                    {{!-- Report Detail --}}
-                    <div class="reportDescription">
-                        <p>{{firstReport.description}}</p>
-                    </div>
-
-                    {{!-- Reactions Section --}}
-                    <div class="reactionsBlock">
-                            <div class="comment-actions">
-                                <div class="vote-group">
-                                    <button
-                                        class="vote-btn"
-                                        data-id="{{firstReport._id}}"
-                                        data-type="like"
-                                        {{#unless isLoggedIn}}disabled{{/unless}}
-                                    >
-                                        👍
-                                    </button>
-                                    <span class="vote-count" id="likes-{{this._id}}">
-                                        {{this.stats.likes}}
-                                    </span>
-                                    </div>
-
-                                    <div class="vote-group">
-                                    <button
-                                        class="vote-btn"
-                                        data-id="{{this._id}}"
-                                        data-type="dislike"
-                                        {{#unless isLoggedIn}}disabled{{/unless}}
-                                    >
-                                        👎
-                                    </button>
-                                    <span class="vote-count" id="dislikes-{{this._id}}">
-                                        {{this.stats.dislikes}}
-                                    </span>
-                                </div>
-                            </div>
-                    </div>
-                </div>
-
-                {{!-- Comment and Reaction Setting --}}
-                {{!-- #TODO populate with actual data for this rodent report --}}
-                {{> commentSection
-                    comments=comments
-                    isLoggedIn=isLoggedIn
-                    error=error
-                    formData=formData
-                    target=firstReport
-                    targetId=firstReport._id
-                    collection="rodentreports" 
-                }}
-
-            {{/if}}
-            {{!-- Data for that report gets written into here when a card is clicked --}}
-        </div>
+        <!-- render the individual rodent report page -->
+        {{> rodentReport}}
     </div>
 </section>
-
 
 <script src="/js/rodentReports.js"></script>
 
@@ -170,7 +75,6 @@
 
 {{!-- leaflet heat plugin --}}
 <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
-
 
     {{!-- "_id": "69dcc7b4cc0c22fba23864b1",
     "jobId": "PC7002932",

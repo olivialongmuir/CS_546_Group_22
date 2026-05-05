@@ -128,15 +128,18 @@ router.route('/heatmap').get(async (req, res) => {
 //Generic Route which is called from the nav bar route. Will send user to first available rodent report page.
 router.route('/ratreports').get(async (req, res) => {
     try {
-
-        //TODO - handle case when no reports in DB
         //get all reports
         let reports = await getAllReports();
-        //get a single report
+
+        //if reports is empty redirect to error page
+        if(reports.length == 0){
+            res.redirect('/error');
+        }
+
+        //route user to first report
         let firstReport = reports[0]
-        let id = firstReport._id
-        //redirect user to that reports page
-        res.redirect(`/ratreports/${id}`);
+        res.redirect(`/ratreports/${firstReport._id}`);
+        
     } catch (error) {
         console.error(error);
         res.status(500).send("Error loading Rodent Reports");
@@ -149,27 +152,28 @@ router.route('/ratreports').get(async (req, res) => {
 router.route('/ratreports/:id').get(async (req, res) => {
     try {
 
-        //TODO -  error handling and invalid data checking
+        //validate the id
+        const id = req.params.id.trim();
+        const validatedId = checkId(id);
 
-        //Get that specific report
-        let id = req.params.id;
-        let targetReport = await getReportById(id);
+        let targetReport = await getReportById(validatedId);
+
+        //if there is no report then raise error
 
         //get all reports to be shown
         let reports = await getAllReports();
 
-
-        const firstLocation = {
+        //gets the location of the specified report
+        const location = {
             name: targetReport.name,
             lat: Number(targetReport.latitude),
             lng: Number(targetReport.longitude)
         }
 
         //put object in arr since its iterated when the maps built
-        const restaurantData = [firstLocation];
+        const restaurantData = [location];
 
         const restaurantMapData = JSON.stringify(restaurantData);
-
 
         //Load in the comments from that report
         //const comments = await getRestaurantComments(id);
@@ -177,7 +181,7 @@ router.route('/ratreports/:id').get(async (req, res) => {
             title: 'Rodent Reports',
             reports:reports,
             restaurantMapData: restaurantMapData,
-            firstReport: targetReport, //passing in target report
+            report: targetReport, //passing in target report
             comments:null,
             currentUserId: req.session.userId
         });
