@@ -107,12 +107,18 @@ window.addEventListener('load', () => {
         restaurantMapData.forEach(restaurant => {
             const marker = L.marker([restaurant.lat, restaurant.lng], { icon: restaurantPin })
                 .addTo(map)
-                .bindPopup(`
-                    <div class="btn-stack">
-                        <a href="/restaurants/${restaurant._id}" class="popup-link">
-                        ${restaurant.name}
-                        <button class="btn">View Restaurant</button>
-                        </a>
+                .bindPopup(
+                        `<div class="btn-stack">
+                            <div class="popUpText">
+                                <p class="popUp-p">${restaurant.name}</p>
+                            </div>
+                            <div class="infoRow">
+                                <span class="locationStat">Lat: ${restaurant.lat}</span>
+                                <span class="locationStat">Lng: ${restaurant.lng}</span>
+                            </div>
+                            <a href="/restaurants/${restaurant._id}" class="popup-link">
+                            <button class="btn popup-btn">View Restaurant</button>
+                            </a>
                     </div>`
                 );
             // store marker
