@@ -96,7 +96,10 @@ const constructorMethod = (app) => {
   /**
    * Sends user to login page if trying to comment while not logged in
    */
-  app.use('/restaurants/:id/comments', (res, req, next) => {
+  app.use([
+    '/restaurants/:id/comments',
+    '/api/restaurants/:id/comments'
+  ], (res, req, next) => {
     if (!req.session.userId) {
       return res.status(401).redirect('/login');
     }

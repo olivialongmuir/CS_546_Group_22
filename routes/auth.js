@@ -129,6 +129,51 @@ router
     }
   });
 
+router.route('/api/register-user').post(async (res, req) => {
+  try {
+    const { 
+      firstName, 
+      lastName, 
+      username, 
+      emailAddress, 
+      password, 
+      confirmPassword, 
+      type 
+    } = req.body;
+
+    // Project requirement - 3 stage validation in client, route, server
+    const validatedFirstName = checkFirstName(firstName);
+    const validatedLastName = checkLastName(lastName);
+    const validatedUsername = checkUsername(username);
+    const validatedPassword = checkPassword(password);
+    const validatedEmail = checkEmail(emailAddress);
+    const validatedType = checkUserType(type);
+
+    if (validatedPassword !== confirmPassword) throw 'Passwords do not match';
+
+    const newUser = await createUser(
+      validatedFirstName,
+      validatedLastName,
+      validatedUsername,
+      validatedPassword,
+      validatedEmail,
+      validatedType
+    );
+
+    // Regular users are automatically approved
+    if (newUser.type === 'consumer') {
+      req.session.userId = newUser._id;
+      req.session.userType = newUser.type;
+      return res.send('/profile');
+    }
+
+    // Special users need to be approved first
+    return res.send('/registration-submitted');
+  } catch(error) {
+    return res.status(400).send(error);
+  }
+});
+
 router.route('/registration-submitted').get(async (req, res) => {
   return res.render('registration-submitted', {
     title: 'SqueakPeek - Registration Submitted'

@@ -7,6 +7,8 @@
         <p class="registerError" style="color: #c0392b;">{{ error }}</p>
     {{/if}}
 
+    <p class="register-response" id="registerResponse" name="registerResponse" display="hidden"></p>
+
     <form class="register-form" id="registerForm" method="POST" action="/register">
         <div>
             <label for="firstName">First Name</label>
@@ -90,8 +92,19 @@
             </select>
         </div>
 
-        <button type="submit" class="pillButton">Sign Up</button>
+        <button id="submitButton" type="submit" class="pillButton">Sign Up</button>
     </form>
 
+    <div class="register-instructions">
+        <h2>Instructions</h2>
+        <label>Username:</label>
+        <p>Must be 3 to 20 characters. Can only contain letters, numbers, and underscores.</p>
+        <label>Password:</label>
+        <p>Must be 8 to 16 characters. Must contain at least 1 uppercase letter, 1 number, and one special character (!@#$%^&*).</p>
+    </div>
+
     <p>Already have an account? <a href="/login">Log in</a></p>
+
+    <script type="module" src="/public/js/register.js"></script>
+
 </section>

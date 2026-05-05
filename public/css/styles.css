@@ -494,6 +494,20 @@ h2{
 .register-page > p {
   margin-top: 20px;
 }
+.register-instructions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.register-instructions h2 {
+  margin-top: 50px;
+}
+.register-instructions label {
+  font-weight: bold;
+}
+.register-response {
+  color: #c0392b;
+}
 
 /* Shared utilities — used across multiple pages*/
 
