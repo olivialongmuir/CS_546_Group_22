@@ -29,6 +29,37 @@
           {{#if restaurant.grade}}
             <span class="grade-pill">Grade {{restaurant.grade}}</span>
           {{/if}}
+          <div class="restaurant-reactions">
+            <div class="vote-group">
+              <button
+                class="vote-btn"
+                data-id="{{restaurant._id}}"
+                data-type="like"
+                data-target="restaurants"
+                {{#unless isLoggedIn}}disabled{{/unless}}
+              >
+                👍
+              </button>
+              <span class="vote-count" id="likes-{{restaurant._id}}">
+                {{restaurant.stats.likes}}
+              </span>
+            </div>
+
+            <div class="vote-group">
+              <button
+                class="vote-btn"
+                data-id="{{restaurant._id}}"
+                data-type="dislike"
+                data-target="restaurants"
+                {{#unless isLoggedIn}}disabled{{/unless}}
+              >
+                👎
+              </button>
+              <span class="vote-count" id="dislikes-{{restaurant._id}}">
+                {{restaurant.stats.dislikes}}
+              </span>
+            </div>
+          </div>
         </div>
       </header>
 

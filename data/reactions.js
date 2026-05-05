@@ -195,7 +195,15 @@ export const updateReaction = async (
     { returnDocument: "after" }
   );
 
-  return updatedTarget;
+  const doc = updatedTarget?.value || updatedTarget;
+
+  return {
+    ...doc,
+    stats: {
+      likes: doc?.stats?.likes ?? 0,
+      dislikes: doc?.stats?.dislikes ?? 0
+    }
+  };
 };
 
 /**

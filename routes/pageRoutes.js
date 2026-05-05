@@ -6,7 +6,7 @@ import { getAllRestaurants, getRestaurantById, getRestaurantComments } from '../
 import { getAllReports, getReportById} from '../data/rodentReports.js';
 import { getUserById, getUserActivity } from '../data/users.js';
 import { createComment, deleteComment, getCommentById} from '../data/comments.js';
-import { updateCommentReaction } from "../data/reactions.js";
+import { updateCommentReaction, updateRestaurantReaction } from "../data/reactions.js";
 import { checkId, getLocationFromZip, countToStatus, gradeToStatus, normalizeRestaurant } from '../helpers.js';
 import NodeGeocoder from 'node-geocoder';
 import { countStats } from '../data/utility.js';
@@ -364,6 +364,44 @@ router.post('/comments/:id/dislike', async (req, res) => {
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: "Failed to dislike comment" });
+  }
+});
+
+router.post('/restaurants/:id/like', async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    if (!userId) return res.status(403).json({ error: "Not logged in" });
+
+    const restaurantId = checkId(req.params.id.trim());
+
+    const updated = await updateRestaurantReaction(userId, restaurantId, "like");
+
+    return res.json({
+      success: true,
+      stats: updated.stats
+    });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Failed to like restaurant" });
+  }
+});
+
+router.post('/restaurants/:id/dislike', async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    if (!userId) return res.status(403).json({ error: "Not logged in" });
+
+    const restaurantId = checkId(req.params.id.trim());
+
+    const updated = await updateRestaurantReaction(userId, restaurantId, "dislike");
+
+    return res.json({
+      success: true,
+      stats: updated.stats
+    });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Failed to dislike restaurant" });
   }
 });
 
