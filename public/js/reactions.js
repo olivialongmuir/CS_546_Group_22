@@ -1,5 +1,6 @@
 // adding event listener to update the stats
 document.addEventListener("click", async (e) => {
+
   const btn = e.target.closest(".vote-btn");
   if (!btn) return;
 
@@ -11,6 +12,7 @@ document.addEventListener("click", async (e) => {
     const res = await fetch(`/comments/${id}/${type}`, {
       method: "POST"
     });
+
 
     const data = await res.json();
 
@@ -27,6 +29,7 @@ document.addEventListener("click", async (e) => {
     console.error(err);
   }
 });
+
 
 // adding event listener to delete a comment
 document.querySelectorAll(".delete-btn").forEach(btn => {

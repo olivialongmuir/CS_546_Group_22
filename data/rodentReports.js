@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { reactions, rodentReports } from "../config/mongoCollections.js";
+import { reactions, rodentReports, comments } from "../config/mongoCollections.js";
 import { 
     checkDate, 
     checkDescription, 
@@ -317,4 +317,36 @@ export const deleteReport = async(id) => {
     deletionInfo = await reactionCollection.deleteMany({targetId: validatedId, targetKey: COLLECTION_IDS.REPORT});
 
     return { deleted: true };
+};
+
+
+
+/**
+ * Gets all comments for a rodent report as an array
+ * @param {string} id 
+ * @returns commentItems
+ */
+export const getRodentReportComments = async(id) => {
+    const errorSource = "getRodentReportComments";
+    const validatedId = validateId(id, 'rodentReportId', errorSource);
+
+    // Check that this restaurant exists in restaurants database
+    const rodentsCollection = await rodentReports();
+    const rodentItem = await rodentsCollection.findOne({_id: new ObjectId(validatedId)});
+    if (!rodentItem) throw `Error {${errorSource}} No rodent found with id ${validatedId}`;
+
+    // Get all comments from comments database associated with this restaurant
+    //Use the rodent ID as search key instead of restaurant
+    const commentCollection = await comments();
+    let commentItems = await commentCollection.find({rodentReportId: validatedId}).toArray(); // Assuming not too many comments
+
+
+
+    // Ensure all comment IDs are in the form of a string
+    commentItems = (commentItems || []).map(item => {
+        item._id = item._id.toString();
+        return item
+    })
+
+    return commentItems
 };

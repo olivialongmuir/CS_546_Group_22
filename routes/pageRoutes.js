@@ -3,7 +3,7 @@
 import { Router } from 'express';
 const router = Router();
 import { getAllRestaurants, getRestaurantById, getRestaurantComments } from '../data/restaurants.js';
-import { getAllReports, getReportById} from '../data/rodentReports.js';
+import { getAllReports, getReportById, getRodentReportComments} from '../data/rodentReports.js';
 import { getUserById, getUserActivity } from '../data/users.js';
 import { createComment, deleteComment, getCommentById} from '../data/comments.js';
 import { updateCommentReaction } from "../data/reactions.js";
@@ -158,7 +158,7 @@ router.route('/ratreports/:id').get(async (req, res) => {
 
         let targetReport = await getReportById(validatedId);
 
-        //if there is no report then raise error
+        //TODO if there is no report then raise error?
 
         //get all reports to be shown
         let reports = await getAllReports();
@@ -171,13 +171,9 @@ router.route('/ratreports/:id').get(async (req, res) => {
         }
 
         //put object in arr since its iterated when the maps built
+        //Set the users map location
         const restaurantData = [location];
-
         const restaurantMapData = JSON.stringify(restaurantData);
-
-        //Load in the comments from that report
-        //const comments = await getRestaurantComments(id);
-
 
         //Set name of user using their ID. Otherwise is "Unknown User"
         if(targetReport.userId == null){
@@ -187,12 +183,25 @@ router.route('/ratreports/:id').get(async (req, res) => {
             targetReport.reporter = user.username
         }
 
+        //Load in the comments from that report
+        const comments = await getRodentReportComments(validatedId);
+        const rodentComments = await Promise.all(
+            comments.map(async (c) => {
+                const user = await getUserById(c.userId);
+                return {
+                    ...c,
+                    userName: user.username
+                };
+            })
+        );
+
+
         res.render("rodentReports", {
             title: 'Rodent Reports',
             reports:reports,
             restaurantMapData: restaurantMapData,
             report: targetReport, //passing in target report
-            comments:null,
+            comments:rodentComments,
             currentUserId: req.session.userId
         });
     } catch (error) {
