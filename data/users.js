@@ -9,7 +9,7 @@ import {
     checkUsername, 
     checkUserType,
     COLLECTION_IDS,
-} from "../helpers.js";
+} from "../public/js/helpers.js";
 import { validateId } from "./utility.js";
 import { getRestaurantById } from "./restaurants.js";
 
@@ -67,29 +67,29 @@ export const getUserById = async(id) => {
 
 /**
  * Creates a new user with selected type and inserts it into the database
- * @param {string} type 
  * @param {string} firstName 
  * @param {string} lastName 
  * @param {string} username      //Must be unique
  * @param {string} password 
  * @param {string} emailAddress  //Must be unique
+ * @param {string} type 
  * @returns newUser
  */
-export const createUser = async({
-    type,
+export const createUser = async(
     firstName,
     lastName,
     username,
     password,
-    emailAddress
-}) => {
+    emailAddress,
+    type
+) => {
     const errorSource = "createUser";
-    const validatedType = checkUserType(type);
     const validatedFirstName = checkFirstName(firstName);
     const validatedLastName = checkLastName(lastName);
     const validatedUsername = checkUsername(username);
     const validatedPassword = checkPassword(password);
     const validatedEmail = checkEmail(emailAddress);
+    const validatedType = checkUserType(type);
 
     // Make sure no duplicate user exists
     const userCollection = await users();

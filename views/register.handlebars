@@ -1,14 +1,16 @@
 {{!-- THIS FILE WILL BE WRAPPED BY MAIN.HANDLEBARS --}}
 
-<section id="registerSection">
+<section class="register-page" id="registerSection">
     <h1>Create Account</h1>
 
     {{#if error}}
         <p class="registerError" style="color: #c0392b;">{{ error }}</p>
     {{/if}}
 
-    <form id="registerForm" method="POST" action="/register">
-        <div>
+    <p class="register-response" id="registerResponse" name="registerResponse" display="hidden"></p>
+
+    <form class="register-form" id="registerForm" name="registerForm" method="POST" action="/register">
+        <div class="tooltip-container">
             <label for="firstName">First Name</label>
             <input
                 type="text"
@@ -17,6 +19,9 @@
                 value="{{ firstName }}"
                 required
             />
+            <span class="tooltip">ⓘ
+                <span class="tooltip-text">Must be alphabetic and less than 50 characters long.</span>
+            </span>
         </div>
 
         <div>
@@ -28,6 +33,9 @@
                 value="{{ lastName }}"
                 required
             />
+            <span class="tooltip">ⓘ
+                <span class="tooltip-text">Must be alphabetic and less than 50 characters long.</span>
+            </span>
         </div>
 
         <div>
@@ -43,6 +51,9 @@
                 pattern="[A-Za-z0-9_]+"
                 title="Letters, numbers, and underscores only"
             />
+            <span class="tooltip">ⓘ
+                <span class="tooltip-text">Can only contain letters, numbers, and underscores. Length must be between 3 and 20 characters.</span>
+            </span>
         </div>
 
         <div>
@@ -54,6 +65,9 @@
                 value="{{ emailAddress }}"
                 required
             />
+            <span class="tooltip">ⓘ
+                <span class="tooltip-text">Must be a standard email address and not over 100 characters long.</span>
+            </span>
         </div>
 
         <div>
@@ -65,8 +79,11 @@
                 required
                 minlength="8"
                 maxlength="16"
-                title="8-16 characters, one uppercase letter, one number, one special character (!@#$%^&*)"
+                title="8-16 characters, one uppercase letter, one number, one special character !@#$%^&*"
             />
+            <span class="tooltip">ⓘ
+                <span class="tooltip-text">Must contain at least 1 uppercase letter, 1 number, and 1 special character !@#$%^&*. Length must be between 8 and 16 characters long.</span>
+            </span>
         </div>
 
         <div>
@@ -79,6 +96,9 @@
                 minlength="8"
                 maxlength="16"
             />
+            <span class="tooltip">ⓘ
+                <span class="tooltip-text">Must match password exactly.</span>
+            </span>
         </div>
 
         <div>
@@ -90,8 +110,11 @@
             </select>
         </div>
 
-        <button type="submit" class="pillButton">Sign Up</button>
+        <button id="submitButton" name="submitButton" type="submit" class="pillButton">Sign Up</button>
     </form>
 
     <p>Already have an account? <a href="/login">Log in</a></p>
+
+    <script type="module" src="/public/js/register.js"></script>
+
 </section>

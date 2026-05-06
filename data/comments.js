@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import { comments, reactions } from "../config/mongoCollections.js";
-import { checkComment, COLLECTION_IDS } from "../helpers.js";
+import { checkComment, COLLECTION_IDS } from "../public/js/helpers.js";
 import { validateId } from "./utility.js";
 
 /**

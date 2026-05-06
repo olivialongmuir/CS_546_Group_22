@@ -7,7 +7,7 @@ import { getAllReports, getReportById} from '../data/rodentReports.js';
 import { getUserById, getUserActivity } from '../data/users.js';
 import { createComment, deleteComment, getCommentById} from '../data/comments.js';
 import { updateCommentReaction, updateRestaurantReaction } from "../data/reactions.js";
-import { checkId, getLocationFromZip, countToStatus, gradeToStatus, normalizeRestaurant } from '../helpers.js';
+import { checkId, getLocationFromZip, countToStatus, gradeToStatus, normalizeRestaurant } from '../public/js/helpers.js';
 import NodeGeocoder from 'node-geocoder';
 import { countStats } from '../data/utility.js';
 
@@ -142,8 +142,6 @@ router.route('/ratreports').get(async (req, res) => {
         res.status(500).send("Error loading Rodent Reports");
     }
 });
-
-
 
 //Route which allows you to pre-filter to a specific report by ID. The target report will be the data used to prepopulate first shown report
 router.route('/ratreports/:id').get(async (req, res) => {

@@ -3,8 +3,6 @@
 import { Router } from 'express';
 const router = Router();
 
-import { adminOnly } from '../middleware.js';
-
 import {
   getAllRestaurants,
   getRestaurantById,
@@ -25,7 +23,7 @@ import {
     checkLongitude,
     checkRestaurantName,
     checkId
-} from '../helpers.js';
+} from '../public/js/helpers.js';
 
 // Error handling helper function
 const handleError = (res, error) => {
@@ -120,7 +118,7 @@ router.route('/:id').get(async (req, res) => {
 
 // PATCH /restaurants/:id
 // Updates a restaurant's information by id
-router.route('/:id').patch(adminOnly, async (req, res) => {
+router.route('/:id').patch(async (req, res) => {
   try {
     const id = req.params.id.trim();
     const validatedId = checkId(id);
@@ -168,7 +166,7 @@ router.route('/:id').patch(adminOnly, async (req, res) => {
 
 // DELETE /restaurants/:id
 // deletes a restaurant by id
-router.route('/:id').delete(adminOnly, async (req, res) => {
+router.route('/:id').delete(async (req, res) => {
   try {
     const validatedId = checkId(req.params.id.trim());
     await deleteRestaurant(validatedId);

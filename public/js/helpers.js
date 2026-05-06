@@ -86,18 +86,21 @@ export const checkRestaurantName = (restaurantName) => {
 
 export const checkFirstName = (firstName) => {
     const parsed_name = checkString(firstName, 'firstName');
-    if (!/^[\p{L}\s'-]+$/u.test(parsed_name)) throw 'Error: First name can only '; //Only alphabetic and accented characters. Apostrophes and hyphens are fine
+    if (parsed_name.length > 50) throw 'Error: First name cannot be over 50 characters';
+    if (!/^[\p{L}\s'-]+$/u.test(parsed_name)) throw 'Error: First name can only be alphabetic'; //Only alphabetic and accented characters.
     return parsed_name
 }
 
 export const checkLastName = (lastName) => {
     const parsed_name = checkString(lastName, 'lastName');
-    if (!/^[\p{L}\s'-]+$/u.test(parsed_name)) throw 'Error: Last name can only '; //Only alphabetic and accented characters. Apostrophes and hyphens are fine
+    if (parsed_name.length > 50) throw 'Error: Last name cannot be over 50 characters';
+    if (!/^[\p{L}\s'-]+$/u.test(parsed_name)) throw 'Error: Last name can only be alphabetic'; //Only alphabetic and accented characters.
     return parsed_name
 }
 
 export const checkEmail = (email) => {
     const parsed_email = checkString(email, 'email');
+    if (parsed_email.length > 100) throw 'Error: Email cannot be over 100 characters';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(parsed_email)) throw 'Error: Email address is not valid';
     return parsed_email;
 };
@@ -114,26 +117,25 @@ export const checkPassword = (password) => {
     if (parsed_password.length > 16) throw 'Error: Password can at most be 16 characters';
     if (!/[A-Z]/.test(parsed_password)) throw 'Error: Password must contain at least one uppercase letter';
     if (!/[0-9]/.test(parsed_password)) throw 'Error: Password must contain at least one number';
-    if (!/[!@#$%^&*]/.test(parsed_password)) throw 'Error: Password must contain at least one special character (!@#$%^&*)';
+    if (!/[!@#$%^&*]/.test(parsed_password)) throw 'Error: Password must contain at least one special character !@#$%^&*';
     return parsed_password;
 };
 
 export const checkZipcode = (zipcode) => {
-
-
     const parsed_zipcode = checkString(zipcode, 'zipcode'); //zipcode can be 00502
-
     if (!(/^\d{5}$/.test(parsed_zipcode))) throw 'Error: Zipcode must contain exactly 5 integers';
     return parsed_zipcode;
 };
 
 export const checkLatitude = (latitude) => {
     const parsed_latitude = checkNumber(latitude, 'latitude');
+    if (parsed_latitude > 40.9176 || parsed_latitude < 40.4774) throw 'Error: Latitude must be between 40.4774 and 40.9176';
     return parsed_latitude;
 }
 
 export const checkLongitude = (longitude) => {
     const parsed_longitude = checkNumber(longitude, 'longitude');
+    if (parsed_longitude > -73.7004 || parsed_longitude < -74.2591) throw 'Error: Longitude must be between -74.2591 and -73.7004';
     return parsed_longitude;
 }
 

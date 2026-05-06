@@ -4,10 +4,6 @@ import { Router } from 'express';
 const router = Router();
 import NodeGeocoder from 'node-geocoder';
 
-//middleware import
-import { protectedRoute, adminOnly } from "../middleware.js"
-
-
 import {
   getAllReports,
   getReportById,
@@ -30,10 +26,9 @@ router.route('/').get(async (req, res) => {
 
 // POST /rodentReports
 // creates a rodent report
-//middlewear is used to check if user is logged in before they can make a report
-router.route('/').post(protectedRoute, async (req, res) => {
+// Only logged in users can create a new report - see middleware.js
+router.route('/').post(async (req, res) => {
   try {
-
     const data = req.body;
 
     //Add in the default values needed for report creation
@@ -122,7 +117,7 @@ router.route('/:id').get(async (req, res) => {
 
 // PATCH /rodentReports/:id
 // updates a rodent report by id
-router.route('/:id').patch(adminOnly, async (req, res) => {
+router.route('/:id').patch(async (req, res) => {
   try {
     const updated = await updateReport(req.params.id, req.body);
 
@@ -134,7 +129,7 @@ router.route('/:id').patch(adminOnly, async (req, res) => {
 
 // DELETE /rodentReports/:id
 // deletes a rodent report by id
-router.route('/:id').delete(adminOnly, async (req, res) => {
+router.route('/:id').delete(async (req, res) => {
   try {
     await deleteReport(req.params.id);
 

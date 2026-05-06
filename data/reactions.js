@@ -5,7 +5,7 @@ import {
     checkReactionType, 
     checkTargetKeyType, 
     COLLECTION_IDS 
-} from "../helpers.js";
+} from "../public/js/helpers.js";
 
 /**
  * Reaction Schema:
@@ -80,7 +80,7 @@ export const deleteCommentReaction = async(reactionId, commentId) => {
  * @param {string} reportId 
  */
 export const deleteReportReaction = async(reactionId, reportId) => {
-    const errorSource = "deletereportReaction";
+    const errorSource = "deleteReportReaction";
     return deleteReaction(reactionId, reportId, COLLECTION_IDS.REPORT, errorSource);
 }
 

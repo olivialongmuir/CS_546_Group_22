@@ -9,7 +9,7 @@ import {
     checkLongitude,
     checkRestaurantName,
     COLLECTION_IDS
-} from '../helpers.js';
+} from '../public/js/helpers.js';
 import { validateId } from './utility.js';
 
 /**
