@@ -16,8 +16,8 @@ $(document).ready(function() {
             type: 'POST',
             data: $form.serialize(),
             dataType: 'json',
-            success: function(url) {
-                window.location.href = url;
+            success: function(response) {
+                window.location.href = response.url;
             },
             error: function(xhr) {
                 const errorMessage = xhr.responseText;

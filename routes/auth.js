@@ -129,7 +129,7 @@ router
     }
   });
 
-router.route('/api/register-user').post(async (res, req) => {
+router.route('/api/register-user').post(async (req, res) => {
   try {
     const { 
       firstName, 
@@ -164,11 +164,11 @@ router.route('/api/register-user').post(async (res, req) => {
     if (newUser.type === 'consumer') {
       req.session.userId = newUser._id;
       req.session.userType = newUser.type;
-      return res.send('/profile');
+      return res.send({url: '/profile'});
     }
 
     // Special users need to be approved first
-    return res.send('/registration-submitted');
+    return res.send({url: '/registration-submitted'});
   } catch(error) {
     return res.status(400).send(error);
   }
