@@ -13,6 +13,8 @@ import {
 import { validateId } from "./utility.js";
 import { getRestaurantById } from "./restaurants.js";
 
+import {getReportById} from '../data/rodentReports.js';
+
 /**
  * User Schema:
  * {
@@ -426,17 +428,35 @@ export const getUserActivity = async (userId) => {
 
   // comments
   for (let c of userComments) {
-    const restaurant = await getRestaurantById(c.restaurantId);
 
-    activity.push({
-      type: "comment",
-      text: `You commented on "${restaurant.name}"`,
-      time: c.timestamp,
-      color: "blue",
-      link: `/restaurants/${restaurant._id}`,
-      status: restaurant.status?.key
+     //case to determine if is a restaurant or rodent report comment
+     if(c.restaurantId == null){
+        //its a rodent comment
+        const rodentReport = await getReportById(c.rodentReportId);
+
+        activity.push({
+        type: "comment",
+        text: `You commented on a rodent report!!"`,
+        time: c.timestamp,
+        color: "blue",
+        link: `/ratreports/${rodentReport._id}`,
+        status: rodentReport.status
     });
+     }else{
+        //its a restuarant comment
+        const restaurant = await getRestaurantById(c.restaurantId);
+
+        activity.push({
+        type: "comment",
+        text: `You commented on "${restaurant.name}"`,
+        time: c.timestamp,
+        color: "blue",
+        link: `/restaurants/${restaurant._id}`,
+        status: restaurant.status?.key
+    });
+    }
   }
+
 
   // reports
   for (let r of reports) {

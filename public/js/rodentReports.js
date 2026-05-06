@@ -89,38 +89,7 @@ document.querySelector(".leftPane")?.addEventListener("click", async (e) => {
     const id = card.dataset.id;
 
     //get the data for that id by calling the api
-    const res = await fetch(`/rodentReports/${id}`);
-
-    let data = await res.json()
-
-    //Set the element value
-    //zipcode, latitude, longitude, status
-    let zipcode = document.getElementById('zipcode')
-    zipcode.textContent = `Zipcode: ${data.zipcode}`
-
-    let latitude = document.getElementById('latitude')
-    latitude.textContent = `Lat: ${data.latitude}`
-
-    let longitude = document.getElementById('longitude')
-    longitude.textContent = `Lng: ${data.longitude}`
-
-    let status = document.getElementById('status')
-    status.textContent = `Status: ${data.status}`
-
-    //TODO - set the description and user
-
-    
-    //Heatmap update - set the heatmaps view to be the center of this elements lat and long coordinates
-    const lo = [data.latitude, data.longitude]
-    //clear all old markers
-
-    //set the center view (use fly to or pan to?)
-    miniMap.panTo(lo, 14, {animate: true, duration: 0.5}); 
-    // map.flyTo(lo, map.getZoom(), { duration: 0.3 });
-    //set a marker icon to be a small rat??? use L.Icon from docs
-
-    //add new marker to the map for that rodent sighting
-    L.marker([data.latitude, data.longitude], { icon: miniRatPin }).addTo(miniMap).bindPopup(data._id);
+     res = await fetch(`/rodentReports/${id}`);
 
 });
 

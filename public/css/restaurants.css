@@ -145,6 +145,14 @@
   border-radius: 0.25rem;
 }
 
+.verified{
+  background-color: green;
+}
+
+.unverified{
+  background-color: #ef4444;
+}
+
 .empty-state {
   text-align: center;
   padding: 2rem;

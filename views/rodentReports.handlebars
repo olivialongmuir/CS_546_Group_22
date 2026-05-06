@@ -5,47 +5,39 @@
 <link rel="stylesheet" href="/public/css/restaurants.css">
 
 
-
 <section>
     <div class="container">
     <div class="leftPane">
 
         {{!-- Filter Panel --}}
-        <div class="filterPanel">
-        <h2>Filter Reports</h2>
-            <div class="filterBlock">
-                    <div class="filterItem">
-                    <p class="filterLabel">Report Date:</p>
+        <h2>Browse Reports</h2>
+        <div class="panel filterPanel">
+
+            <div class="filters">
+                <div class="filterItem">
+                    <label class="filterLabel" for="startDate">Report Date</label>
                     <div class="dateRange">
-                        <input id="startDate" type="date" name="startDate">
-                        <input id="endDate" type="date" name="endDate">
+                        <input id="startDate" type="date" name="startDate" aria-label="Start date">
+                        <span class="dateRangeSeparator">to</span>
+                        <input id="endDate" type="date" name="endDate" aria-label="End date">
                     </div>
                 </div>
 
-            <div class="filterItem checkboxItem">
-                <span>
-                    <p class="filterLabel">Verified Only:</p>
-                    <input type="checkbox" id="verifiedStatus" name="verifiedStatus">
-                </span>
+                <div class="filterItem">
+                    <p class="filterLabel">Report Status:</p>
+                    <span class="checkbox"><input type="checkbox" id="verifiedStatus" name="verifiedStatus">Verified Only</span>
+                </div>
             </div>
 
-                <button type="button" class="btn btn--outline" id="clearFilters">
-                Clear Filters
-                </button>
+            <div>
+                <button type="button" class="btn btn--outline" id="clearFilters">Clear Filters</button>
             </div>
         </div>
 
         <!-- Cards list -->
         <ul class="rodent-list"></ul>
         {{#each reports}}
-
-            {{!-- <div class="ratCard" data-id="{{this._id}}" status-id="{{this.status}}" data-timestamp="{{this.timestamp}}">
-                <p>Report: {{this.jobId}}</p>
-                <p>Time: {{this.timestamp}}</p>
-                <p>Location: {{this.latitude}} {{this.longitude}}</p>
-                <p>{{this.status}}</p>
-            </div> --}}
-                <div class="rodent-card panel" data-id="{{this._id}}" status-id="{{this.status}}" data-timestamp="{{this.timestamp}}">
+            <a href="/ratreports/{{this._id}}" class="rodent-card panel" data-id="{{this._id}}" status-id="{{this.status}}" data-timestamp="{{this.timestamp}}">
                 <div class="rodent-card-main">
                     {{!-- <h3 class="rodent-name">{{this._id}}</h3> --}}
                         <div class="rodent-meta">
@@ -54,79 +46,39 @@
                         </div>
                     <p class="restaurant-address">{{this.timestamp}}</p>
                 </div>
-                  <div class="restaurant-card-side">
-                    {{!-- <span class="status-badge status-badge--{{this.status.key}}">{{this.status.label}}</span> --}}
-                      <span class="grade-pill">{{this.status}}</span>
-                  </div>
+                <div class="restaurant-card-side">
+                    {{#if (eq this.status "verified")}}
+                    <span class="status-badge verified">{{this.status}} 
+                        <i data-lucide="shield-check"class="verified-icon"></i>
+                    </span>
+                    {{else}}
+                    <span class="status-badge unverified">{{this.status}}</span>
+                    {{/if}}
                 </div>
+            </a>
         {{/each}}
         </ul>
     </div>
 
     <div class="rightPane">
-        <!-- this part will be edited by client side js -->
-        <div id="ratReportDetail" class="panel ratDetailPanel">
-            <div class="minimapPanel">
-                <section id="miniHeatmapSection">
-                    {{!-- map container --}}
-                    <div id="miniHeatmap" class="miniHeatmap"></div>
-                    <script>
-                        {{!-- TODO - pass in rodent data --}}
-                        const restaurantMapData = {{{restaurantMapData}}};
-                    </script>
-                </section>
-            </div>
-
-            {{#if firstReport}}
-
-                {{!-- Info Section --}}
-                <div class="infoRow">
-                    <span id="zipcode" class="locationStat largeStat">Zipcode: {{firstReport.zipcode}}</span>
-                    <span id="latitude" class="locationStat largeStat">Lat: {{firstReport.latitude}}</span>
-                    <span id="longitude" class="locationStat largeStat">Lng: {{firstReport.longitude}}</span>
-                    <span id="status" class="locationStat largeStat">Status: {{firstReport.status}}</span>
-                </div>
-
-                {{!-- Report Section --}}
-                <div class="panel">
-                    {{!-- <h2>Report {{firstReport._id}}</h2> --}}
-                    <p>User: {{firstReport.userId}}</p>
-                    <p>{{firstReport.timestamp}}</p>
-                    <p>{{firstReport.description}}</p>
-
-                    {{!-- Reactions Section --}}
-                    <div class="reactionsBlock">
-                        <button>👍</button>
-                        <button>👎</button>
-                    </div>
-                </div>
-
-                {{!-- Comment and Reaction Setting --}}
-                {{!-- #TODO populate with actual data for this rodent report --}}
-                {{> commentSection
-                    comments=comments
-                    isLoggedIn=isLoggedIn
-                    error=error
-                    formData=formData
-                    target=firstReport._id
-                    collection="rodentreports" 
-                }}
-
-            {{/if}}
-            {{!-- Data for that report gets written into here when a card is clicked --}}
-        </div>
+        <!-- render the individual rodent report page -->
+        {{#if report}}
+            {{> rodentReport}}
+        {{else}}
+            <p class="panel ratDetailPanel">No Rodent Reports Yet!</p>
+        {{/if}}
     </div>
 </section>
 
-
 <script src="/js/rodentReports.js"></script>
+
+<script src="/js/reactions.js"></script>
 
 {{!-- leaflet scripts --}}
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 {{!-- leaflet heat plugin --}}
 <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
-
 
     {{!-- "_id": "69dcc7b4cc0c22fba23864b1",
     "jobId": "PC7002932",

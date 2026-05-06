@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import { comments, reactions } from "../config/mongoCollections.js";
-import { checkComment, COLLECTION_IDS } from "../public/js/helpers.js";
+import { checkComment, COLLECTION_IDS, validateCommentType } from "../helpers.js";
 import { validateId } from "./utility.js";
 
 /**
@@ -27,28 +27,46 @@ import { validateId } from "./utility.js";
 /**
  * Creates a new comment and inserts it into the database. Updates all linked collections
  * @param {string} userId 
- * @param {string} restaurantId 
+ * @param {string} commentType defines wether or not should be a 'restuarant' or a 'rodent' comment
+ * @param {string} targetId  if of rodent or restaurant
  * @param {string} comment 
  * @returns newComment
  */
 export const createComment = async(
     userId,
-    restaurantId,
+    commentType,
+    targetId,
     comment
 ) => {
+
+
     const errorSource = "createComment";
     const validatedUserId = validateId(userId, 'userId', errorSource);
-    const validatedRestaurantId = validateId(restaurantId, 'restaurantId', errorSource);
+    const validatedCommentType = validateCommentType(commentType)
+    const validatedTargetId = validateId(targetId, 'targetId', errorSource);
     const validatedComment = checkComment(comment);
 
     // Timestamp request
     const now = new Date();
     const timestamp = now.toISOString();
 
+
+    //Determines wether or not should be a restuarant or a rodent comment and sets other type as null. This allows use to use shared collection
+    let restaurantId;
+    let rodentReportId;
+    if(validatedCommentType == 'restaurant'){
+        restaurantId = validatedTargetId;
+        rodentReportId = null;
+    }else if(validatedCommentType == 'rodent'){
+        restaurantId = null;
+        rodentReportId = validatedTargetId;
+    }
+
     // Template for new comment
     const newComment = {
         userId: validatedUserId,
-        restaurantId: validatedRestaurantId,
+        restaurantId: restaurantId,
+        rodentReportId: rodentReportId,
         comment: validatedComment,
         timestamp: timestamp,
         edited: false,
@@ -68,6 +86,8 @@ export const createComment = async(
     const newId = insertInfo.insertedId.toString();
     return await getCommentById(newId);
 }
+
+
 
 /**
  * Gets comment from database by objectId

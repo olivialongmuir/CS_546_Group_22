@@ -3,7 +3,7 @@
 import { Router } from 'express';
 const router = Router();
 import { getAllRestaurants, getRestaurantById, getRestaurantComments } from '../data/restaurants.js';
-import { getAllReports, getReportById} from '../data/rodentReports.js';
+import { getAllReports, getReportById, getRodentReportComments} from '../data/rodentReports.js';
 import { getUserById, getUserActivity } from '../data/users.js';
 import { createComment, deleteComment, getCommentById} from '../data/comments.js';
 import { updateCommentReaction, updateRestaurantReaction } from "../data/reactions.js";
@@ -128,15 +128,18 @@ router.route('/heatmap').get(async (req, res) => {
 //Generic Route which is called from the nav bar route. Will send user to first available rodent report page.
 router.route('/ratreports').get(async (req, res) => {
     try {
-
-        //TODO - handle case when no reports in DB
         //get all reports
         let reports = await getAllReports();
-        //get a single report
+
+        //if reports is empty redirect to error page
+        if(reports.length == 0){
+            res.redirect('/error');
+        }
+
+        //route user to first report
         let firstReport = reports[0]
-        let id = firstReport._id
-        //redirect user to that reports page
-        res.redirect(`/ratreports/${id}`);
+        res.redirect(`/ratreports/${firstReport._id}`);
+
     } catch (error) {
         console.error(error);
         res.status(500).send("Error loading Rodent Reports");
@@ -147,37 +150,56 @@ router.route('/ratreports').get(async (req, res) => {
 router.route('/ratreports/:id').get(async (req, res) => {
     try {
 
-        //TODO -  error handling and invalid data checking
+        //validate the id
+        const id = req.params.id.trim();
+        const validatedId = checkId(id);
 
-        //Get that specific report
-        let id = req.params.id;
-        let targetReport = await getReportById(id);
+        let targetReport = await getReportById(validatedId);
+
+        //TODO if there is no report then raise error?
 
         //get all reports to be shown
         let reports = await getAllReports();
 
-
-        const firstLocation = {
+        //gets the location of the specified report
+        const location = {
             name: targetReport.name,
             lat: Number(targetReport.latitude),
             lng: Number(targetReport.longitude)
         }
 
         //put object in arr since its iterated when the maps built
-        const restaurantData = [firstLocation];
-
+        //Set the users map location
+        const restaurantData = [location];
         const restaurantMapData = JSON.stringify(restaurantData);
 
+        //Set name of user using their ID. Otherwise is "Unknown User"
+        if(targetReport.userId == null){
+            targetReport.reporter = "Unknown Reporter";
+        }else{
+            let user = await getUserById(targetReport.userId);
+            targetReport.reporter = user.username
+        }
 
         //Load in the comments from that report
-        //const comments = await getRestaurantComments(id);
+        const comments = await getRodentReportComments(validatedId);
+        const rodentComments = await Promise.all(
+            comments.map(async (c) => {
+                const user = await getUserById(c.userId);
+                return {
+                    ...c,
+                    userName: user.username
+                };
+            })
+        );
+
 
         res.render("rodentReports", {
             title: 'Rodent Reports',
             reports:reports,
             restaurantMapData: restaurantMapData,
-            firstReport: targetReport, //passing in target report
-            comments:null,
+            report: targetReport, //passing in target report
+            comments:rodentComments,
             currentUserId: req.session.userId
         });
     } catch (error) {
@@ -276,7 +298,9 @@ router.post('/comments/:id/delete', async (req, res) => {
   }
 });
 
+//Posts a comment for a restuarant
 router.post('/restaurants/:id/comments', async (req, res) => {
+
   const restaurantId = checkId(req.params.id.trim());
 
   try {
@@ -298,7 +322,7 @@ router.post('/restaurants/:id/comments', async (req, res) => {
       throw 'Comment cannot exceed 500 characters';
     }
 
-    await createComment(userId, restaurantId, trimmedComment);
+    await createComment(userId, 'restaurant', restaurantId, trimmedComment);
 
     // if no error was caught reload the page
     return res.redirect(`/restaurants/${restaurantId}`);
@@ -328,6 +352,50 @@ router.post('/restaurants/:id/comments', async (req, res) => {
     });
   }
 });
+
+
+
+//Posts a comment for a rodent report
+router.post('/rodentReports/:id/comments', async (req, res) => {
+
+    //use rodent report id insteaf of a restaurant
+    const reportId = checkId(req.params.id.trim());
+
+  try {
+    const userId = req.session.userId;
+    if (!userId) {
+      return res.status(403).redirect('/login');
+    }
+
+    const { comment } = req.body;
+    // validation
+    if (!comment || typeof comment !== 'string') {
+      throw 'Comment must be a string';
+    }
+    const trimmedComment = comment.trim();
+    if (trimmedComment.length === 0) {
+      throw 'Comment cannot be empty';
+    }
+    if (trimmedComment.length > 500) {
+      throw 'Comment cannot exceed 500 characters';
+    }
+
+    //Creates a comment using a rodent ID
+    await createComment(userId, 'rodent', reportId, trimmedComment);
+
+    // if no error was caught reload the page
+    return res.redirect(`/ratreports/${reportId}`);
+
+  } catch (error) {
+    //TODO - just sending them to a generic error page 
+    res.status(404).render('error adding comment to rodent report');
+  }
+});
+
+
+
+
+
 
 router.post('/comments/:id/like', async (req, res) => {
   try {
@@ -405,12 +473,14 @@ router.post('/restaurants/:id/dislike', async (req, res) => {
 
 router.route('/profile').get(async (req, res) => {
   try {
+
     const dbUser = await getUserById(req.session.userId);
 
     const joinedDate = new Date(dbUser.timestamp).toLocaleDateString('en-US', {
       month: 'short',
       year: 'numeric'
     });
+
 
     const activity = await getUserActivity(req.session.userId);
 

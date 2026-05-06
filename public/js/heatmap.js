@@ -129,12 +129,18 @@ window.addEventListener('load', () => {
         restaurantMapData.forEach(restaurant => {
             const marker = L.marker([restaurant.lat, restaurant.lng], { icon: restaurantPin })
                 .addTo(map)
-                .bindPopup(`
-                    <div class="btn-stack">
-                        <a href="/restaurants/${restaurant._id}" class="popup-link">
-                        ${restaurant.name}
-                        <button class="btn">View Restaurant</button>
-                        </a>
+                .bindPopup(
+                        `<div class="btn-stack">
+                            <div class="popUpText">
+                                <p class="popUp-p">${restaurant.name}</p>
+                            </div>
+                            <div class="infoRow">
+                                <span class="locationStat">Lat: ${restaurant.lat}</span>
+                                <span class="locationStat">Lng: ${restaurant.lng}</span>
+                            </div>
+                            <a href="/restaurants/${restaurant._id}" class="popup-link">
+                            <button class="btn popup-btn">View Restaurant</button>
+                            </a>
                     </div>`
                 );
             // store marker
@@ -145,12 +151,19 @@ window.addEventListener('load', () => {
     if (typeof rodentMapData !== 'undefined') {
         // markers
         rodentMapData.forEach(r => {
+
+            //Set null descriptions to say a geenric message!
+            let description = r.description
+            if(description == null){
+                description = "A rodent was reported here!!!";
+            }
+
             const marker = L.marker([Number(r.lat), Number(r.lng)], { icon: ratPin })
             // TODO - add link to rodent report details similar to restaurant above
                 .bindPopup(
                         `<div class="btn-stack">
                         <div class="popUpText">
-                            <p class="popUp-p">${r.description}</p>
+                            <p class="popUp-p">${description}</p>
                         </div>
                         <div class="infoRow">
                             <span class="locationStat">Lat: ${r.lat}</span>

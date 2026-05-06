@@ -48,6 +48,14 @@ export const checkComment = (comment) => {
     return parsed_comment;
 };
 
+//Validates a comment type as 'rodent' or 'restaurant'
+export const validateCommentType=(commentType)=>{
+    const checkedType = checkString(commentType, 'commentType');
+    //if is not a string or is not 'restuarant' or 'rodent throw error
+    if(checkedType !== 'restaurant' && checkedType !== 'rodent') throw 'Error: Comment Type must be rodent or restuarant';
+    return checkedType
+}
+
 export const checkDescription = (description) => {
     const parsed_description = checkString(description, 'description');
     if (parsed_description.length > 500) throw 'Error: Description cannot exeed 500 characters';
