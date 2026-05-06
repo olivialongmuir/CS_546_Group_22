@@ -473,7 +473,7 @@ h2{
 .register-form {
   display: grid;
   align-items: center;
-  grid-template-columns: max-content 1fr;
+  grid-template-columns: max-content 1fr 40px;
 }
 .register-form div {
   display: contents;
@@ -494,19 +494,36 @@ h2{
 .register-page > p {
   margin-top: 20px;
 }
-.register-instructions {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.register-instructions h2 {
-  margin-top: 50px;
-}
-.register-instructions label {
-  font-weight: bold;
-}
 .register-response {
   color: #c0392b;
+}
+.register-form .tooltip {
+  grid-column: 3; /* Forces it into the new third column */
+  position: relative;
+  cursor: help;
+  justify-self: start;
+}
+.register-form .tooltip-text {
+  visibility: hidden;
+  width: 180px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 8px;
+  border-radius: 4px;
+  
+  position: absolute;
+  z-index: 1;
+  left: 125%; 
+  top: 50%;
+  transform: translateY(-50%);
+  
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.register-form .tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
 }
 
 /* Shared utilities — used across multiple pages*/

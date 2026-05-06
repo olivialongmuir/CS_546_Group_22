@@ -86,18 +86,21 @@ export const checkRestaurantName = (restaurantName) => {
 
 export const checkFirstName = (firstName) => {
     const parsed_name = checkString(firstName, 'firstName');
-    if (!/^[\p{L}\s'-]+$/u.test(parsed_name)) throw 'Error: First name can only be alphabetic'; //Only alphabetic and accented characters. Apostrophes and hyphens are fine
+    if (parsed_name.length > 50) throw 'Error: First name cannot be over 50 characters';
+    if (!/^[\p{L}\s'-]+$/u.test(parsed_name)) throw 'Error: First name can only be alphabetic'; //Only alphabetic and accented characters.
     return parsed_name
 }
 
 export const checkLastName = (lastName) => {
     const parsed_name = checkString(lastName, 'lastName');
-    if (!/^[\p{L}\s'-]+$/u.test(parsed_name)) throw 'Error: Last name can only be alphabetic'; //Only alphabetic and accented characters. Apostrophes and hyphens are fine
+    if (parsed_name.length > 50) throw 'Error: Last name cannot be over 50 characters';
+    if (!/^[\p{L}\s'-]+$/u.test(parsed_name)) throw 'Error: Last name can only be alphabetic'; //Only alphabetic and accented characters.
     return parsed_name
 }
 
 export const checkEmail = (email) => {
     const parsed_email = checkString(email, 'email');
+    if (parsed_email.length > 100) throw 'Error: Email cannot be over 100 characters';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(parsed_email)) throw 'Error: Email address is not valid';
     return parsed_email;
 };
@@ -114,7 +117,7 @@ export const checkPassword = (password) => {
     if (parsed_password.length > 16) throw 'Error: Password can at most be 16 characters';
     if (!/[A-Z]/.test(parsed_password)) throw 'Error: Password must contain at least one uppercase letter';
     if (!/[0-9]/.test(parsed_password)) throw 'Error: Password must contain at least one number';
-    if (!/[!@#$%^&*]/.test(parsed_password)) throw 'Error: Password must contain at least one special character (!@#$%^&*)';
+    if (!/[!@#$%^&*]/.test(parsed_password)) throw 'Error: Password must contain at least one special character !@#$%^&*';
     return parsed_password;
 };
 

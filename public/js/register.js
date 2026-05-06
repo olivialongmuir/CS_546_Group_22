@@ -12,7 +12,7 @@ $(document).ready(function() {
         $submitBtn.prop('disabled', true);
 
         $.ajax({
-            url: '/register',
+            url: '/api/register-user',
             type: 'POST',
             data: $form.serialize(),
             dataType: 'json',
