@@ -1,8 +1,10 @@
 // global variables
 let map;
 let heat;
+let heatDataGlobal = [];
 let searchInput;
 let searchButton;
+let colorBtn;
 let autocompleteList;
 let activePins = []; //Use as a global tracker for active dropped pins
 const rodentMarkers = L.layerGroup();
@@ -81,6 +83,26 @@ window.addEventListener('load', () => {
     var southWest = L.latLng(40.4774, -74.2591);
     var northEast = L.latLng(40.9176, -73.7004);
     var bounds = L.latLngBounds(southWest, northEast);
+
+    const savedTheme = localStorage.getItem('mapTheme');
+    const savedColor = localStorage.getItem('heatColor');
+  
+    // toggle light or dark map
+    const toggle = document.getElementById('themeToggle');
+    const iconContainer = document.getElementById('themeIcon');
+
+    let isLight = savedTheme === 'light';
+    if (isLight) {
+        document.body.classList.add('light-map');
+        iconContainer.innerHTML = `<i data-lucide="sun"></i>`;
+    } else {
+        iconContainer.innerHTML = `<i data-lucide="moon"></i>`;
+    }
+    lucide.createIcons();
+
+    // choose heat color
+    colorBtn = document.getElementById('heatColorBtn');
+    const colorPicker = document.getElementById('heatColorPicker');
     
     // initialize the map with the given boundaries and set the view to NYC
     map = L.map('heatmap', {
@@ -150,19 +172,15 @@ window.addEventListener('load', () => {
             1
         ]));
 
+        // set global heat data for use in color changes
+        heatDataGlobal = heatData;
+
         // heatmap
-        heat = L.heatLayer(heatData, {
-            radius: 50,
-            blur: 15,
-            maxZoom: 17,
-            gradient: {
-                0.1: '#ff4d4d',
-                0.5: '#e60000',
-                1.0: '#990000'
-            }
-        });
-        // add heatmap
-        heat.addTo(map);
+        if (savedColor) {
+            buildHeatmap(savedColor);
+        } else {
+            buildHeatmap('#ff0000'); // default red
+        }
     };
 
     // dynamic zoom
@@ -192,15 +210,12 @@ window.addEventListener('load', () => {
 
 
     //Event listener to remove old pins
-    // //removes active pin if user clicked back to map outside of popup 
     map.on('click', function () {
         removePins();
     });
     map.on('popupclose', function () {
         removePins();
     });
-
-
 
     // event listeners for search bar (button click or enter)
     searchButton.addEventListener("click", searchRestaurant);
@@ -239,13 +254,46 @@ window.addEventListener('load', () => {
         }
     });
 
+    toggle.addEventListener('click', () => {
+        const isLight = document.body.classList.toggle('light-map');
+        localStorage.setItem('mapTheme', isLight ? 'light' : 'dark');
+        iconContainer.innerHTML = `<i data-lucide="${isLight ? 'sun' : 'moon'}"></i>`;
+        lucide.createIcons();
+    });
+
+    colorBtn.addEventListener('click', () => {
+        colorPicker.click();
+    });
+
+    colorPicker.addEventListener('input', (e) => {
+        const color = e.target.value;
+        localStorage.setItem('heatColor', color);
+        buildHeatmap(color);
+    });
+
     setTimeout(() => {
         map.invalidateSize(true);
     }, 0);
 });
 
-
-
+// Helper to change the color of the heatmap based on user input
+function buildHeatmap(color) {
+    if (heat) {
+        map.removeLayer(heat);
+        heat = null;
+    }
+    heat = L.heatLayer(heatDataGlobal, {
+        radius: 50,
+        blur: 15,
+        maxZoom: 17,
+        gradient: {
+            0.0: color,
+            1.0: color
+        }
+    });
+    heat.addTo(map);
+    colorBtn.style.backgroundColor = color;
+}
 
 //Flys and zooms to a location from and event click
 function flyToLocation(lat,lng, zoom) {
@@ -266,8 +314,6 @@ function flyToLocation(lat,lng, zoom) {
         if (heat) heat.addTo(map);
     }, flyDuration * 1000);
 }
-
-
 
 //Creates and returns a map HTML stub to use as a popup for pins
 const makePopUp=(lat,lng)=>{

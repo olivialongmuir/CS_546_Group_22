@@ -1,18 +1,64 @@
 /* CSS STYLESHEET */
 :root {
-  --background: #0a0a0a;
-  --fg: #fafafa;
-  --muted: #a1a1aa;
-  --primary: #a3e635;
-  --primary-darker: #65a30d;
-  --primary-hover: #8bc629;
-  --card-bg: rgba(24, 24, 27, 0.5);
-  --card-border: #27272a;
-  --black-overlay: rgba(0, 0, 0, 0.4);
+  /* dark neutrals */
+  --black: black;
+  --map-tip: #111;
   --input-bg: #18181b;
+  --form-background: #18181b;
+  --card-bg: rgba(24, 24, 27, 0.5);
+  --autocomplete-item: #222;
+  --card-border: #27272a;
+  --pane-border: #333;
   --input-border: #3f3f46;
+  --form-border: #3f3f46;
+  /* translucent dark */
+  --black-overlay: rgba(0, 0, 0, 0.4);
+  --map-shadow: rgba(0,0,0,0.4);
+  /* light neutrals */
+  --fg: #fafafa;
+  --location: rgb(255, 255, 255);
+  --map-popup: white;
+  --muted: #a1a1aa;
   --input-placeholder: #71717a;
+  --hint-color: #71717a;
+  --button-outline: #d4d4d8;
+  --footer-color: gray;
+  /* greens */
+  --primary: #a3e635;
+  --primary-hover: #8bc629;
+  --primary-darker: #65a30d;
+  --primary-darkest: rgb(74, 161, 17);
+  --form-focus: rgba(163, 230, 53, 0.2);
+  --card-border-2: #387a1291;
+  --risk-low-background: rgba(163, 230, 53, 0.15);
+  --risk-low-border: rgba(163, 230, 53, 0.3);
+  --pill-button-background: rgba(95, 153, 34, 0.691);
+  --button-background: greenyellow;
+  /* yellows */
+  --popup-hover: yellow;
+  --risk-medium-color: #facc15;
+  --risk-medium-background: rgba(250, 204, 21, 0.15);
+  --risk-medium-border: rgba(250, 204, 21, 0.3);
+  --location-background: rgba(103, 103, 101, 0.505);
+  /* reds */
+  --error: #ef4444;
+  --error-background: rgba(239, 68, 68, 0.1);
+  --error-border: rgba(239, 68, 68, 0.3);
+  --risk-high-background: rgba(239, 68, 68, 0.15);
+  --risk-high-border: rgba(239, 68, 68, 0.3);
+  /* blues */
+  --restaurant-icon: rgb(71, 130, 239);
+  /* misc */
   --radius: 0.75rem;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--primary-hover);
 }
 
 header ul {
@@ -56,7 +102,7 @@ html, body {
 }
 
 footer {
-    color: gray;
+    color: var(--footer-color);
     text-align: right;
     padding: 20px;
 }
@@ -97,16 +143,16 @@ main {
   justify-content: center;
   padding: 0.5rem 1rem;
   border-radius: 9999px;
-  background-color: rgba(95, 153, 34, 0.691);
+  background-color: var(--pill-button-background);
   border: none;  
-  color: white ;
+  color: var(--map-popup) ;
   font-weight: 600;
   font-size: 0.875rem;
 }
 
 .pillButton:hover{
-  background-color: #3a3a3a;
-  border-color: yellow;
+  background-color: var(--form-border);
+  border-color: var(--popup-hover);
 }
 
 .homeH2{
@@ -131,10 +177,10 @@ main {
   justify-content: center;
   width: 200px;                 
   padding: 1.5rem;
-  background-color: rgba(24, 24, 27, 0.6);
-  border: 1px solid #387a1291;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border-2);
   border-radius: 0.75rem;    
-  color: #fafafa;
+  color: var(--fg);
   font-weight: 500;
 }
 
@@ -179,22 +225,22 @@ main {
   flex: 1;
   padding: 10px 12px;
 
-  background-color: #1e1e1e;
-  color: #ffffff;
+  background-color: var(--input-bg);
+  color: var(--muted);
 
-  border: 1px solid #333;
+  border: 1px solid var(--pane-border);
   border-radius: 10px;
 
   outline: none;
 }
 
 #searchInput::placeholder {
-  color: #888;
+  color: var(--muted);
 }
 
 
 #searchButton:hover {
-  background-color: #3a3a3a;
+  background-color: var(--card-border);
 }
 
 #searchButton:active {
@@ -211,8 +257,8 @@ main {
   left: 0;
 
   width: 100%;
-  background: #111;
-  border: 1px solid #333;
+  background: var(--map-tip);
+  border: 1px solid var(--pane-border);
   border-radius: 10px;
 
   max-height: 200px;
@@ -227,17 +273,17 @@ main {
 .autocomplete-item {
   padding: 10px;
   cursor: pointer;
-  color: white;
-  border-bottom: 1px solid #222;
+  color: var(--map-popup);
+  border-bottom: 1px solid var(--autocomplete-item);
 }
 
 .autocomplete-item:hover {
-  background: #222;
+  background: var(--autocomplete-item);
 }
 
 #hotspotFeed {
   flex: 0.5;
-  color: white;
+  color: var(--map-popup);
 }
 
 #hotspotList {
@@ -251,15 +297,15 @@ main {
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid var(--pane-border);
   cursor: pointer;
-  background-color: #333;
+  background-color: var(--pane-border);
   margin-bottom: 5px;
   border-radius: 5px;
 }
 
 #hotspotList li:hover {
-  background: #222;
+  background: var(--card-border);
 }
 
 .hotspot-left {
@@ -279,7 +325,7 @@ main {
 
 .borough {
   font-size: 0.75rem;
-  color: #aaa;
+  color: var(--fg);
   font-weight: 400;
   margin-top: 2px;
 }
@@ -296,21 +342,21 @@ main {
 }
 
 .risk-badge--low {
-  background-color: rgba(163, 230, 53, 0.15);
-  border-color: rgba(163, 230, 53, 0.3);
+  background-color: var(--risk-low-background);
+  border-color: var(--risk-low-border);
   color: var(--primary);
 }
 
 .risk-badge--medium {
-  background-color: rgba(250, 204, 21, 0.15);
-  border-color: rgba(250, 204, 21, 0.3);
-  color: #facc15;
+  background-color: var(--risk-medium-background);
+  border-color: var(--risk-medium-border);
+  color: var(--risk-medium-color);
 }
 
 .risk-badge--high {
-  background-color: rgba(239, 68, 68, 0.15);
-  border-color: rgba(239, 68, 68, 0.3);
-  color: #ef4444;
+  background-color: var(--risk-high-background);
+  border-color: var(--risk-high-border);
+  color: var(--error);
 }
 
 /* Added mini heapmap used in rodent report detail */
@@ -352,24 +398,24 @@ main {
 
 /* Heatmap popus */
 .leaflet-popup{
-  border: 2px greenyellow;
+  border: 2px var(--button-background);
   border-radius: 2px;
 }
 
 h2{
-  color:white;
+  color:var(--map-popup);
 }
 
 /* Syle of paragraph text in popups */
 .popUp-p{
   text-align: center;
-  color: black;
+  color: var(--black);
 }
 
 /* Stores pop up parargaph */
 .popUpText{
-  background-color: white;
-  border: 1px solid greenyellow;
+  background-color: var(--map-popup);
+  border: 1px solid var(--button-background);
   border-radius: 6px;
   width: 100%;
 }
@@ -377,36 +423,79 @@ h2{
 
 .popup-btn:hover{
   background-color: var(--primary-hover);
-  border-color: yellow;
+  border-color: var(--popup-hover);
 }
-
-
-
 
 /* css map dark mode override */
 .leaflet-tile-pane {
     filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
 }
 
+body.light-map .leaflet-tile-pane {
+  filter: none;
+}
+
+#themeToggle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: var(--card-border-2);
+  color: var(--button-outline);
+  transition: all 0.2s ease;
+}
+
+#themeToggle:hover {
+  transform: scale(1.1);
+}
+
+body.light-map #themeToggle {
+  background: var(--primary-darker);
+}
+
+body.light-map #themeIcon svg {
+  stroke: var(--black);
+}
+
+.heat-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: var(--error);
+}
+
+.heat-btn:hover {
+  transform: scale(1.1);
+}
+
 .leaflet-popup-content-wrapper {
-  background-color: #111 !important;
-  color: white;
+  background-color: var(--map-tip) !important;
+  color: var(--map-popup);
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  box-shadow: 0 4px 20px var(--map-shadow);
 }
 
 .leaflet-popup-tip {
-  background-color: #111 !important;
+  background-color: var(--map-tip) !important;
 }
 
 .popup-link {
   display: inline-block;
-  color: white !important;
+  color: var(--map-popup) !important;
   text-decoration: none;
 }
 
 .popup-link:hover {
-  color: #8bc629 !important;
+  color: var(--primary-hover) !important;
 }
 
 /* End Heatmap Styles */
@@ -417,8 +506,8 @@ h2{
   display: inline-block;
   padding: 0.35rem 0.8rem;
   border-radius: 9999px;
-  background-color: #27272a;
-  color: #fafafa;
+  background-color: var(--card-border);
+  color: var(--fg);
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1;
@@ -431,11 +520,11 @@ h2{
 }
 .rightPane {
   padding: 1rem;
-  border-left: 1px solid #333;
+  border-left: 1px solid var(--pane-border);
 }
 .ratCard {
   background: #181819;
-  border: 1px solid rgb(74, 161, 17);
+  border: 1px solid var(--primary-darkest);
   padding: 1rem;
   margin-bottom: 1rem;
   border-radius: 8px;
@@ -446,7 +535,7 @@ h2{
 }
 .ratCard:hover {
   transform: scale(1.02);
-  border-color: #a3e635;
+  border-color: var(--primary);
   transition: 0.2s;
 }
 .container {
@@ -562,7 +651,7 @@ h2{
   width: 24px;
   height: 24px;
   align-items: center;
-  color: #a3e635;
+  color: var(--primary);
 }
 
 
@@ -571,7 +660,7 @@ h2{
   height: 28px;
   margin: 10px;
   vertical-align: middle;
-  color: rgb(71, 130, 239);
+  color: var(--restaurant-icon);
 }
 
 .page-container {
@@ -598,8 +687,8 @@ h2{
 
 /* Used to display a lat or lng stat. also for zip code */
 .locationStat{
-  background-color: rgba(103, 103, 101, 0.505);
-  color: rgb(255, 255, 255);
+  background-color: var(--location-background);
+  color: var(--location);
   display: inline-flex;
   align-items: center;
   padding: 0.25rem 0.65rem;
@@ -691,7 +780,7 @@ h2{
   left: 0.75rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #71717a;
+  color: var(--input-placeholder);
   font-size: 0.9rem;
   pointer-events: none;
 }
@@ -700,8 +789,8 @@ h2{
   width: 100%;
   box-sizing: border-box;
   padding: 0.625rem 0.75rem 0.625rem 2.25rem;
-  background-color: #18181b;
-  border: 1px solid #3f3f46;
+  background-color: var(--input-bg);
+  border: 1px solid var(--form-border);
   border-radius: 0.5rem;
   color: var(--fg);
   font-size: 1rem;
@@ -711,15 +800,15 @@ h2{
 .form-input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(163, 230, 53, 0.2);
+  box-shadow: 0 0 0 2px var(--form-focus);
 }
 
 .form-select {
   width: 100%;
   box-sizing: border-box;
   padding: 0.625rem 0.75rem;
-  background-color: #18181b;
-  border: 1px solid #3f3f46;
+  background-color: var(--form-background);
+  border: 1px solid var(--form-border);
   border-radius: 0.5rem;
   color: var(--fg);
   font-size: 1rem;
@@ -731,18 +820,18 @@ h2{
 .form-select:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(163, 230, 53, 0.2);
+  box-shadow: 0 0 0 2px var(--form-focus);
 }
 
 .form-hint {
   font-size: 0.75rem;
-  color: #71717a;
+  color: var(--hint-color);
 }
 
 .form-error {
-  color: #ef4444;
-  background-color: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: var(--error);
+  background-color: var(--error-background);
+  border: 1px solid var(--error-border);
   padding: 0.75rem;
   border-radius: 0.5rem;
   font-size: 0.875rem;
@@ -753,6 +842,22 @@ h2{
   flex-direction: column;
   gap: 0.75rem;
   padding-top: 0.5rem;
+}
+
+.error-page {
+  text-align: center;
+}
+
+.error-title {
+    color: var(--error);
+    font-weight: bold;
+    font-size: x-large;
+}
+
+.error-message {
+    color: var(--error);
+    font-weight: bold;
+    font-size: medium;
 }
 
 /* --- Buttons --- */
@@ -780,7 +885,7 @@ h2{
 
 .btn--outline {
   background-color: transparent;
-  color: #d4d4d8;
+  color: var(--button-outline);
   border-color: var(--input-border);
 }
 
@@ -788,9 +893,6 @@ h2{
 
 .btn--full { width: 100%; }
 
-
-
-/* //button holder */
 .btn-stack {
   padding: 2%;
   /* border: 1px solid grey; */
@@ -801,7 +903,7 @@ h2{
 }
 
 .btn-stack button {
-  background-color: greenyellow;
+  background-color: var(--button-background);
   width: 100%;
 }
 

@@ -1,8 +1,5 @@
 // ROUTES FOR RODENT REPORTS
 
-// TODO - update to res.render() when we have front end set up
-// TODO - import and use validation
-
 import { Router } from 'express';
 const router = Router();
 import NodeGeocoder from 'node-geocoder';

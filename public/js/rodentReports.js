@@ -26,6 +26,15 @@ window.addEventListener('load', () => {
     const nycLatLng = [lat, lng];
 
     
+    // grab saved map theme from localStorage and apply it to the mini map
+    const savedTheme = localStorage.getItem('mapTheme');
+    if (savedTheme === 'light') {
+        document.body.classList.add('light-map');
+    } else {
+        document.body.classList.remove('light-map');
+    }
+
+    
     //initialize the map and set the rules
     miniMap = L.map('miniHeatmap', {
         preferCanvas: true,
