@@ -84,9 +84,21 @@ window.addEventListener('load', () => {
     var northEast = L.latLng(40.9176, -73.7004);
     var bounds = L.latLngBounds(southWest, northEast);
 
+    const savedTheme = localStorage.getItem('mapTheme');
+    const savedColor = localStorage.getItem('heatColor');
+  
     // toggle light or dark map
     const toggle = document.getElementById('themeToggle');
     const iconContainer = document.getElementById('themeIcon');
+
+    let isLight = savedTheme === 'light';
+    if (isLight) {
+        document.body.classList.add('light-map');
+        iconContainer.innerHTML = `<i data-lucide="sun"></i>`;
+    } else {
+        iconContainer.innerHTML = `<i data-lucide="moon"></i>`;
+    }
+    lucide.createIcons();
 
     // choose heat color
     colorBtn = document.getElementById('heatColorBtn');
@@ -164,17 +176,11 @@ window.addEventListener('load', () => {
         heatDataGlobal = heatData;
 
         // heatmap
-        heat = L.heatLayer(heatData, {
-            radius: 50,
-            blur: 15,
-            maxZoom: 17,
-            gradient: {
-                0.0: '#ff0000',
-                1.0: '#ff0000'
-            }
-        });
-        // add heatmap
-        heat.addTo(map);
+        if (savedColor) {
+            buildHeatmap(savedColor);
+        } else {
+            buildHeatmap('#ff0000'); // default red
+        }
     };
 
     // dynamic zoom
@@ -250,6 +256,7 @@ window.addEventListener('load', () => {
 
     toggle.addEventListener('click', () => {
         const isLight = document.body.classList.toggle('light-map');
+        localStorage.setItem('mapTheme', isLight ? 'light' : 'dark');
         iconContainer.innerHTML = `<i data-lucide="${isLight ? 'sun' : 'moon'}"></i>`;
         lucide.createIcons();
     });
@@ -260,6 +267,7 @@ window.addEventListener('load', () => {
 
     colorPicker.addEventListener('input', (e) => {
         const color = e.target.value;
+        localStorage.setItem('heatColor', color);
         buildHeatmap(color);
     });
 
