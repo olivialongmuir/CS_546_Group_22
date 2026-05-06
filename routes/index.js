@@ -18,8 +18,12 @@ const constructorMethod = (app) => {
     app.use('/rodentReports', rodentReports);
     app.use('/api/restaurants', restaurants);
 
-    app.use((req, res) => {
-        res.status(404).render('error');
+    // catch all
+    app.use(/(.*)/, (req, res) => {
+        return res.status(404).render('error', {
+        title: 'Error',
+        error: 'Page not found'
+        });
     });
 };
 
