@@ -1,4 +1,4 @@
-import { users, comments, reactions, restaurants } from "../config/mongoCollections.js";
+import { users, comments, reactions, restaurants, rodentReports } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import { hash, compare } from "bcryptjs";
 import { 
@@ -11,6 +11,7 @@ import {
     COLLECTION_IDS,
 } from "../helpers.js";
 import { validateId } from "./utility.js";
+import { getRestaurantById } from "./restaurants.js";
 
 /**
  * User Schema:
@@ -409,3 +410,75 @@ export const getUserReactedRestaurants = async(userID, restaurantId) => {
     })
     return itemsList
 }
+/**
+ * Aggregate user activity
+ * @param {string} userId 
+ * @returns activity(10)
+ */
+export const getUserActivity = async (userId) => {
+  const [userComments, reports] = await Promise.all([
+    getUserComments(userId),
+    getUserRodentReports(userId)
+  ]);
+
+  // store activity
+  const activity = [];
+
+  // comments
+  for (let c of userComments) {
+    const restaurant = await getRestaurantById(c.restaurantId);
+
+    activity.push({
+      type: "comment",
+      text: `You commented on "${restaurant.name}"`,
+      time: c.timestamp,
+      color: "blue",
+      link: `/restaurants/${restaurant._id}`,
+      status: restaurant.status?.key
+    });
+  }
+
+  // reports
+  for (let r of reports) {
+    activity.push({
+    type: "report",
+    text: `You submitted a rodent report`,
+    time: r.timestamp,
+    color: "orange",
+    link: `/ratreports/${r._id}`
+    });
+  }
+
+  // find reactions
+  const commentsCollection = await comments();
+  const reactionCollection = await reactions();
+  const userReactions = await reactionCollection
+    .find({ userId })
+    .toArray();
+
+  for (let r of userReactions) {
+    if (r.targetKey === COLLECTION_IDS.COMMENT) {
+
+        const comment = await commentsCollection.findOne({
+        _id: new ObjectId(r.targetId)
+        });
+
+        if (!comment) continue;
+
+        const preview = comment.comment.length > 60
+            ? comment.comment.slice(0, 60) + "..."
+            : comment.comment;
+
+        activity.push({
+            type: "reaction",
+            text: `You ${r.reactionType}d: "${preview}"`,
+            time: r.timestamp,
+            color: r.reactionType === "like" ? "green" : "red"
+        });
+    }
+  }
+  activity.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+  // return most recent 5
+  return activity.slice(0, 5);
+};

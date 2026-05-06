@@ -1,0 +1,51 @@
+{{!-- WRAPPED BY MAIN.HANDLEBARS --}}
+
+<section id="adminSection">
+    <nav class="admin-nav">
+        <a class="pillButton" href="/admin">Pending Approvals</a>
+        <a class="pillButton" href="/admin/restaurants">Manage Restaurants</a>
+        <a class="pillButton" href="/admin/rodent-reports">Manage Rodent Reports</a>
+    </nav>
+
+    <h1>Admin: Rodent Reports</h1>
+
+    <p>
+        <a class="pillButton" href="/admin/rodent-reports/new">+ New Rodent Report</a>
+    </p>
+
+    {{#if hasReports}}
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>Zip</th>
+                    <th>Lat / Lng</th>
+                    <th>Description</th>
+                    <th>Verified By</th>
+                    <th>Timestamp</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each reports}}
+                    <tr>
+                        <td>{{this.status}}</td>
+                        <td>{{this.zipcode}}</td>
+                        <td>{{this.latitude}}, {{this.longitude}}</td>
+                        <td>{{this.description}}</td>
+                        <td>{{this.verifiedBy}}</td>
+                        <td>{{this.timestamp}}</td>
+                        <td>
+                            <a class="pillButton" href="/admin/rodent-reports/{{this._id}}/edit">Edit</a>
+                            <form method="POST" action="/admin/rodent-reports/{{this._id}}/delete" style="display:inline" onsubmit="return confirm('Delete this rodent report? Associated reactions will also be removed.');">
+                                <button type="submit" class="pillButton">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    {{else}}
+        <p>No rodent reports in the database.</p>
+    {{/if}}
+</section>

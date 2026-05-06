@@ -167,6 +167,7 @@ export const createReport = async(
         timestamp: timestamp,
         updatedAt: null,
         verifiedBy: null,
+        comments:[],
         stats: {
             likes: 0,
             dislikes: 0
@@ -222,7 +223,7 @@ export const updateReport = async(
     if (latitude !== undefined) updateReport["latitude"] = checkLatitude(latitude);
     if (longitude !== undefined) updateReport["longitude"] = checkLongitude(longitude);
     if (inspectionDate !== undefined) updateReport["inspectionDate"] = checkDate(inspectionDate);
-    if (status !== undefined)  updateReport["status"] = checkReportStatus(status);
+    if (status !== undefined)  updateReport["status"] = checkRodentStatus(status);
     if (approvedDate !== undefined) updateReport["approvedDate"] = checkDate(approvedDate);
     if (description !== undefined) updateReport["description"] = checkDescription(description);
     if (verifiedBy !== undefined) updateReport["verifiedBy"] = checkUserType(verifiedBy);

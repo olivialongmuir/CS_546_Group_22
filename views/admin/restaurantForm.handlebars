@@ -1,0 +1,72 @@
+{{!-- WRAPPED BY MAIN.HANDLEBARS --}}
+
+<section id="adminSection">
+    <nav class="admin-nav">
+        <a class="pillButton" href="/admin">Pending Approvals</a>
+        <a class="pillButton" href="/admin/restaurants">Manage Restaurants</a>
+        <a class="pillButton" href="/admin/rodent-reports">Manage Rodent Reports</a>
+    </nav>
+
+    {{#if (eq mode "create")}}
+        <h1>New Restaurant</h1>
+    {{else}}
+        <h1>Edit Restaurant</h1>
+    {{/if}}
+
+    {{#if errorMessage}}
+        <p class="error">{{errorMessage}}</p>
+    {{/if}}
+
+    <form method="POST" action="{{formAction}}" class="admin-form">
+        <label>
+            Name
+            <input type="text" name="name" value="{{restaurant.name}}" required>
+        </label>
+
+        <label>
+            Type
+            <input type="text" name="type" value="{{restaurant.type}}" required>
+        </label>
+
+        <label>
+            Latitude
+            <input type="number" step="any" name="latitude" value="{{restaurant.latitude}}" required>
+        </label>
+
+        <label>
+            Longitude
+            <input type="number" step="any" name="longitude" value="{{restaurant.longitude}}" required>
+        </label>
+
+        <label>
+            Website (https://...)
+            <input type="url" name="website" value="{{restaurant.website}}" required>
+        </label>
+
+        <label>
+            Phone (XXX-XXX-XXXX)
+            <input type="text" name="phone" value="{{restaurant.phone}}" required>
+        </label>
+
+        <label>
+            Permit Number
+            <input type="text" name="permit_number" value="{{restaurant.permit_number}}" required>
+        </label>
+
+        <label>
+            Status
+            <select name="status" required>
+                {{#each statuses}}
+                    <option value="{{this}}" {{#if (eq this ../restaurant.status)}}selected{{/if}}>{{this}}</option>
+                {{/each}}
+            </select>
+        </label>
+
+        <div class="formButtonRow">
+            <a class="pillButton" href="/admin/restaurants">Cancel</a>
+            <button type="submit" class="pillButton">
+                {{#if (eq mode "create")}}Create{{else}}Save{{/if}}
+            </button>
+        </div>
+    </form>
+</section>

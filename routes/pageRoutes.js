@@ -3,10 +3,10 @@
 import { Router } from 'express';
 const router = Router();
 import { getAllRestaurants, getRestaurantById, getRestaurantComments } from '../data/restaurants.js';
-import { getAllReports, getReportById} from '../data/rodentReports.js'
-import { getUserById } from '../data/users.js';
+import { getAllReports, getReportById} from '../data/rodentReports.js';
+import { getUserById, getUserActivity } from '../data/users.js';
 import { createComment, deleteComment, getCommentById} from '../data/comments.js';
-import { updateCommentReaction } from "../data/reactions.js";
+import { updateCommentReaction, updateRestaurantReaction } from "../data/reactions.js";
 import { checkId, getLocationFromZip, countToStatus, gradeToStatus, normalizeRestaurant } from '../helpers.js';
 import NodeGeocoder from 'node-geocoder';
 import { countStats } from '../data/utility.js';
@@ -61,7 +61,6 @@ router.route('/heatmap').get(async (req, res) => {
             lat: Number(r.latitude),
             lng: Number(r.longitude)
         }));
-        const restaurantMapData = JSON.stringify(restaurantData);
 
         // get rodent data
         const rodentList = await getAllReports();
@@ -73,7 +72,6 @@ router.route('/heatmap').get(async (req, res) => {
             status: r.status,
             description: r.description
         }));
-        const rodentMapData = JSON.stringify(rodentData);
 
         // group rodent data for hotspot list by borough and neighborhood
         const counts = {};
@@ -115,8 +113,8 @@ router.route('/heatmap').get(async (req, res) => {
 
         res.render("heatmap", {
             title: 'Heatmap',
-            restaurantMapData: restaurantMapData,
-            rodentMapData: rodentMapData,
+            restaurantMapData: restaurantData,
+            rodentMapData: rodentData,
             hotspotFeed: hotspotFeed,
             userAuthenticated: userAuthenticated
         });
@@ -127,35 +125,18 @@ router.route('/heatmap').get(async (req, res) => {
     }
 });
 
-//Generic Route which is called from the nav bar route
+//Generic Route which is called from the nav bar route. Will send user to first available rodent report page.
 router.route('/ratreports').get(async (req, res) => {
     try {
 
-        //TODO -  error handling and invalid data checking
-
+        //TODO - handle case when no reports in DB
         //get all reports
         let reports = await getAllReports();
-
-        //set the minimaps location to be first report if available
+        //get a single report
         let firstReport = reports[0]
-
-        const firstLocation = {
-            name: firstReport.name,
-            lat: Number(firstReport.latitude),
-            lng: Number(firstReport.longitude)
-        }
-
-        //put object in arr since its iterated when the maps built
-        const restaurantData = [firstLocation];
-
-        const restaurantMapData = JSON.stringify(restaurantData);
-
-        res.render("rodentReports", {
-            title: 'Rodent Reports',
-            reports:reports,
-            restaurantMapData: restaurantMapData,
-            firstReport: firstReport //passing in first report which will be the default starting data shown
-        });
+        let id = firstReport._id
+        //redirect user to that reports page
+        res.redirect(`/ratreports/${id}`);
     } catch (error) {
         console.error(error);
         res.status(500).send("Error loading Rodent Reports");
@@ -187,11 +168,17 @@ router.route('/ratreports/:id').get(async (req, res) => {
 
         const restaurantMapData = JSON.stringify(restaurantData);
 
+
+        //Load in the comments from that report
+        //const comments = await getRestaurantComments(id);
+
         res.render("rodentReports", {
             title: 'Rodent Reports',
             reports:reports,
             restaurantMapData: restaurantMapData,
-            firstReport: targetReport //passing in target report
+            firstReport: targetReport, //passing in target report
+            comments:null,
+            currentUserId: req.session.userId
         });
     } catch (error) {
         console.error(error);
@@ -378,6 +365,44 @@ router.post('/comments/:id/dislike', async (req, res) => {
   }
 });
 
+router.post('/restaurants/:id/like', async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    if (!userId) return res.status(403).json({ error: "Not logged in" });
+
+    const restaurantId = checkId(req.params.id.trim());
+
+    const updated = await updateRestaurantReaction(userId, restaurantId, "like");
+
+    return res.json({
+      success: true,
+      stats: updated.stats
+    });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Failed to like restaurant" });
+  }
+});
+
+router.post('/restaurants/:id/dislike', async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    if (!userId) return res.status(403).json({ error: "Not logged in" });
+
+    const restaurantId = checkId(req.params.id.trim());
+
+    const updated = await updateRestaurantReaction(userId, restaurantId, "dislike");
+
+    return res.json({
+      success: true,
+      stats: updated.stats
+    });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Failed to dislike restaurant" });
+  }
+});
+
 router.route('/profile').get(async (req, res) => {
   try {
     const dbUser = await getUserById(req.session.userId);
@@ -386,6 +411,8 @@ router.route('/profile').get(async (req, res) => {
       month: 'short',
       year: 'numeric'
     });
+
+    const activity = await getUserActivity(req.session.userId);
 
     const user = {
       avatar: '🐭',
@@ -396,7 +423,7 @@ router.route('/profile').get(async (req, res) => {
       savedRestaurants: 0,
       notifications: 0,
       joinedDate,
-      activity: []
+      activity: activity
     };
 
     return res.render('profile', { title: 'SqueakPeek - Profile', user });

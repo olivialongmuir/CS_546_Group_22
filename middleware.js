@@ -4,7 +4,6 @@
  * If further organization is required, consider grouping middleware by page
  */
 
-
 const constructorMethod = (app) => {
   /**
    * Default middlware - runs every time any route is requested
@@ -32,7 +31,38 @@ const constructorMethod = (app) => {
   });
 
   /**
-   * Redirects to profile page if already logged in
+   * Protect admin page
+   */
+  app.use([
+    '/admin',
+  ], (req, res, next) => {
+    if (!req.session.userId) res.redirect('/login');
+    if (req.session.userType !== 'admin') {
+      return res.status(403).render('error', {title: 'Forbidden'});
+    }
+
+    next();
+  });
+
+  /**
+   * Only admin users can change or delete restaurants and reports
+   */
+  app.use([
+    '/restaurants/:id',
+    '/rodentReports/:id'
+  ], (req, res, next) => {
+    if (req.method === 'PATCH' || req.method === 'DELETE') {
+      if (!req.session.userId) res.redirect('/login');
+      if (req.session.userType !== 'admin') {
+        return res.status(403).render('error', {title: 'Forbidden'});
+      }
+    }
+
+    next();
+  })
+
+  /**
+   * Logged in already so redirect to profile page
    */
   app.use(['/login', '/register'], (req, res, next) => {
     if (req.session.userId) {
@@ -43,49 +73,26 @@ const constructorMethod = (app) => {
   });
 
   /**
-   * Redirects to login page if not logged in
+   * Only logged in users can post rodent reports
    */
-  app.use('/profile', (req, res, next) => {
-    if (!req.session.userId) {
-      return res.redirect('/login');
-    }
-
-    next();
-  });
-
-  /**
-   * Redirects to login if not logged in. If access level is not admin, throw error
-   */
-  app.use('/admin', (res, req, next) => {
-    if (!req.session.userId) res.redirect('/login');
-    if (req.session.userType !== 'admin') {
-      return res.status(403).render('error', {title: 'Forbidden'});
-    }
-
-    next();
-  });
-
-  /**
-   * Only logged in users can create a rodent report
-   */
-  app.use('/rodentReports', (res, req, next) => {
+  app.use('/rodentReports', (req, res, next) => {
     if (req.method === 'POST') {
       if (!req.session.userId) {
-        return res.status(403).render('error', {title: 'Forbiddent'});
+        return res.status(403).render('error', {title: 'Forbidden'});
       }
     }
 
     next();
   });
-  
+
   /**
-   * Stops route if attempting to interact while not logged in
+   * Only logged users can react and delete comments
    */
   app.use([
     '/comments/:id/delete',
     '/comments/:id/like',
     '/comments/:id/dislike'
-  ], (res, req, next) => {
+  ], (req, res, next) => {
     if (!req.session.userId) {
       return res.status(401).json({error: 'Must be logged in'});
     }
@@ -94,12 +101,13 @@ const constructorMethod = (app) => {
   });
 
   /**
-   * Sends user to login page if trying to comment while not logged in
+   * Trying to interact with comments while not logged in redirects to login page
    */
   app.use([
+    '/profile',
     '/restaurants/:id/comments',
     '/api/restaurants/:id/comments'
-  ], (res, req, next) => {
+  ], (req, res, next) => {
     if (!req.session.userId) {
       return res.status(401).redirect('/login');
     }

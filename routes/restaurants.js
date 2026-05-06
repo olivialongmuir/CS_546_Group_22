@@ -21,7 +21,8 @@ import {
     checkRestaurantStatus, 
     checkLatitude,
     checkLongitude,
-    checkRestaurantName
+    checkRestaurantName,
+    checkId
 } from '../helpers.js';
 
 // Error handling helper function
@@ -122,7 +123,7 @@ router.route('/:id').patch(async (req, res) => {
     const id = req.params.id.trim();
     const validatedId = checkId(id);
 
-    const {
+    let {
       name,
       type,
       latitude,
@@ -141,7 +142,7 @@ router.route('/:id').patch(async (req, res) => {
     if (website !== undefined) website = checkWebsite(website, "website");
     if (phone !== undefined) phone = checkPhone(phone, "phone");
     if (permit_number !== undefined) permit_number = checkString(permit_number, "permit_number");
-    if (status !== undefined) status = checkReportStatus(status, "status");
+    if (status !== undefined) status = checkRestaurantStatus(status, "status");
 
     const updated = await updateRestaurant(
       validatedId,

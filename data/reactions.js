@@ -30,6 +30,7 @@ export const updateRestaurantReaction = async(userId, restaurantId, type) => {
     return updateReaction(userId, restaurantId, COLLECTION_IDS.RESTAURANT, type, errorSource)
 }
 
+
 /**
  * Wrapper: Updates comment reaction
  * @param {string} userId 
@@ -40,6 +41,7 @@ export const updateCommentReaction = async(userId, commentId, type) => {
     const errorSource = "updateCommentReaction";
     return updateReaction(userId, commentId, COLLECTION_IDS.COMMENT, type, errorSource)
 }
+
 
 /**
  * Wrapper: Updates rodent report reaction
@@ -193,7 +195,15 @@ export const updateReaction = async (
     { returnDocument: "after" }
   );
 
-  return updatedTarget;
+  const doc = updatedTarget?.value || updatedTarget;
+
+  return {
+    ...doc,
+    stats: {
+      likes: doc?.stats?.likes ?? 0,
+      dislikes: doc?.stats?.dislikes ?? 0
+    }
+  };
 };
 
 /**

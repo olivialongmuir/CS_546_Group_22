@@ -1,0 +1,81 @@
+{{!-- WRAPPED BY MAIN.HANDLEBARS --}}
+
+<section id="adminSection">
+    <nav class="admin-nav">
+        <a class="pillButton" href="/admin">Pending Approvals</a>
+        <a class="pillButton" href="/admin/restaurants">Manage Restaurants</a>
+        <a class="pillButton" href="/admin/rodent-reports">Manage Rodent Reports</a>
+    </nav>
+
+    {{#if (eq mode "create")}}
+        <h1>New Rodent Report</h1>
+    {{else}}
+        <h1>Edit Rodent Report</h1>
+    {{/if}}
+
+    {{#if errorMessage}}
+        <p class="error">{{errorMessage}}</p>
+    {{/if}}
+
+    <form method="POST" action="{{formAction}}" class="admin-form">
+        <label>
+            Zipcode (5 digits)
+            <input type="text" name="zipcode" value="{{report.zipcode}}" required>
+        </label>
+
+        <label>
+            Latitude
+            <input type="number" step="any" name="latitude" value="{{report.latitude}}" required>
+        </label>
+
+        <label>
+            Longitude
+            <input type="number" step="any" name="longitude" value="{{report.longitude}}" required>
+        </label>
+
+        <label>
+            Status
+            <select name="status" required>
+                {{#each statuses}}
+                    <option value="{{this}}" {{#if (eq this ../report.status)}}selected{{/if}}>{{this}}</option>
+                {{/each}}
+            </select>
+        </label>
+
+        <label>
+            Description
+            <textarea name="description" rows="4" required>{{report.description}}</textarea>
+        </label>
+
+        <label>
+            Inspection Date (MM/DD/YYYY HH:MM:SS AM|PM, optional)
+            <input type="text" name="inspectionDate" value="{{report.inspectionDate}}" placeholder="05/03/2026 02:30:00 PM">
+        </label>
+
+        <label>
+            Approved Date (MM/DD/YYYY HH:MM:SS AM|PM, optional)
+            <input type="text" name="approvedDate" value="{{report.approvedDate}}" placeholder="05/03/2026 02:30:00 PM">
+        </label>
+
+        <label>
+            Restaurant ID (optional)
+            <input type="text" name="restaurantId" value="{{report.restaurantId}}">
+        </label>
+
+        <label>
+            Verified By (optional)
+            <select name="verifiedBy">
+                {{#each verifierTypes}}
+                    <option value="{{this}}" {{#if (eq this ../report.verifiedBy)}}selected{{/if}}>{{#if this}}{{this}}{{else}}— none —{{/if}}</option>
+                {{/each}}
+            </select>
+        </label>
+
+        <div class="formButtonRow">
+            <a class="pillButton" href="/admin/rodent-reports">Cancel</a>
+            <button type="submit" class="pillButton">
+                {{#if (eq mode "create")}}Create{{else}}Save{{/if}}
+            </button>
+        </div>
+    </form>
+</section>

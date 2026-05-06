@@ -84,20 +84,23 @@ document.querySelector(".leftPane")?.addEventListener("click", async (e) => {
 
     let data = await res.json()
 
-    let ratDetail = document.getElementById('ratReportDetail')
+    //Set the element value
+    //zipcode, latitude, longitude, status
+    let zipcode = document.getElementById('zipcode')
+    zipcode.textContent = `Zipcode: ${data.zipcode}`
 
-    ratDetail.innerHTML = `
-        <h2>Report ${data._id}</h2>
-        <p>USER: ${data.userId}</p>
-        <p>Date: ${data.inspectionDate}</p>
-        <p>Status: ${data.status}</p>
-        <p>Timestamp: ${data.timestamp}</p>
-        <p>zipcode: ${data.zipcode}</p>
-        <p>latitude: ${data.latitude}</p>
-        <p>longitude: ${data.longitude}</p>
-        <p>Description: ${data.description}</p>
-    `;
+    let latitude = document.getElementById('latitude')
+    latitude.textContent = `Lat: ${data.latitude}`
 
+    let longitude = document.getElementById('longitude')
+    longitude.textContent = `Lng: ${data.longitude}`
+
+    let status = document.getElementById('status')
+    status.textContent = `Status: ${data.status}`
+
+    //TODO - set the description and user
+
+    
     //Heatmap update - set the heatmaps view to be the center of this elements lat and long coordinates
     const lo = [data.latitude, data.longitude]
     //clear all old markers
