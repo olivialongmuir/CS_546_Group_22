@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { checkId } from "../helpers.js";
+import { checkId } from "../public/js/helpers.js";
 import { users, rodentReports, restaurants } from '../config/mongoCollections.js';
 
 /**

@@ -23,7 +23,7 @@ import {
     checkLongitude,
     checkRestaurantName,
     checkId
-} from '../helpers.js';
+} from '../public/js/helpers.js';
 
 // Error handling helper function
 const handleError = (res, error) => {

@@ -9,7 +9,7 @@ import {
     checkPassword, 
     checkUsername, 
     checkUserType,
-} from '../helpers.js';
+} from '../public/js/helpers.js';
 
 const router = Router();
 

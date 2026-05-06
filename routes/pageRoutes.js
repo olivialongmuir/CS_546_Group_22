@@ -7,7 +7,7 @@ import { getAllReports, getReportById} from '../data/rodentReports.js';
 import { getUserById, getUserActivity } from '../data/users.js';
 import { createComment, deleteComment, getCommentById} from '../data/comments.js';
 import { updateCommentReaction, updateRestaurantReaction } from "../data/reactions.js";
-import { checkId, getLocationFromZip, countToStatus, gradeToStatus, normalizeRestaurant } from '../helpers.js';
+import { checkId, getLocationFromZip, countToStatus, gradeToStatus, normalizeRestaurant } from '../public/js/helpers.js';
 import NodeGeocoder from 'node-geocoder';
 import { countStats } from '../data/utility.js';
 

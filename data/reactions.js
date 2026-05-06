@@ -5,7 +5,7 @@ import {
     checkReactionType, 
     checkTargetKeyType, 
     COLLECTION_IDS 
-} from "../helpers.js";
+} from "../public/js/helpers.js";
 
 /**
  * Reaction Schema:

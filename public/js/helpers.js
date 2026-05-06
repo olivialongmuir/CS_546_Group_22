@@ -122,21 +122,20 @@ export const checkPassword = (password) => {
 };
 
 export const checkZipcode = (zipcode) => {
-
-
     const parsed_zipcode = checkString(zipcode, 'zipcode'); //zipcode can be 00502
-
     if (!(/^\d{5}$/.test(parsed_zipcode))) throw 'Error: Zipcode must contain exactly 5 integers';
     return parsed_zipcode;
 };
 
 export const checkLatitude = (latitude) => {
     const parsed_latitude = checkNumber(latitude, 'latitude');
+    if (parsed_latitude > 40.9176 || parsed_latitude < 40.4774) throw 'Error: Latitude must be between 40.4774 and 40.9176';
     return parsed_latitude;
 }
 
 export const checkLongitude = (longitude) => {
     const parsed_longitude = checkNumber(longitude, 'longitude');
+    if (parsed_longitude > -73.7004 || parsed_longitude < -74.2591) throw 'Error: Longitude must be between -74.2591 and -73.7004';
     return parsed_longitude;
 }
 
