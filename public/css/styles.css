@@ -498,6 +498,14 @@ body.light-map #themeIcon svg {
   color: var(--primary-hover) !important;
 }
 
+
+/* used for rodent report pop up of rat icon */
+.light-popup .leaflet-popup-content-wrapper {
+  background-color: white;
+  color: var(--primary);
+  border-radius: 10px;
+}
+
 /* End Heatmap Styles */
 
 

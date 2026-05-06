@@ -204,7 +204,7 @@ router.route('/ratreports/:id').get(async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.status(500).send("Error loading Rodent Reports");
+        res.status(500).redirect('/error');
     }
 });
 
@@ -244,7 +244,7 @@ router.route('/restaurants').get(async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.status(500).send("Error loading Restaurants");
+        res.status(500).redirect('/error');
     }
 });
 
@@ -272,7 +272,7 @@ router.route('/restaurants/:id').get(async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.status(404).send("Restaurant not found");
+        res.status(404).redirect('/error');
     }
 });
 

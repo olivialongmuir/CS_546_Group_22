@@ -66,7 +66,9 @@ window.addEventListener('load', () => {
         restaurantMapData.forEach(restaurant => {
             L.marker([restaurant.lat, restaurant.lng], { icon: miniRatPin})
                 .addTo(miniMap)
-                .bindPopup(restaurant.name);
+                .bindPopup("SQUEAK!!", {
+                    className: 'light-popup'
+                });
         });
     }
 
