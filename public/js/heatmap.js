@@ -81,6 +81,10 @@ window.addEventListener('load', () => {
     var southWest = L.latLng(40.4774, -74.2591);
     var northEast = L.latLng(40.9176, -73.7004);
     var bounds = L.latLngBounds(southWest, northEast);
+
+    // toggle light or dark map
+    const toggle = document.getElementById('themeToggle');
+    const iconContainer = document.getElementById('themeIcon');
     
     // initialize the map with the given boundaries and set the view to NYC
     map = L.map('heatmap', {
@@ -156,9 +160,8 @@ window.addEventListener('load', () => {
             blur: 15,
             maxZoom: 17,
             gradient: {
-                0.1: '#ff4d4d',
-                0.5: '#e60000',
-                1.0: '#990000'
+                0.0: '#ff0000',
+                1.0: '#ff0000'
             }
         });
         // add heatmap
@@ -192,15 +195,12 @@ window.addEventListener('load', () => {
 
 
     //Event listener to remove old pins
-    // //removes active pin if user clicked back to map outside of popup 
     map.on('click', function () {
         removePins();
     });
     map.on('popupclose', function () {
         removePins();
     });
-
-
 
     // event listeners for search bar (button click or enter)
     searchButton.addEventListener("click", searchRestaurant);
@@ -239,13 +239,16 @@ window.addEventListener('load', () => {
         }
     });
 
+    toggle.addEventListener('click', () => {
+        const isLight = document.body.classList.toggle('light-map');
+        iconContainer.innerHTML = `<i data-lucide="${isLight ? 'sun' : 'moon'}"></i>`;
+        lucide.createIcons();
+    });
+
     setTimeout(() => {
         map.invalidateSize(true);
     }, 0);
 });
-
-
-
 
 //Flys and zooms to a location from and event click
 function flyToLocation(lat,lng, zoom) {
@@ -266,8 +269,6 @@ function flyToLocation(lat,lng, zoom) {
         if (heat) heat.addTo(map);
     }, flyDuration * 1000);
 }
-
-
 
 //Creates and returns a map HTML stub to use as a popup for pins
 const makePopUp=(lat,lng)=>{

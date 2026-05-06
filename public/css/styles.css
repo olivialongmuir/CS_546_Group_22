@@ -426,13 +426,39 @@ h2{
   border-color: var(--popup-hover);
 }
 
-
-
-
 /* css map dark mode override */
-/* TODO - allow for user to choose */
 .leaflet-tile-pane {
     filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
+
+body.light-map .leaflet-tile-pane {
+  filter: none;
+}
+
+#themeToggle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: var(--card-border-2);
+  color: var(--button-outline);
+  transition: all 0.2s ease;
+}
+
+#themeToggle:hover {
+  transform: scale(1.1);
+}
+
+body.light-map #themeToggle {
+  background: var(--primary-darker);
+}
+
+body.light-map #themeIcon svg {
+  stroke: var(--black);
 }
 
 .leaflet-popup-content-wrapper {
@@ -757,9 +783,6 @@ h2{
 
 .btn--full { width: 100%; }
 
-
-
-/* //button holder */
 .btn-stack {
   padding: 2%;
   /* border: 1px solid grey; */
