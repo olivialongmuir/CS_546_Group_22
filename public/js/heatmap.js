@@ -1,8 +1,10 @@
 // global variables
 let map;
 let heat;
+let heatDataGlobal = [];
 let searchInput;
 let searchButton;
+let colorBtn;
 let autocompleteList;
 let activePins = []; //Use as a global tracker for active dropped pins
 const rodentMarkers = L.layerGroup();
@@ -85,6 +87,10 @@ window.addEventListener('load', () => {
     // toggle light or dark map
     const toggle = document.getElementById('themeToggle');
     const iconContainer = document.getElementById('themeIcon');
+
+    // choose heat color
+    colorBtn = document.getElementById('heatColorBtn');
+    const colorPicker = document.getElementById('heatColorPicker');
     
     // initialize the map with the given boundaries and set the view to NYC
     map = L.map('heatmap', {
@@ -153,6 +159,9 @@ window.addEventListener('load', () => {
             Number(r.lng),
             1
         ]));
+
+        // set global heat data for use in color changes
+        heatDataGlobal = heatData;
 
         // heatmap
         heat = L.heatLayer(heatData, {
@@ -245,10 +254,38 @@ window.addEventListener('load', () => {
         lucide.createIcons();
     });
 
+    colorBtn.addEventListener('click', () => {
+        colorPicker.click();
+    });
+
+    colorPicker.addEventListener('input', (e) => {
+        const color = e.target.value;
+        buildHeatmap(color);
+    });
+
     setTimeout(() => {
         map.invalidateSize(true);
     }, 0);
 });
+
+// Helper to change the color of the heatmap based on user input
+function buildHeatmap(color) {
+    if (heat) {
+        map.removeLayer(heat);
+        heat = null;
+    }
+    heat = L.heatLayer(heatDataGlobal, {
+        radius: 50,
+        blur: 15,
+        maxZoom: 17,
+        gradient: {
+            0.0: color,
+            1.0: color
+        }
+    });
+    heat.addTo(map);
+    colorBtn.style.backgroundColor = color;
+}
 
 //Flys and zooms to a location from and event click
 function flyToLocation(lat,lng, zoom) {

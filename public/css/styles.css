@@ -461,6 +461,18 @@ body.light-map #themeIcon svg {
   stroke: var(--black);
 }
 
+.heat-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: var(--error);
+}
+
 .leaflet-popup-content-wrapper {
   background-color: var(--map-tip) !important;
   color: var(--map-popup);
