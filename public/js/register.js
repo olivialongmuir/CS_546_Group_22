@@ -24,8 +24,10 @@ $(document).ready(function() {
                 
                 $('#registerResponse').text(errorMessage).show();
                 $submitBtn.prop('disabled', false);
-            }
 
+                $('#password').val('');
+                $('#confirmPassword').val('');
+            }
         })
     })
 })
