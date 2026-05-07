@@ -13,8 +13,8 @@
         "gradeDate": "02/03/2025",
         "latitude": 40.7073915868,
         "longitude": -74.0111055233,
-        "status": null,
-        "comments": null
+        "status": "sanitary",
+        "comments": []
     },
     {
         "camis": 50176339,
@@ -30,8 +30,8 @@
         "gradeDate": null,
         "latitude": 40.8312113868,
         "longitude": -73.9102056747,
-        "status": null,
-        "comments": null
+        "status": "sanitary",
+        "comments": []
     },
     {
         "camis": 50140336,
@@ -47,8 +47,8 @@
         "gradeDate": null,
         "latitude": 40.587895113,
         "longitude": -73.9558881247,
-        "status": null,
-        "comments": null
+        "status": "pending",
+        "comments": []
     },
     {
         "camis": 41684486,
@@ -64,8 +64,8 @@
         "gradeDate": "10/17/2024",
         "latitude": 40.6891099538,
         "longitude": -73.9302769348,
-        "status": null,
-        "comments": null
+        "status": "sanitary",
+        "comments": []
     },
     {
         "camis": 50175904,
@@ -81,8 +81,8 @@
         "gradeDate": "12/18/2025",
         "latitude": 40.6898065177,
         "longitude": -73.938825808,
-        "status": null,
-        "comments": null
+        "status": "inspecting",
+        "comments": []
     },
     {
         "camis": 50171201,
@@ -98,8 +98,8 @@
         "gradeDate": "12/29/2025",
         "latitude": 40.7268275222,
         "longitude": -73.9916260259,
-        "status": null,
-        "comments": null
+        "status": "sanitary",
+        "comments": []
     },
     {
         "camis": 50119298,
@@ -115,8 +115,8 @@
         "gradeDate": "01/29/2023",
         "latitude": 40.7621833714,
         "longitude": -73.9761317442,
-        "status": null,
-        "comments": null
+        "status": "pending",
+        "comments": []
     },
     {
         "camis": 50128948,
@@ -132,8 +132,8 @@
         "gradeDate": "05/10/2023",
         "latitude": 40.7012859535,
         "longitude": -73.8887710147,
-        "status": null,
-        "comments": null
+        "status": "unsanitary",
+        "comments": []
     },
     {
         "camis": 50017059,
@@ -149,8 +149,8 @@
         "gradeDate": "04/04/2023",
         "latitude": 40.8471037753,
         "longitude": -73.8321694347,
-        "status": null,
-        "comments": null
+        "status": "pending",
+        "comments": []
     },
     {
         "camis": 50071605,
@@ -166,8 +166,8 @@
         "gradeDate": "01/21/2023",
         "latitude": 40.7245164148,
         "longitude": -73.9914351046,
-        "status": null,
-        "comments": null
+        "status": "sanitary",
+        "comments": []
     },
     {
         "camis": 50145948,
@@ -183,8 +183,8 @@
         "gradeDate": "02/02/2026",
         "latitude": 40.8107768094,
         "longitude": -73.9581710374,
-        "status": null,
-        "comments": null
+        "status": "inspecting",
+        "comments": []
     },
     {
         "camis": 50130679,
@@ -200,8 +200,8 @@
         "gradeDate": null,
         "latitude": 40.6843858517,
         "longitude": -73.8320036508,
-        "status": null,
-        "comments": null
+        "status": "sanitary",
+        "comments": []
     },
     {
         "camis": 50086714,
@@ -217,8 +217,8 @@
         "gradeDate": null,
         "latitude": 40.7778865807,
         "longitude": -73.9784549913,
-        "status": null,
-        "comments": null
+        "status": "sanitary",
+        "comments": []
     },
     {
         "camis": 50071307,
@@ -234,8 +234,8 @@
         "gradeDate": "03/29/2023",
         "latitude": 40.7489926374,
         "longitude": -73.8914917348,
-        "status": null,
-        "comments": null
+        "status": "sanitary",
+        "comments": []
     },
     {
         "camis": 50135258,
@@ -251,8 +251,8 @@
         "gradeDate": "04/28/2025",
         "latitude": 40.6936013576,
         "longitude": -73.9318625156,
-        "status": null,
-        "comments": null
+        "status": "sanitary",
+        "comments": []
     },
     {
         "camis": 50114919,
@@ -268,8 +268,8 @@
         "gradeDate": "09/10/2024",
         "latitude": 40.6184989739,
         "longitude": -73.9323429035,
-        "status": null,
-        "comments": null
+        "status": "unsanitary",
+        "comments": []
     },
     {
         "camis": 50145545,
@@ -285,8 +285,8 @@
         "gradeDate": "09/24/2025",
         "latitude": 40.6688433209,
         "longitude": -73.8115714299,
-        "status": null,
-        "comments": null
+        "status": "pending",
+        "comments": []
     },
     {
         "camis": 50120834,
@@ -302,8 +302,8 @@
         "gradeDate": null,
         "latitude": 40.7303877889,
         "longitude": -74.0001659731,
-        "status": null,
-        "comments": null
+        "status": "sanitary",
+        "comments": []
     },
     {
         "camis": 50106063,
@@ -319,8 +319,8 @@
         "gradeDate": "04/30/2024",
         "latitude": 40.7262980045,
         "longitude": -74.0043763677,
-        "status": null,
-        "comments": null
+        "status": "sanitary",
+        "comments": []
     },
     {
         "camis": 50150731,
@@ -336,7 +336,7 @@
         "gradeDate": null,
         "latitude": 40.7685620885,
         "longitude": -73.9249478324,
-        "status": null,
-        "comments": null
+        "status": "sanitary",
+        "comments": []
     }
 ]

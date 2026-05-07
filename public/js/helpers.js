@@ -206,9 +206,10 @@ export const checkRodentType = (rodentType) => {
 };
 
 export const checkWebsite = (website) => {
-    const parsed_website = checkString(website, 'website');
-    if (!/^https?:\/\/[^\s$.?#].[^\s]*$/.test(parsed_website)) throw 'Error: Website URL is not valid';
-    return parsed_website;
+    let parsedWebsite = checkString(website, 'website');
+    if (!/^https?:\/\//i.test(parsedWebsite)) parsedWebsite = `https://${parsedWebsite}`;
+    if (!/^https?:\/\/[^\s$.?#].[^\s]*$/i.test(parsedWebsite)) throw 'Error: Website URL is not valid';
+    return parsedWebsite;
 };
 
 export const checkPhone = (phone) => {
@@ -233,6 +234,8 @@ export const normalizeRestaurant = (r) => ({
   borough: r.boro,
   cuisine: r.type,
   address: [r.building, r.street].filter(Boolean).join(' '),
+  latitude: r.latitude,
+  longitude: r.longitude,
   zipcode: r.zipcode ? String(r.zipcode).split('.')[0] : '',
   phone: r.phone,
   grade: r.grade,

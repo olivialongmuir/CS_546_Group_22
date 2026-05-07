@@ -90,7 +90,7 @@ router.route('/').post(async (req, res) => {
       validatedStatus
     );
 
-    res.status(201).json(newRestaurant);
+    res.redirect(`/restaurants/${newRestaurant._id}`);
   } catch (error) {
     handleError(res, error);
   }
@@ -122,7 +122,7 @@ router.route('/:id').patch(async (req, res) => {
     const errorSource = 'PATCH /restaurant/:id';
     const validatedId = validateId(req.params.id, 'restaurantId', errorSource);
 
-    let {
+    const {
       name,
       type,
       latitude,
@@ -133,15 +133,15 @@ router.route('/:id').patch(async (req, res) => {
     } = req.body;
 
     // Input validation
-    if (name !== undefined) name = checkRestaurantName(name);
-    if (type !== undefined) type = checkRestaurantType(type);
-    if (latitude !== undefined) latitude = checkLatitude(latitude);
-    if (longitude !== undefined) longitude = checkLongitude(longitude);
-    if (status !== undefined) status = checkRestaurantStatus(status);
+    const validatedName = checkRestaurantName(name);
+    const validatedType = checkRestaurantType(type);
+    const validatedLatitude = checkLatitude(latitude);
+    const validatedLongitude = checkLongitude(longitude);
+    const validatedStatus = checkRestaurantStatus(status);
 
     // Optional
-    if (website !== undefined) website = website != "" ? checkWebsite(website) : null;
-    if (phone !== undefined) phone = phone != "" ? checkPhone(phone) : null;
+    const validatedWebsite = website != "" ? checkWebsite(website) : null;
+    const validatedPhone = phone != "" ? checkPhone(phone) : null;
 
     const updated = await updateRestaurant(
       validatedId,

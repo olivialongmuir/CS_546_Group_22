@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { comments, reactions } from "../config/mongoCollections.js";
+import { comments, reactions, rodentReports, restaurants } from "../config/mongoCollections.js";
 import { checkComment, COLLECTION_IDS, validateCommentType } from "../public/js/helpers.js";
 import { validateId } from "./utility.js";
 
@@ -38,8 +38,6 @@ export const createComment = async(
     targetId,
     comment
 ) => {
-
-
     const errorSource = "createComment";
     const validatedUserId = validateId(userId, 'userId', errorSource);
     const validatedCommentType = validateCommentType(commentType)
@@ -49,7 +47,6 @@ export const createComment = async(
     // Timestamp request
     const now = new Date();
     const timestamp = now.toISOString();
-
 
     //Determines wether or not should be a restuarant or a rodent comment and sets other type as null. This allows use to use shared collection
     let restaurantId;
@@ -84,10 +81,30 @@ export const createComment = async(
 
     // Return newly created comment
     const newId = insertInfo.insertedId.toString();
+
+    if (validatedCommentType === 'restaurant') {
+        const restaurantCollection = await restaurants();
+        const updateResult = await restaurantCollection.updateOne(
+        { _id: new ObjectId(validatedTargetId) },
+        { $push: { comments: newId } }
+    );
+
+    if (updateResult.modifiedCount === 0) {
+      throw `Error {${errorSource}}: Failed to append comment to restaurant`;
+    }
+    } else if (validatedCommentType === 'rodent') {
+        const rodentCollection = await rodentReports();
+        const updateResult = await rodentCollection.updateOne(
+        { _id: new ObjectId(validatedTargetId) },
+        { $push: { comments: newId } }
+        );
+
+        if (updateResult.modifiedCount === 0) {
+        throw `Error {${errorSource}}: Failed to append comment to rodent report`;
+        }
+    }
     return await getCommentById(newId);
 }
-
-
 
 /**
  * Gets comment from database by objectId

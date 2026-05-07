@@ -77,6 +77,38 @@ window.addEventListener('load', () => {
 
 
 
+//Limits coordinates to designated area
+const NYC_BOUNDS = { minLat: 40.4774, maxLat: 40.9176, minLng: -74.2591, maxLng: -73.7004 };
+
+document.getElementById('rodentForm')?.addEventListener('submit', (e) => {
+    const errEl = document.getElementById('reportError');
+    if (errEl) {
+        errEl.textContent = '';
+        errEl.style.display = 'none';
+    }
+
+    const description = document.getElementById('description').value.trim();
+    const lat = Number(document.getElementById('latitude').value);
+    const lng = Number(document.getElementById('longitude').value);
+
+    let error = null;
+    if (!description) error = 'Error: Description is required';
+    else if (description.length > 500) error = 'Error: Description cannot exceed 500 characters';
+    else if (!Number.isFinite(lat) || lat < NYC_BOUNDS.minLat || lat > NYC_BOUNDS.maxLat)
+        error = 'Error: Latitude must be within NYC';
+    else if (!Number.isFinite(lng) || lng < NYC_BOUNDS.minLng || lng > NYC_BOUNDS.maxLng)
+        error = 'Error: Longitude must be within NYC';
+
+    if (error) {
+        e.preventDefault();
+        if (errEl) {
+            errEl.textContent = error;
+            errEl.style.display = '';
+        }
+    }
+});
+
+
 //Allows rodent report on left to be clicked and then shows the details on the right
 document.querySelector(".leftPane")?.addEventListener("click", async (e) => {
 
