@@ -1,5 +1,6 @@
 // global variables
 let map;
+let popupMap //secondary map rendered into the rodent report pop up
 let heat;
 let heatDataGlobal = [];
 let searchInput;
@@ -37,6 +38,7 @@ const locationPin = L.icon({
     iconAnchor: [16, 32],
     popupAnchor: [0, -32]
 });
+
 
 
 // dynamic way to show rodent markers when zoomed in beyond thresh
@@ -159,7 +161,6 @@ window.addEventListener('load', () => {
             }
 
             const marker = L.marker([Number(r.lat), Number(r.lng)], { icon: ratPin })
-            // TODO - add link to rodent report details similar to restaurant above
                 .bindPopup(
                         `<div class="btn-stack">
                         <div class="popUpText">
@@ -206,7 +207,7 @@ window.addEventListener('load', () => {
     map.on('contextmenu', function (e) {
 
         //clear stale pins
-        removePins();
+        removePins(map);
 
         const lat = e.latlng.lat;
         const lng = e.latlng.lng;
@@ -224,10 +225,10 @@ window.addEventListener('load', () => {
 
     //Event listener to remove old pins
     map.on('click', function () {
-        removePins();
+        removePins(map);
     });
     map.on('popupclose', function () {
-        removePins();
+        removePins(map);
     });
 
     // event listeners for search bar (button click or enter)
@@ -375,6 +376,7 @@ const addPin=(map, lat, lng)=>{
     newPin = L.marker([lat, lng], { icon: locationPin })
         .addTo(map)
 
+
     //Checks wether or not the user is logged in. 
     //If user is not logged in the pop up will be generic and promt them to login. Else will be the report creation prompt
     //get current user data
@@ -384,6 +386,7 @@ const addPin=(map, lat, lng)=>{
     }else{
         newPin.bindPopup(loginPopUp(lat,lng));
     }
+    
 
     //Open the pop up for user to see
     newPin.openPopup();
@@ -393,7 +396,7 @@ const addPin=(map, lat, lng)=>{
 }
 
 //Removes all active pins
-const removePins=()=>{
+const removePins=(map)=>{
     for(const pin of activePins){
         if (map.hasLayer(pin)) {
             map.removeLayer(pin);
@@ -439,6 +442,9 @@ const hidePopUp=(popUp)=>{
         mapLayout.style.visibility = 'visible';
     }
 
+    //remove the rat pin that had been added to the minimap
+    removePins(popupMap);
+
     //Flys the user back to  map
     flyToLocation(lastLat, lastLng, 16);
 }
@@ -481,13 +487,23 @@ document.addEventListener('click', (e)=>{
     document.getElementById("latStat").innerText = `Lat: ${lastLat}`;
     document.getElementById("lngStat").innerText = `Lng: ${lastLng}`;
 
+
     //Prepopulate the forms fiedls with user info and location
     document.getElementById("latitude").value = lastLat;
     document.getElementById("longitude").value = lastLng;
 
+    //Navigates the pop up map to target location
+    popupMap.panTo([lastLat,lastLng], {duration:0.1});
+
+    //Add mini rat pin to that location
+    newPin = L.marker([lastLat, lastLng], { icon: ratPin })
+        .addTo(popupMap)
+
+    //Add pin to active pins arr
+    activePins.push(newPin);
+
     //shows the report card
     showPopUp("reportPopUp");
-
 });
 
 
@@ -513,3 +529,68 @@ document.addEventListener('click', (e)=>{
     showPopUp("restaurantPopUp");
 
 });
+
+
+
+
+
+
+
+
+//Pop up map function for redering a popupMap in the pop up window
+//will display as a popupMap with the rodent report coordinate as its center marking point
+//Make small and not scrollable
+
+//set map as a global var to edit 
+//using alternative name for rat pin since used across multiple pages
+
+
+window.addEventListener('load', () => {
+    
+    const popupMapEl = document.getElementById('miniHeatmap');
+    if (!popupMapEl) {
+        console.error('miniHeatmap element not found');
+        return;
+    }
+
+    //Set in default location for map
+    const nycLatLng = [40.7128, -74.0060];
+
+    // grab saved map theme from localStorage and apply it to the mini map
+    const savedTheme = localStorage.getItem('mapTheme');
+    if (savedTheme === 'light') {
+        document.body.classList.add('light-map');
+    } else {
+        document.body.classList.remove('light-map');
+    }
+
+    //initialize the map and set the rules
+    popupMap = L.map('miniHeatmap', {
+        preferCanvas: true,
+        dragging: false,
+        zoomControl: false,       //Removes the +/- buttons
+        scrollWheelZoom: false,   //Disables mouse wheel zoom
+        doubleClickZoom: false,   //Disables zoom on double-click
+        touchZoom: false,         //Disables pinch-to-zoom on mobile
+        boxZoom: false            //Disables zoom by dragging with shift key
+    }).setView(nycLatLng, 16);
+
+
+    //map layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(popupMap);
+
+    // restaurant marker (only showing one since it should just be current rodent report)
+    L.marker(nycLatLng, { icon: ratPin})
+                .addTo(popupMap)
+                .bindPopup("SQUEAK!!", {
+                    className: 'light-popup'
+                });
+    
+
+    setTimeout(() => {
+        popupMap.invalidateSize(true);
+    }, 0);
+});
+

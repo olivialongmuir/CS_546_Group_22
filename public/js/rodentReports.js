@@ -9,18 +9,19 @@ let miniMap;
 let miniRatPin;
 
 window.addEventListener('load', () => {
+    
     const miniMapEl = document.getElementById('miniHeatmap');
     if (!miniMapEl) {
         console.error('miniHeatmap element not found');
         return;
     }
 
-    //get the lat and long of the current restaurant
+    //get the lat and long of the current pin drop
+    //TODO map rendering bugfix
     let temp = restaurantMapData[0];
-    let lat = temp.lat
-    let lng = temp.lng
-    
-
+    //If there is no restaurant then set to default NYC data location as a default.
+    let lat = temp?.lat ?? 40.7128
+    let lng = temp?.lng ?? -74.0060
 
     //set map center to the current restaurant
     const nycLatLng = [lat, lng];
@@ -62,15 +63,12 @@ window.addEventListener('load', () => {
 
 
     // restaurant marker (only showing one since it should just be current rodent report)
-    if (typeof restaurantMapData !== 'undefined') {
-        restaurantMapData.forEach(restaurant => {
-            L.marker([restaurant.lat, restaurant.lng], { icon: miniRatPin})
+    L.marker(nycLatLng, { icon: miniRatPin})
                 .addTo(miniMap)
                 .bindPopup("SQUEAK!!", {
                     className: 'light-popup'
                 });
-        });
-    }
+    
 
     setTimeout(() => {
         miniMap.invalidateSize(true);
@@ -198,11 +196,5 @@ document.getElementById('clearFilters')?.addEventListener("click", function(){
         card.style.display = '';
     }
 })
-
-
-
-
-
-
 
 

@@ -131,13 +131,22 @@ router.route('/ratreports').get(async (req, res) => {
         //get all reports
         let reports = await getAllReports();
 
-        //if reports is empty redirect to error page
-        if(reports.length == 0){
-            res.redirect('/error');
-        }
-
         //route user to first report
         let firstReport = reports[0]
+
+        //if there are no available reports, render blank page
+        if(firstReport === undefined){
+
+            //set standard placeholder location for heatmap render
+            //gets the location of the specified report
+
+            return res.render("rodentReports", {
+                title: 'Rodent Reports',
+                reports:reports,
+                currentUserId: req.session.userId
+        });
+        }
+
         res.redirect(`/ratreports/${firstReport._id}`);
 
     } catch (error) {
@@ -153,6 +162,8 @@ router.route('/ratreports/:id').get(async (req, res) => {
         //validate the id
         const id = req.params.id.trim();
         const validatedId = checkId(id);
+
+        console.log("hit here");
 
         let targetReport = await getReportById(validatedId);
 
@@ -204,7 +215,10 @@ router.route('/ratreports/:id').get(async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.status(500).redirect('/error');
+                return res.status(404).render('error', {
+            title: 'Error',
+            error: 'Report not found'
+            });
     }
 });
 
@@ -244,7 +258,7 @@ router.route('/restaurants').get(async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.status(500).redirect('/error');
+        res.status(500).render("error");
     }
 });
 
@@ -272,7 +286,7 @@ router.route('/restaurants/:id').get(async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.status(404).redirect('/error');
+        return res.status(404).render("error");
     }
 });
 
@@ -387,8 +401,7 @@ router.post('/rodentReports/:id/comments', async (req, res) => {
     return res.redirect(`/ratreports/${reportId}`);
 
   } catch (error) {
-    //TODO - just sending them to a generic error page 
-    res.status(404).render('error adding comment to rodent report');
+    return res.status(500).render("error");
   }
 });
 
@@ -499,7 +512,7 @@ router.route('/profile').get(async (req, res) => {
     return res.render('profile', { title: 'SqueakPeek - Profile', user });
   } catch (error) {
     console.error(error);
-    return res.status(500).send('Error loading Profile');
+    return res.status(400).render("error");
   }
 });
 
