@@ -228,6 +228,8 @@ export const normalizeRestaurant = (r) => ({
   borough: r.boro,
   cuisine: r.type,
   address: [r.building, r.street].filter(Boolean).join(' '),
+  latitude: r.latitude,
+  longitude: r.longitude,
   zipcode: r.zipcode ? String(r.zipcode).split('.')[0] : '',
   phone: r.phone,
   grade: r.grade,
