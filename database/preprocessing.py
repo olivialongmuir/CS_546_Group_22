@@ -119,7 +119,7 @@ def main():
     }
 
     restaurants_newKeys = {
-        "status": None,
+        "status": "pending",
         "stats": {
             "likes": 0,
             "dislikes": 0

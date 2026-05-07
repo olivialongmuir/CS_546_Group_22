@@ -116,6 +116,43 @@ textarea {
 }
 
 
+/* Restaurant registration form */
+#restaurantRegisterForm {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0 1rem;
+    color: white;
+}
+#restaurantRegisterForm > div:has(label) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+#restaurantRegisterForm label {
+    font-size: 0.85rem;
+    color: #ddd;
+    font-weight: 500;
+}
+
+#restaurantRegisterForm input[type="text"] {
+    padding: 0.45rem 0.6rem;
+    border-radius: 5px;
+    border: 1px solid #444;
+    background-color: lightgray;
+    color: black;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+#restaurantRegisterForm input[type="text"]:focus {
+    outline: none;
+    border-color: rgb(71, 130, 239);
+}
+
+
 
 /* Filter styles */
 .filters{

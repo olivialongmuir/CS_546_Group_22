@@ -268,6 +268,9 @@ router.route('/restaurants/:id').get(async (req, res) => {
         const validatedId = checkId(id);
         const raw = await getRestaurantById(validatedId);
         const restaurant = normalizeRestaurant(raw);
+        if (!restaurant.address || restaurant.address.trim() === "") {
+            restaurant.address = `${restaurant.latitude}, ${restaurant.longitude}`;
+        }
         const comments = await getRestaurantComments(validatedId);
         const restaurantComments = await Promise.all(
             comments.map(async (c) => {

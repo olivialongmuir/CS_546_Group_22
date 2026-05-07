@@ -646,6 +646,79 @@ body.light-map #themeIcon svg {
   opacity: 1;
 }
 
+/* Styles used for Admin page */
+.admin-nav {
+  margin-top: 20px;
+}
+.admin-nav a {
+  margin-left: 10px;
+}
+.admin-create a {
+  margin-left: 10px;
+}
+
+/* Styles used for Admin/restaurants page */
+.admin-edit {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.admin-form {
+  display: grid;
+  align-items: center;
+  grid-template-columns: max-content 1fr 80px;
+}
+.admin-form div {
+  display: contents;
+}
+.admin-form label {
+  grid-column: 1;
+  margin: 8px;
+}
+.admin-form input {
+  grid-column: 2;
+  margin: 8px;
+}
+.admin-form .formButtonRow {
+  grid-column: 1 / -1;
+  justify-self: center;
+  margin-top: 15px;
+  display: flex;
+}
+.admin-form .formButtonRow > * {
+  width: 90px;
+  margin: 15px;
+  box-sizing: border-box;
+}
+.admin-form .tooltip {
+  grid-column: 3; /* Forces it into the new third column */
+  position: relative;
+  cursor: help;
+  justify-self: start;
+}
+.admin-form .tooltip-text {
+  visibility: hidden;
+  width: 180px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 8px;
+  border-radius: 5px;
+  
+  position: absolute;
+  z-index: 1;
+  left: 125%; 
+  top: 50%;
+  transform: translateY(-50%);
+  
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.admin-form .tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
 /* Shared utilities — used across multiple pages*/
 
 .link-icon {

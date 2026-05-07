@@ -1,13 +1,13 @@
 import { ObjectId } from 'mongodb';
 import { comments, reactions, restaurants } from '../config/mongoCollections.js';
 import { 
-    checkString, 
     checkWebsite, 
     checkPhone, 
     checkRestaurantStatus, 
     checkLatitude,
     checkLongitude,
     checkRestaurantName,
+    checkRestaurantType,
     COLLECTION_IDS
 } from '../public/js/helpers.js';
 import { validateId } from './utility.js';
@@ -22,7 +22,6 @@ import { validateId } from './utility.js';
  *  longitude:          number
  *  website:            string
  *  phone:              string
- *  permit_number:      string
  *  status:             string
  *  stats:              subdocument
  * }
@@ -82,7 +81,6 @@ export const getRestaurantById = async(id) => {
  * @param {number} longitude 
  * @param {string} website 
  * @param {string} phone 
- * @param {string} permit_number 
  * @param {string} status 
  * @returns newRestaurant
  */
@@ -93,18 +91,18 @@ export const createRestaurant = async(
     longitude,
     website,
     phone,
-    permit_number,
     status
 ) => {
     const errorSource = "createRestaurant";
-    const validatedName = checkRestaurantName(name, "name");
-    const validatedType = checkString(type, "type");
+    const validatedName = checkRestaurantName(name);
+    const validatedType = checkRestaurantType(type);
     const validatedLatitude = checkLatitude(latitude);
     const validatedLongitude = checkLongitude(longitude);
-    const validatedWebsite = checkWebsite(website, "website");
-    const validatedPhone = checkPhone(phone, "phone");
-    const validatedPermitNumber = checkString(permit_number, "permit_number");
     const validatedStatus = checkRestaurantStatus(status, "status");
+
+    // Optional
+    const validatedWebsite = website != null ? checkWebsite(website) : null;
+    const validatedPhone = phone != null ? checkPhone(phone) : null;
 
     // Create new restaurant object
     const newRestaurant = {
@@ -114,7 +112,6 @@ export const createRestaurant = async(
         longitude: validatedLongitude,
         website: validatedWebsite,
         phone: validatedPhone,
-        permit_number: validatedPermitNumber,
         status: validatedStatus,
         stats: {
             likes: 0,
@@ -141,7 +138,6 @@ export const createRestaurant = async(
  * @param {number} longitude 
  * @param {string} website 
  * @param {string} phone 
- * @param {string} permit_number 
  * @param {string} status 
  * @returns updateInfo
  */
@@ -153,7 +149,6 @@ export const updateRestaurant = async(
     longitude,
     website,
     phone,
-    permit_number,
     status
 ) => {
     const errorSource = "updateRestaurant";
@@ -161,14 +156,15 @@ export const updateRestaurant = async(
 
     // Template for partial update
     const updateRestaurant = {};
-    if (name !== undefined) updateRestaurant["name"] = checkRestaurantName(name, "name");
-    if (type !== undefined) updateRestaurant["type"] = checkString(type, "type");
+    if (name !== undefined) updateRestaurant["name"] = checkRestaurantName(name);
+    if (type !== undefined) updateRestaurant["type"] = checkRestaurantType(type);
     if (latitude !== undefined) updateRestaurant["latitude"] = checkLatitude(latitude);
     if (longitude !== undefined) updateRestaurant["longitude"] = checkLongitude(longitude);
-    if (website !== undefined) updateRestaurant["website"] = checkWebsite(website);
-    if (phone !== undefined) updateRestaurant["phone"] = checkPhone(phone);
-    if (permit_number !== undefined) updateRestaurant["permit_number"] = checkString(permit_number);
     if (status !== undefined) updateRestaurant["status"] = checkRestaurantStatus(status);
+
+    // Optional
+    if (website !== undefined) updateRestaurant["website"] = website != null ? checkWebsite(website) : null;
+    if (phone !== undefined) updateRestaurant["phone"] = phone != null ? checkPhone(phone) : null;
 
     if (Object.keys(updateRestaurant).length === 0) throw `Error {${errorSource}}: No fields to update`;
 
