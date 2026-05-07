@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const longitude = document.getElementById("longitude").value.trim();
 
 
-        const zipcode = document.getElementById("zipcode").value.trim();
+        // const zipcode = document.getElementById("zipcode").value.trim();
 
         let error;
 
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
             let validatedDescription = helpers.checkDescription(description);
             let validatedLatitude = helpers.checkLatitude(latitude);
             let validatedLongitude = helpers.checkLongitude(longitude);
-            let validatedZipcode = helpers.checkZipcode(zipcode);
+            // let validatedZipcode = helpers.checkZipcode(zipcode);
         }catch(err){
             //stop the form
             e.preventDefault();
