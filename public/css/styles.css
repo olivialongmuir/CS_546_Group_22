@@ -944,3 +944,15 @@ body.light-map #themeIcon svg {
   display: flex;
   justify-content: right;
 }
+
+
+
+/* Error box used in pop up forms */
+.errorBox {
+  color: #b00020;
+  background: #ffecec;
+  border: 1px solid #ffb3b3;
+  padding: 0.1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
