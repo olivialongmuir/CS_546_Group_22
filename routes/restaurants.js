@@ -91,7 +91,7 @@ router.route('/').post(async (req, res) => {
       validatedStatus
     );
 
-    res.status(201).json(newRestaurant);
+    res.redirect(`/restaurants/${newRestaurant._id}`);
   } catch (error) {
     handleError(res, error);
   }

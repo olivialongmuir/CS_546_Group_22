@@ -197,15 +197,20 @@ export const checkRodentType = (rodentType) => {
 };
 
 export const checkWebsite = (website) => {
-    const parsed_website = checkString(website, 'website');
-    if (!/^https?:\/\/[^\s$.?#].[^\s]*$/.test(parsed_website)) throw 'Error: Website URL is not valid';
-    return parsed_website;
+    let parsedWebsite = checkString(website, 'website');
+    if (!/^https?:\/\//i.test(parsedWebsite)) parsedWebsite = `https://${parsedWebsite}`;
+    if (!/^https?:\/\/[^\s$.?#].[^\s]*$/i.test(parsedWebsite)) throw 'Error: Website URL is not valid';
+    return parsedWebsite;
 };
 
 export const checkPhone = (phone) => {
-    const parsed_phone = checkString(phone, 'phone');
-    if (!/^\d{3}-\d{3}-\d{4}$/.test(parsed_phone)) throw 'Error: Phone number must be in the format XXX-XXX-XXXX';
-    return parsed_phone;
+    const parsedPhone = checkString(phone, 'phone');
+    const digits = parsedPhone.replace(/\D/g, '');
+    if (digits.length !== 10) {
+        throw 'Error: Phone number must contain exactly 10 digits';
+    }
+    const formattedPhone = `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+    return formattedPhone;
 };
 
 export const gradeToStatus = (grade) => {

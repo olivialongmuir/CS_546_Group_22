@@ -70,6 +70,7 @@
                         class="vote-btn"
                         data-id="{{this._id}}"
                         data-type="like"
+                        data-target="comments"
                         {{#unless ../isLoggedIn}}disabled{{/unless}}
                     >
                         👍
@@ -84,6 +85,7 @@
                         class="vote-btn"
                         data-id="{{this._id}}"
                         data-type="dislike"
+                        data-target="comments"
                         {{#unless ../isLoggedIn}}disabled{{/unless}}
                     >
                         👎
