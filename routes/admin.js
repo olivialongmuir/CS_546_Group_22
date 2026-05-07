@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { getPendingUsers, approveUser } from '../data/users.js';
+import { validateId } from '../data/utility.js';
 import {
   getAllRestaurants,
   getRestaurantById,
@@ -7,6 +8,7 @@ import {
   updateRestaurant,
   deleteRestaurant
 } from '../data/restaurants.js';
+
 import {
   getAllReports,
   getReportById,
@@ -14,6 +16,27 @@ import {
   updateReport,
   deleteReport
 } from '../data/rodentReports.js';
+
+import { 
+    checkWebsite, 
+    checkPhone, 
+    checkRestaurantStatus, 
+    checkRestaurantName,
+    checkRestaurantType,
+    checkDate, 
+    checkDescription, 
+    checkJobId, 
+    checkNote, 
+    checkPhotoUrl, 
+    checkRatSizeRating, 
+    checkRodentName,
+    checkRodentType, 
+    checkRodentStatus, 
+    checkUserType, 
+    checkZipcode, 
+    checkLatitude,
+    checkLongitude,
+} from '../public/js/helpers.js';
 
 const router = Router();
 
@@ -76,16 +99,37 @@ router.route('/restaurants/new').get((req, res) => {
 
 router.route('/restaurants').post(async (req, res) => {
   const body = req.body || {};
+
   try {
-    await createRestaurant(
-      body.name,
-      body.type,
-      body.latitude,
-      body.longitude,
-      body.website,
-      body.phone,
-      body.permit_number,
-      body.status
+    const {
+      name,
+      type,
+      latitude,
+      longitude,
+      website,
+      phone,
+      status
+    } = body;
+
+    // Input validation
+    const validatedName = checkRestaurantName(name);
+    const validatedType = checkRestaurantType(type);
+    const validatedLatitude = checkLatitude(latitude);
+    const validatedLongitude = checkLongitude(longitude);
+    const validatedStatus = checkRestaurantStatus(status);
+
+    // Optional
+    const validatedWebsite = website != "" ? checkWebsite(website) : null;
+    const validatedPhone = phone != "" ? checkPhone(phone) : null;
+
+    const newRestaurant = await createRestaurant(
+      validatedName,
+      validatedType,
+      validatedLatitude,
+      validatedLongitude,
+      validatedWebsite,
+      validatedPhone,
+      validatedStatus
     );
     return res.redirect('/admin/restaurants');
   } catch (error) {
@@ -118,17 +162,41 @@ router.route('/restaurants/:id/edit').get(async (req, res) => {
 
 router.route('/restaurants/:id/edit').post(async (req, res) => {
   const body = req.body || {};
+
   try {
-    await updateRestaurant(
-      req.params.id,
-      body.name,
-      body.type,
-      body.latitude,
-      body.longitude,
-      body.website,
-      body.phone,
-      body.permit_number,
-      body.status
+    const errorSource = 'POST /admin/restaurants/:id/edit'
+    const validatedId = validateId(req.params.id, 'restaurantId', errorSource);
+
+    const {
+      name,
+      type,
+      latitude,
+      longitude,
+      website,
+      phone,
+      status
+    } = body;
+
+    // Input validation
+    const validatedName = checkRestaurantName(name);
+    const validatedType = checkRestaurantType(type);
+    const validatedLatitude = checkLatitude(latitude);
+    const validatedLongitude = checkLongitude(longitude);
+    const validatedStatus = checkRestaurantStatus(status);
+
+    // Optional
+    const validatedWebsite = website != "" ? checkWebsite(website) : null;
+    const validatedPhone = phone != "" ? checkPhone(phone) : null;
+
+    const updated = await updateRestaurant(
+      validatedId,
+      validatedName,
+      validatedType,
+      validatedLatitude,
+      validatedLongitude,
+      validatedWebsite,
+      validatedPhone,
+      validatedStatus
     );
     return res.redirect('/admin/restaurants');
   } catch (error) {
@@ -182,18 +250,43 @@ router.route('/rodent-reports/new').get((req, res) => {
 
 router.route('/rodent-reports').post(async (req, res) => {
   const body = req.body || {};
+
   try {
+    const {
+      zipcode,
+      latitude,
+      longitude,
+      description,
+      reportStatus,
+      inspectionDate,
+      approvedDate,
+      restaurantId,
+      verifiedBy
+    } = body;
+
+    const errorSource = 'POST /admin/rodent-reports';
+    const validatedZipcode = checkZipcode(zipcode);
+    const validatedLatitude = checkLatitude(latitude);
+    const validatedLongitude = checkLongitude(longitude);
+    const validatedStatus = checkRodentStatus(reportStatus);
+    const validatedDescription = checkDescription(description);
+    const validatedUserId = validateId(req.session.userId, 'userId', errorSource);
+
+    const validatedInspectionDate = restaurantId != "" ? checkDate(inspectionDate) : null;
+    const validatedApprovedDate = approvedDate != "" ? checkDate(approvedDate) : null;
+    const validatedRestaurantId = restaurantId != "" ? validateId(restaurantId, 'restaurantId', errorSource) : null;
+
     await createReport(
       null, // jobId
-      body.zipcode,
-      body.latitude,
-      body.longitude,
-      blankToNull(body.inspectionDate),
-      body.status,
-      blankToNull(body.approvedDate),
-      blankToNull(body.restaurantId),
-      req.session.userId,
-      body.description
+      validatedZipcode,
+      validatedLatitude,
+      validatedLongitude,
+      validatedInspectionDate,
+      validatedStatus,
+      validatedApprovedDate,
+      validatedRestaurantId,
+      validatedUserId,
+      validatedDescription
     );
     return res.redirect('/admin/rodent-reports');
   } catch (error) {
@@ -228,20 +321,46 @@ router.route('/rodent-reports/:id/edit').get(async (req, res) => {
 
 router.route('/rodent-reports/:id/edit').post(async (req, res) => {
   const body = req.body || {};
+
   try {
+    let {
+      zipcode,
+      latitude,
+      longitude,
+      description,
+      reportStatus,
+      inspectionDate,
+      approvedDate,
+      restaurantId,
+      verifiedBy
+    } = body;
+
+    const errorSource = 'POST /admin/rodent-reports/:id/edit';
+    const validatedZipcode = checkZipcode(zipcode);
+    const validatedLatitude = checkLatitude(latitude);
+    const validatedLongitude = checkLongitude(longitude);
+    const validatedStatus = checkRodentStatus(reportStatus);
+    const validatedDescription = checkDescription(description);
+    const validatedUserId = validateId(req.session.userId, 'userId', errorSource);
+    const validatedVerifiedBy = checkUserType(verifiedBy);
+
+    const validatedInspectionDate = restaurantId != "" ? checkDate(inspectionDate) : null;
+    const validatedApprovedDate = approvedDate != "" ? checkDate(approvedDate) : null;
+    const validatedRestaurantId = restaurantId != "" ? validateId(restaurantId, 'restaurantId', errorSource) : null;
+
     await updateReport(
       req.params.id,
       undefined, // jobId
-      body.zipcode,
-      body.latitude,
-      body.longitude,
-      blankToNull(body.inspectionDate) === null ? undefined : body.inspectionDate,
-      body.status,
-      blankToNull(body.approvedDate) === null ? undefined : body.approvedDate,
-      blankToNull(body.restaurantId) === null ? undefined : body.restaurantId,
-      undefined, // userId
-      body.description,
-      blankToNull(body.verifiedBy) === null ? undefined : body.verifiedBy
+      validatedZipcode,
+      validatedLatitude,
+      validatedLongitude,
+      validatedInspectionDate,
+      validatedStatus,
+      validatedApprovedDate,
+      validatedRestaurantId,
+      validatedUserId,
+      validatedDescription,
+      validatedVerifiedBy
     );
     return res.redirect('/admin/rodent-reports');
   } catch (error) {

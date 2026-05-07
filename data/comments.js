@@ -38,8 +38,6 @@ export const createComment = async(
     targetId,
     comment
 ) => {
-
-
     const errorSource = "createComment";
     const validatedUserId = validateId(userId, 'userId', errorSource);
     const validatedCommentType = validateCommentType(commentType)
@@ -49,7 +47,6 @@ export const createComment = async(
     // Timestamp request
     const now = new Date();
     const timestamp = now.toISOString();
-
 
     //Determines wether or not should be a restuarant or a rodent comment and sets other type as null. This allows use to use shared collection
     let restaurantId;
@@ -108,8 +105,6 @@ export const createComment = async(
     }
     return await getCommentById(newId);
 }
-
-
 
 /**
  * Gets comment from database by objectId

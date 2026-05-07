@@ -136,7 +136,7 @@ export const createReport = async(
 
     // Allowed null values for dates. These values are null until a validation event
     const validatedInspectionDate = restaurantId != null ? checkDate(inspectionDate) : null;
-    const validatedDate = approvedDate != null ? checkDate(approvedDate) : null;
+    const validatedApprovedDate = approvedDate != null ? checkDate(approvedDate) : null;
 
     // null restaurant id for an unassocated report
     const validatedRestaurantId = restaurantId != null ? validateId(restaurantId, 'restaurantId', errorSource) : null;
@@ -159,7 +159,7 @@ export const createReport = async(
         longitude: validatedLongitude,
         inspectionDate: validatedInspectionDate,
         status: validatedStatus,
-        approvedDate: validatedDate,
+        approvedDate: validatedApprovedDate,
         restaurantId: validatedRestaurantId,
         userId: validatedUserId,
         description: validatedDescription,
@@ -167,7 +167,6 @@ export const createReport = async(
         timestamp: timestamp,
         updatedAt: null,
         verifiedBy: null,
-        comments:[],
         stats: {
             likes: 0,
             dislikes: 0
@@ -222,14 +221,16 @@ export const updateReport = async(
     if (zipcode !== undefined) updateReport["zipcode"] = checkZipcode(zipcode);
     if (latitude !== undefined) updateReport["latitude"] = checkLatitude(latitude);
     if (longitude !== undefined) updateReport["longitude"] = checkLongitude(longitude);
-    if (inspectionDate !== undefined) updateReport["inspectionDate"] = checkDate(inspectionDate);
     if (status !== undefined)  updateReport["status"] = checkRodentStatus(status);
-    if (approvedDate !== undefined) updateReport["approvedDate"] = checkDate(approvedDate);
     if (description !== undefined) updateReport["description"] = checkDescription(description);
     if (verifiedBy !== undefined) updateReport["verifiedBy"] = checkUserType(verifiedBy);
-    if (jobId !== undefined) updateReport["jobId"] = jobId != null ? checkJobId(jobId) : null; // jobId is optionally null
-    if (restaurantId !== undefined) updateReport["restaurantId"] = validateId(restaurantId, 'restaurantId', errorSource);
     if (userId !== undefined) updateReport["userId"] = validateId(userId, 'userId', errorSource);
+
+    // Optional
+    if (jobId !== undefined) updateReport["jobId"] = jobId != null ? checkJobId(jobId) : null; // jobId is optionally null
+    if (approvedDate !== undefined) updateReport["approvedDate"] = approvedDate != null ? checkDate(approvedDate) : null;
+    if (inspectionDate !== undefined) updateReport["inspectionDate"] = inspectionDate != null ? checkDate(inspectionDate) : null;
+    if (restaurantId !== undefined) updateReport["restaurantId"] = restaurantId != null ? validateId(restaurantId, 'restaurantId', errorSource) : null;
 
     if (Object.keys(updateReport).length === 0) throw `Error {${errorSource}}: No fields to update`;
 

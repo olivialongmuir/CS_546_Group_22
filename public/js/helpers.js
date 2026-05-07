@@ -44,6 +44,7 @@ export const checkDate = (date) => {
 
 export const checkComment = (comment) => {
     const parsed_comment = checkString(comment, 'comment');
+    if (parsed_comment.length < 1) throw 'Error: Comment cannot be empty';
     if (parsed_comment.length > 500) throw 'Error: Comment cannot exceed 500 characters';
     return parsed_comment;
 };
@@ -90,6 +91,14 @@ export const checkRestaurantName = (restaurantName) => {
     if (parsed_restaurantName.length > 100) throw 'Error: restaurantName cannot exceed 100 characters';
     if (!/^[a-zA-Z0-9_'&\-\s]+$/.test(parsed_restaurantName)) throw 'Error: restaurantName can only contain letters, numbers, spaces, underscores, apostrophes, ampersands, and hyphens';
     return parsed_restaurantName;
+}
+
+export const checkRestaurantType = (restaurantType) => {
+    const parsed_type = checkString(restaurantType, 'restaurantType');
+    if (parsed_type.length < 1) throw 'Error: restaurantType must be at least 1 character';
+    if (parsed_type.length > 100) throw 'Error: restaurantType cannot exceed 100 characters';
+    if (!/^[a-zA-Z0-9_]+$/.test(parsed_type)) throw 'Error: restaurantType can only contain letters, numbers, and underscores';
+    return parsed_type;
 }
 
 export const checkFirstName = (firstName) => {
@@ -204,13 +213,10 @@ export const checkWebsite = (website) => {
 };
 
 export const checkPhone = (phone) => {
-    const parsedPhone = checkString(phone, 'phone');
-    const digits = parsedPhone.replace(/\D/g, '');
-    if (digits.length !== 10) {
-        throw 'Error: Phone number must contain exactly 10 digits';
-    }
-    const formattedPhone = `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
-    return formattedPhone;
+    const parsed_phone = checkString(phone, 'phone');
+    if (parsed_phone.length != 10) throw 'Error: Phone number must be exactly 10 digits long';
+    if (!/^\d+$/.test(parsed_phone)) throw 'Error: Phone number must be entirely numeric';
+    return parsed_phone;
 };
 
 export const gradeToStatus = (grade) => {
