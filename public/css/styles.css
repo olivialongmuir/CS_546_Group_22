@@ -47,7 +47,7 @@
   --risk-high-background: rgba(239, 68, 68, 0.15);
   --risk-high-border: rgba(239, 68, 68, 0.3);
   /* blues */
-  --restaurant-icon: rgb(71, 130, 239);
+  --restaurant-icon: rgb(255, 255, 255);
   /* misc */
   --radius: 0.75rem;
 }
