@@ -9,7 +9,7 @@
 
     <h1>Admin: Restaurants</h1>
 
-    <p>
+    <p class="admin-create">
         <a class="pillButton" href="/admin/restaurants/new">+ New Restaurant</a>
     </p>
 
@@ -21,7 +21,6 @@
                     <th>Type</th>
                     <th>Status</th>
                     <th>Phone</th>
-                    <th>Permit #</th>
                     <th>Lat / Lng</th>
                     <th>Actions</th>
                 </tr>
@@ -33,7 +32,6 @@
                         <td>{{this.type}}</td>
                         <td>{{this.status}}</td>
                         <td>{{this.phone}}</td>
-                        <td>{{this.permit_number}}</td>
                         <td>{{this.latitude}}, {{this.longitude}}</td>
                         <td>
                             <a class="pillButton" href="/admin/restaurants/{{this._id}}/edit">Edit</a>

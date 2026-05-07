@@ -7,75 +7,129 @@
         <a class="pillButton" href="/admin/rodent-reports">Manage Rodent Reports</a>
     </nav>
 
-    {{#if (eq mode "create")}}
-        <h1>New Rodent Report</h1>
-    {{else}}
-        <h1>Edit Rodent Report</h1>
-    {{/if}}
+    <div class="admin-edit">
+        {{#if (eq mode "create")}}
+            <h1>New Rodent Report</h1>
+        {{else}}
+            <h1>Edit Rodent Report</h1>
+        {{/if}}
 
-    {{#if errorMessage}}
-        <p class="error">{{errorMessage}}</p>
-    {{/if}}
+        {{#if errorMessage}}
+            <p class="error">{{errorMessage}}</p>
+        {{/if}}
 
-    <form method="POST" action="{{formAction}}" class="admin-form">
-        <label>
-            Zipcode (5 digits)
-            <input type="text" name="zipcode" value="{{report.zipcode}}" required>
-        </label>
+        <form class="admin-form" method="POST" action="{{formAction}}">
+            <div>
+                <label for="zipcode">Zipcode</label>
+                <input
+                    type="text"
+                    id="zipcode"
+                    name="zipcode"
+                    value="{{ report.zipcode }}"
+                    required
+                />
+                <span class="tooltip">ⓘ
+                    <span class="tooltip-text">Must be exactly 5 digits. Each digit is a number 0 to 9.</span>
+                </span>
+            </div>
 
-        <label>
-            Latitude
-            <input type="number" step="any" name="latitude" value="{{report.latitude}}" required>
-        </label>
+            <div>
+                <label for="latitude">Latitude</label>
+                <input
+                    type="number"
+                    step="any"
+                    id="latitude"
+                    name="latitude"
+                    value="{{ report.latitude }}"
+                    required
+                />
+                <span class="tooltip">ⓘ
+                    <span class="tooltip-text">Must be between 40.4774 and 40.9176.</span>
+                </span>
+            </div>
 
-        <label>
-            Longitude
-            <input type="number" step="any" name="longitude" value="{{report.longitude}}" required>
-        </label>
+            <div>
+                <label for="longitude">Longitude</label>
+                <input
+                    type="number"
+                    step="any"
+                    id="longitude"
+                    name="longitude"
+                    value="{{ report.longitude }}"
+                    required
+                />
+                <span class="tooltip">ⓘ
+                    <span class="tooltip-text">Must be between -74.2591 and -73.7004.</span>
+                </span>
+            </div>
 
-        <label>
-            Status
-            <select name="status" required>
-                {{#each statuses}}
-                    <option value="{{this}}" {{#if (eq this ../report.status)}}selected{{/if}}>{{this}}</option>
-                {{/each}}
-            </select>
-        </label>
+            <div>
+                <label for="status">Status</label>
+                <select id="status" name="status" required>
+                    {{#each statuses}}
+                        <option value="{{this}}" {{#if (eq this ../report.status)}}selected{{/if}}>{{this}}</option>
+                    {{/each}}
+                </select>
+            </div>
 
-        <label>
-            Description
-            <textarea name="description" rows="4" required>{{report.description}}</textarea>
-        </label>
+            <div>
+                <label for="description">Description</label>
+                <textarea
+                    rows="4"
+                    id="description"
+                    name="description"
+                    required
+                >{{ report.description }}</textarea>
+                <span class="tooltip">ⓘ
+                    <span class="tooltip-text">Must be between 1 and 500 characters long.</span>
+                </span>
+            </div>
 
-        <label>
-            Inspection Date (MM/DD/YYYY HH:MM:SS AM|PM, optional)
-            <input type="text" name="inspectionDate" value="{{report.inspectionDate}}" placeholder="05/03/2026 02:30:00 PM">
-        </label>
+            <div>
+                <label for="inspectionDate">Inspection Date</label>
+                <input
+                    type="number"
+                    step="any"
+                    id="longitude"
+                    name="longitude"
+                    value="{{ report.longitude }}"
+                    required
+                />
+                <span class="tooltip">ⓘ
+                    <span class="tooltip-text">MM/DD/YYYY HH:MM:SS AM|PM.</span>
+                </span>
+            </div>
 
-        <label>
-            Approved Date (MM/DD/YYYY HH:MM:SS AM|PM, optional)
-            <input type="text" name="approvedDate" value="{{report.approvedDate}}" placeholder="05/03/2026 02:30:00 PM">
-        </label>
+            <label>
+                Inspection Date (MM/DD/YYYY HH:MM:SS AM|PM, optional)
+                <input type="text" name="inspectionDate" value="{{report.inspectionDate}}" placeholder="05/03/2026 02:30:00 PM">
+            </label>
 
-        <label>
-            Restaurant ID (optional)
-            <input type="text" name="restaurantId" value="{{report.restaurantId}}">
-        </label>
+            <label>
+                Approved Date (MM/DD/YYYY HH:MM:SS AM|PM, optional)
+                <input type="text" name="approvedDate" value="{{report.approvedDate}}" placeholder="05/03/2026 02:30:00 PM">
+            </label>
 
-        <label>
-            Verified By (optional)
-            <select name="verifiedBy">
-                {{#each verifierTypes}}
-                    <option value="{{this}}" {{#if (eq this ../report.verifiedBy)}}selected{{/if}}>{{#if this}}{{this}}{{else}}— none —{{/if}}</option>
-                {{/each}}
-            </select>
-        </label>
+            <label>
+                Restaurant ID (optional)
+                <input type="text" name="restaurantId" value="{{report.restaurantId}}">
+            </label>
 
-        <div class="formButtonRow">
-            <a class="pillButton" href="/admin/rodent-reports">Cancel</a>
-            <button type="submit" class="pillButton">
-                {{#if (eq mode "create")}}Create{{else}}Save{{/if}}
-            </button>
-        </div>
-    </form>
+            <label>
+                Verified By (optional)
+                <select name="verifiedBy">
+                    {{#each verifierTypes}}
+                        <option value="{{this}}" {{#if (eq this ../report.verifiedBy)}}selected{{/if}}>{{#if this}}{{this}}{{else}}— none —{{/if}}</option>
+                    {{/each}}
+                </select>
+            </label>
+
+            <div class="formButtonRow">
+                <a class="pillButton" href="/admin/rodent-reports">Cancel</a>
+                <button type="submit" class="pillButton">
+                    {{#if (eq mode "create")}}Create{{else}}Save{{/if}}
+                </button>
+            </div>
+        </form>
+    </div>
 </section>

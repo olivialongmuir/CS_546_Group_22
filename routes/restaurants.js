@@ -14,16 +14,15 @@ import {
 } from '../data/restaurants.js';
 
 import { 
-    checkString, 
-    checkNumber,
     checkWebsite, 
     checkPhone, 
     checkRestaurantStatus, 
     checkLatitude,
     checkLongitude,
     checkRestaurantName,
-    checkId
+    checkRestaurantType
 } from '../public/js/helpers.js';
+import { validateId } from '../data/utility.js';
 
 // Error handling helper function
 const handleError = (res, error) => {
@@ -66,19 +65,19 @@ router.route('/').post(async (req, res) => {
       longitude,
       website,
       phone,
-      permit_number,
       status
     } = req.body;
 
     // Input validation
-    const validatedName = checkString(name, "name");
-    const validatedType = checkString(type, "type");
-    const validatedLatitude = checkNumber(latitude, "latitude");
-    const validatedLongitude = checkNumber(longitude, "longitude");
-    const validatedWebsite = checkWebsite(website, "website");
-    const validatedPhone = checkPhone(phone, "phone");
-    const validatedPermitNumber = checkString(permit_number, "permit_number");
-    const validatedStatus = status;
+    const validatedName = checkRestaurantName(name);
+    const validatedType = checkRestaurantType(type);
+    const validatedLatitude = checkLatitude(latitude);
+    const validatedLongitude = checkLongitude(longitude);
+    const validatedStatus = checkRestaurantStatus(status);
+
+    // Optional
+    const validatedWebsite = website != "" ? checkWebsite(website) : null;
+    const validatedPhone = phone != "" ? checkPhone(phone) : null;
 
     const newRestaurant = await createRestaurant(
       validatedName,
@@ -87,7 +86,6 @@ router.route('/').post(async (req, res) => {
       validatedLongitude,
       validatedWebsite,
       validatedPhone,
-      validatedPermitNumber,
       validatedStatus
     );
 
@@ -102,7 +100,7 @@ router.route('/').post(async (req, res) => {
 router.route('/:id').get(async (req, res) => {
   try {
     const id = req.params.id.trim();
-    const validatedId = checkId(id);
+    const validatedId = validateId(id);
 
     const restaurant = await getRestaurantById(validatedId);
 
@@ -121,7 +119,7 @@ router.route('/:id').get(async (req, res) => {
 router.route('/:id').patch(async (req, res) => {
   try {
     const id = req.params.id.trim();
-    const validatedId = checkId(id);
+    const validatedId = validateId(id);
 
     let {
       name,
@@ -130,19 +128,19 @@ router.route('/:id').patch(async (req, res) => {
       longitude,
       website,
       phone,
-      permit_number,
       status
     } = req.body;
 
     // Input validation
-    if (name !== undefined) name = checkString(name, "name");
-    if (type !== undefined) type = checkString(type, "type");
-    if (latitude !== undefined) latitude = checkNumber(latitude, "latitude");
-    if (longitude !== undefined) longitude = checkNumber(longitude, "longitude");
-    if (website !== undefined) website = checkWebsite(website, "website");
-    if (phone !== undefined) phone = checkPhone(phone, "phone");
-    if (permit_number !== undefined) permit_number = checkString(permit_number, "permit_number");
-    if (status !== undefined) status = checkRestaurantStatus(status, "status");
+    if (name !== undefined) name = checkRestaurantName(name);
+    if (type !== undefined) type = checkRestaurantType(type);
+    if (latitude !== undefined) latitude = checkLatitude(latitude);
+    if (longitude !== undefined) longitude = checkLongitude(longitude);
+    if (status !== undefined) status = checkRestaurantStatus(status);
+
+    // Optional
+    if (website !== undefined) website = website != "" ? checkWebsite(website) : null;
+    if (phone !== undefined) phone = phone != "" ? checkPhone(phone) : null;
 
     const updated = await updateRestaurant(
       validatedId,
@@ -152,7 +150,6 @@ router.route('/:id').patch(async (req, res) => {
       longitude,
       website,
       phone,
-      permit_number,
       status
     );
 
@@ -168,7 +165,7 @@ router.route('/:id').patch(async (req, res) => {
 // deletes a restaurant by id
 router.route('/:id').delete(async (req, res) => {
   try {
-    const validatedId = checkId(req.params.id.trim());
+    const validatedId = validateId(req.params.id.trim());
     await deleteRestaurant(validatedId);
 
     res.status(204).send();
@@ -181,7 +178,7 @@ router.route('/:id').delete(async (req, res) => {
 // Gets all restaurant comments by id
 router.get('/:id/comments', async (req, res) => {
   try {
-    const validatedId = checkId(req.params.id.trim());
+    const validatedId = validateId(req.params.id.trim());
     const comments = await getRestaurantComments(validatedId);
 
     res.status(200).json(comments);

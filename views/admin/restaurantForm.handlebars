@@ -7,66 +7,117 @@
         <a class="pillButton" href="/admin/rodent-reports">Manage Rodent Reports</a>
     </nav>
 
-    {{#if (eq mode "create")}}
-        <h1>New Restaurant</h1>
-    {{else}}
-        <h1>Edit Restaurant</h1>
-    {{/if}}
+    <div class="admin-edit">
+        {{#if (eq mode "create")}}
+            <h1>New Restaurant</h1>
+        {{else}}
+            <h1>Edit Restaurant</h1>
+        {{/if}}
 
-    {{#if errorMessage}}
-        <p class="error">{{errorMessage}}</p>
-    {{/if}}
+        {{#if errorMessage}}
+            <p class="error">{{errorMessage}}</p>
+        {{/if}}
 
-    <form method="POST" action="{{formAction}}" class="admin-form">
-        <label>
-            Name
-            <input type="text" name="name" value="{{restaurant.name}}" required>
-        </label>
+        <form class="admin-form" method="POST" action="{{formAction}}">
+            <div>
+                <label for="name">Name</label>
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value="{{ restaurant.name }}"
+                    required
+                />
+                <span class="tooltip">ⓘ
+                    <span class="tooltip-text">Can only contain letters, numbers, spaces, and special characters _'&\-. Length must be between 1 and 100 characters.</span>
+                </span>
+            </div>
 
-        <label>
-            Type
-            <input type="text" name="type" value="{{restaurant.type}}" required>
-        </label>
+            <div>
+                <label for="type">Type</label>
+                <input
+                    type="text"
+                    id="type"
+                    name="type"
+                    value="{{ restaurant.type }}"
+                    required
+                />
+                <span class="tooltip">ⓘ
+                    <span class="tooltip-text">Can only contain letters, numbers, and underscores. Length must be between 1 and 100 characters.</span>
+                </span>
+            </div>
 
-        <label>
-            Latitude
-            <input type="number" step="any" name="latitude" value="{{restaurant.latitude}}" required>
-        </label>
+            <div>
+                <label for="latitude">Latitude</label>
+                <input
+                    type="number"
+                    step="any"
+                    id="latitude"
+                    name="latitude"
+                    value="{{ restaurant.latitude }}"
+                    required
+                />
+                <span class="tooltip">ⓘ
+                    <span class="tooltip-text">Must be between 40.4774 and 40.9176.</span>
+                </span>
+            </div>
 
-        <label>
-            Longitude
-            <input type="number" step="any" name="longitude" value="{{restaurant.longitude}}" required>
-        </label>
+            <div>
+                <label for="longitude">Longitude</label>
+                <input
+                    type="number"
+                    step="any"
+                    id="longitude"
+                    name="longitude"
+                    value="{{ restaurant.longitude }}"
+                    required
+                />
+                <span class="tooltip">ⓘ
+                    <span class="tooltip-text">Must be between -74.2591 and -73.7004.</span>
+                </span>
+            </div>
 
-        <label>
-            Website (https://...)
-            <input type="url" name="website" value="{{restaurant.website}}" required>
-        </label>
+            <div>
+                <label for="website">Website</label>
+                <input
+                    type="url"
+                    id="website"
+                    name="website"
+                    value="{{ restaurant.website }}"
+                />
+                <span class="tooltip">ⓘ
+                    <span class="tooltip-text">Optional: Must be a standard URL. Prefixed with https://</span>
+                </span>
+            </div>
 
-        <label>
-            Phone (XXX-XXX-XXXX)
-            <input type="text" name="phone" value="{{restaurant.phone}}" required>
-        </label>
+            <div>
+                <label for="phone">Phone</label>
+                <input
+                    type="text"
+                    id="phone"
+                    name="phone"
+                    value="{{ restaurant.phone }}"
+                />
+                <span class="tooltip">ⓘ
+                    <span class="tooltip-text">Optional: Must be exactly 10 numbers long. Each number can be 0 to 9.</span>
+                </span>
+            </div>
 
-        <label>
-            Permit Number
-            <input type="text" name="permit_number" value="{{restaurant.permit_number}}" required>
-        </label>
+            <div>
+                <label for="status">Status</label>
+                <select id="status" name="status" required>
+                    {{#each statuses}}
+                        <option value="{{this}}" {{#if (eq this ../restaurant.status)}}selected{{/if}}>{{this}}</option>
+                    {{/each}}
+                </select>
+            </div>
 
-        <label>
-            Status
-            <select name="status" required>
-                {{#each statuses}}
-                    <option value="{{this}}" {{#if (eq this ../restaurant.status)}}selected{{/if}}>{{this}}</option>
-                {{/each}}
-            </select>
-        </label>
-
-        <div class="formButtonRow">
-            <a class="pillButton" href="/admin/restaurants">Cancel</a>
-            <button type="submit" class="pillButton">
-                {{#if (eq mode "create")}}Create{{else}}Save{{/if}}
-            </button>
-        </div>
-    </form>
+            <div class="formButtonRow">
+                <a class="pillButton" href="/admin/restaurants">Cancel</a>
+                <button type="submit" class="pillButton">
+                    {{#if (eq mode "create")}}Create{{else}}Save{{/if}}
+                </button>
+            </div>
+        </form>
+    </div>
 </section>

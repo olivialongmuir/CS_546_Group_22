@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { getPendingUsers, approveUser } from '../data/users.js';
+
 import {
   getAllRestaurants,
   getRestaurantById,
@@ -7,6 +8,7 @@ import {
   updateRestaurant,
   deleteRestaurant
 } from '../data/restaurants.js';
+
 import {
   getAllReports,
   getReportById,
@@ -14,6 +16,16 @@ import {
   updateReport,
   deleteReport
 } from '../data/rodentReports.js';
+
+import { 
+    checkWebsite, 
+    checkPhone, 
+    checkRestaurantStatus, 
+    checkLatitude,
+    checkLongitude,
+    checkRestaurantName,
+    checkRestaurantType
+} from '../public/js/helpers.js';
 
 const router = Router();
 
@@ -76,16 +88,37 @@ router.route('/restaurants/new').get((req, res) => {
 
 router.route('/restaurants').post(async (req, res) => {
   const body = req.body || {};
+
   try {
-    await createRestaurant(
-      body.name,
-      body.type,
-      body.latitude,
-      body.longitude,
-      body.website,
-      body.phone,
-      body.permit_number,
-      body.status
+    const {
+      name,
+      type,
+      latitude,
+      longitude,
+      website,
+      phone,
+      status
+    } = body;
+
+    // Input validation
+    const validatedName = checkRestaurantName(name);
+    const validatedType = checkRestaurantType(type);
+    const validatedLatitude = checkLatitude(latitude);
+    const validatedLongitude = checkLongitude(longitude);
+    const validatedStatus = checkRestaurantStatus(status);
+
+    // Optional
+    const validatedWebsite = website != "" ? checkWebsite(website) : null;
+    const validatedPhone = phone != "" ? checkPhone(phone) : null;
+
+    const newRestaurant = await createRestaurant(
+      validatedName,
+      validatedType,
+      validatedLatitude,
+      validatedLongitude,
+      validatedWebsite,
+      validatedPhone,
+      validatedStatus
     );
     return res.redirect('/admin/restaurants');
   } catch (error) {
@@ -118,17 +151,41 @@ router.route('/restaurants/:id/edit').get(async (req, res) => {
 
 router.route('/restaurants/:id/edit').post(async (req, res) => {
   const body = req.body || {};
+
   try {
-    await updateRestaurant(
-      req.params.id,
-      body.name,
-      body.type,
-      body.latitude,
-      body.longitude,
-      body.website,
-      body.phone,
-      body.permit_number,
-      body.status
+    const id = req.params.id.trim();
+    const validatedId = validateId(id);
+
+    let {
+      name,
+      type,
+      latitude,
+      longitude,
+      website,
+      phone,
+      status
+    } = body;
+
+    // Input validation
+    if (name !== undefined) name = checkRestaurantName(name);
+    if (type !== undefined) type = checkRestaurantType(type);
+    if (latitude !== undefined) latitude = checkLatitude(latitude);
+    if (longitude !== undefined) longitude = checkLongitude(longitude);
+    if (status !== undefined) status = checkRestaurantStatus(status);
+
+    // Optional
+    if (website !== undefined) website = website != "" ? checkWebsite(website) : null;
+    if (phone !== undefined) phone = phone != "" ? checkPhone(phone) : null;
+
+    const updated = await updateRestaurant(
+      validatedId,
+      name,
+      type,
+      latitude,
+      longitude,
+      website,
+      phone,
+      status
     );
     return res.redirect('/admin/restaurants');
   } catch (error) {
