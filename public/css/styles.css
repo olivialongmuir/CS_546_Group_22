@@ -47,7 +47,7 @@
   --risk-high-background: rgba(239, 68, 68, 0.15);
   --risk-high-border: rgba(239, 68, 68, 0.3);
   /* blues */
-  --restaurant-icon: rgb(71, 130, 239);
+  --restaurant-icon: rgb(255, 255, 255);
   /* misc */
   --radius: 0.75rem;
 }
@@ -496,6 +496,14 @@ body.light-map #themeIcon svg {
 
 .popup-link:hover {
   color: var(--primary-hover) !important;
+}
+
+
+/* used for rodent report pop up of rat icon */
+.light-popup .leaflet-popup-content-wrapper {
+  background-color: white;
+  color: var(--primary);
+  border-radius: 10px;
 }
 
 /* End Heatmap Styles */
@@ -1008,4 +1016,16 @@ body.light-map #themeIcon svg {
 .reactionsBlock{
   display: flex;
   justify-content: right;
+}
+
+
+
+/* Error box used in pop up forms */
+.errorBox {
+  color: #b00020;
+  background: #ffecec;
+  border: 1px solid #ffb3b3;
+  padding: 0.1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
 }

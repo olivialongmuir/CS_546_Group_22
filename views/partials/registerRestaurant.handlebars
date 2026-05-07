@@ -10,6 +10,18 @@
             <div class="reportCardHeader">
             <h1><i data-lucide="utensils-crossed"class="restaurant-icon"></i>Register restaurant<i data-lucide="utensils-crossed"class="restaurant-icon"></i></h1>
 
+                {{!-- mini heatmap section --}}
+                <div>
+                    <section id="miniHeatmapPopUp">
+                    {{!-- map container --}}
+                    <div id="registerHeatmap" class="formHeatmap"></div>
+
+                    <script>
+                        {{!-- TODO - pass in rodent data --}}
+                        restaurantMapData = {{{jsonForScript restaurantMapData}}};
+                    </script>
+                    </section>
+                </div>
 
                 {{!-- Coordinate displays --}}
                 <div class="reportCardInfo">
@@ -24,74 +36,88 @@
             </div>
 
             {{!-- Form --}}
-            <form id="restaurantRegisterForm" method="POST" action="/api/restaurants">
-                           
-                {{!-- name --}}
-                <div>
-                    <label for="name">Name</label>
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value="{{ name }}"
-                        required
-                    />
-                </div>
+            <div class ="restaurantRegisterForm">
+                <form id="restaurantRegisterForm" method="POST" action="/api/restaurants">        
+                    {{!-- name --}}
+                    <div>
+                        <label for="name">Name</label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            value="{{ name }}"
+                            required
+                        />
+                    </div>
 
-                {{!-- type --}}
-                <div>
-                    <label for="type">Type</label>
-                    <input
-                        type="text"
-                        id="type"
-                        name="type"
-                        value="{{ type }}"
-                        required
-                    />
-                </div>
+                    {{!-- type --}}
+                    <div>
+                        <label for="type">Type</label>
+                        <input
+                            type="text"
+                            id="type"
+                            name="type"
+                            value="{{ type }}"
+                            required
+                        />
+                    </div>
 
-                {{!-- website --}}
-                <div>
-                    <label for="website">Website</label>
-                    <input
-                        type="text"
-                        id="website"
-                        name="website"
-                        value="{{ website }}"
-                        optional
-                    />
-                </div>
+                    {{!-- website --}}
+                    <div>
+                        <label for="website">Website</label>
+                        <input
+                            type="text"
+                            id="website"
+                            name="website"
+                            value="{{ website }}"
+                            required
+                        />
+                    </div>
 
-                {{!-- phone --}}
-                <div>
-                    <label for="phone">Phone</label>
-                    <input
-                        type="text"
-                        id="phone"
-                        name="phone"
-                        value="{{ phone }}"
-                        optional
-                    />
-                </div>
+                    {{!-- phone --}}
+                    <div>
+                        <label for="phone">Phone</label>
+                        <input
+                            type="text"
+                            id="phone"
+                            name="phone"
+                            value="{{ phone }}"
+                            required
+                        />
+                    </div>
 
-                {{!-- Hidden items that are derrived from map click and passed to route --}}
-                <div>
+                    {{!-- phone --}}
+                    <div>
+                        <label for="permit_number">Permit Number</label>
+                        <input
+                            type="text"
+                            id="permit_number"
+                            name="permit_number"
+                            value="{{ permit_number }}"
+                            required
+                        />
+                    </div>
 
-                    {{!-- <label for="latitude">Latitude:</label> --}}
-                    <input type="text" id="restaurant-latitude" name="latitude" value="{{ lat }}" hidden/>
-                    {{!-- <label for="longitude">Longitude:</label> --}}
-                    <input type="text" id="restaurant-longitude" name="longitude" value="{{ lng }}" hidden/>
+                    {{!-- Hidden items that are derrived from map click and passed to route --}}
+                    <div>
 
-                    {{!-- Status will be a defaulted value --}}
-                    <input type="text" id="status" name="status" value="pending" hidden/>
-                    
-                </div>
+                        {{!-- <label for="latitude">Latitude:</label> --}}
+                        <input type="text" id="restaurant-latitude" name="latitude" value="{{ lat }}" hidden/>
+                        {{!-- <label for="longitude">Longitude:</label> --}}
+                        <input type="text" id="restaurant-longitude" name="longitude" value="{{ lng }}" hidden/>
 
-                <div class="formButtonRow">
-                    <button id="restaurantCancelSubmit" type="button" class="pillButton" style="background-color: grey">Cancel</button>
-                    <button type="Submit" class="pillButton" style="background-color: rgb(71, 130, 239);">Submit</button>
-                </div>
-            </form>
+                        {{!-- Status will be a defaulted value --}}
+                        <input type="text" id="status" name="status" value="pending" hidden/>
+                        
+                    </div>
+
+                    <div class="formButtonRow">
+                        <button type="Submit" class="pillButton" style="background-color: rgb(71, 130, 239);">Submit</button>
+                    </div>
+                </form>
+            </div>
+
+
         </section>
     </div>
 </div>
@@ -103,6 +129,4 @@
 <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
 
 
-
-{{!-- Expected restaurant form data --}}
 

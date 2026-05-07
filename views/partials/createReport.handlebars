@@ -3,6 +3,8 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
 
+
+
 {{!-- Page serves as a small pop up for creating a new rodent report --}}
 <div id="reportPopUp" class="cardPopup">
     <div class="rodentReportCard">
@@ -19,7 +21,6 @@
                     <script>
                         {{!-- TODO - pass in rodent data --}}
                         restaurantMapData = {{{jsonForScript restaurantMapData}}};
-
                     </script>
                     </section>
                 </div>
@@ -53,7 +54,7 @@
                 {{!-- Hidden items that are derrived from map click and passed to route --}}
                 <div>
                     {{!-- <label for="zipcode">Zip Code:</label> --}}
-                    <input type="text" id="zipcode" name="zipcode" value="{{ zip }}" hidden/>
+                    {{!-- <input type="text" id="zipcode" name="zipcode" value="{{ zip }}" hidden/> --}}
                     {{!-- <label for="latitude">Latitude:</label> --}}
                     <input type="text" id="latitude" name="latitude" value="{{ lat }}" hidden/>
                     {{!-- <label for="longitude">Longitude:</label> --}}
@@ -64,7 +65,7 @@
                     
                 </div>
 
-                <p class="register-response" id="reportError" style="display:none;"></p>
+                <div id="formErrors" class="errorBox" hidden></div>
 
                 <div class="formButtonRow">
                     <button id="cancelSubmit" type="button" class="pillButton">Cancel</button>
@@ -76,10 +77,10 @@
 </div>
 
 
+{{!-- client side js --}}
+ <script type="module" src="/public/js/reportValidation.js"></script>
 
 
-
-<script src="/js/rodentReports.js"></script>
 {{!-- leaflet scripts --}}
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 {{!-- leaflet heat plugin --}}

@@ -119,13 +119,13 @@
     const cancelBtn = document.getElementById('cancelCommentBtn');
     const textarea = document.getElementById('commentTextarea');
 
-    showBtn.addEventListener('click', () => {
+    showBtn?.addEventListener('click', () => {
         formContainer.style.display = 'block';
         showBtn.style.display = 'none';
         textarea.focus();
     });
 
-    cancelBtn.addEventListener('click', () => {
+    cancelBtn?.addEventListener('click', () => {
         formContainer.style.display = 'none';
         showBtn.style.display = 'inline-block';
         textarea.value = '';
