@@ -13,7 +13,7 @@
         "gradeDate": "02/03/2025",
         "latitude": 40.7073915868,
         "longitude": -74.0111055233,
-        "status": null,
+        "status": "sanitary",
         "comments": []
     },
     {
@@ -30,7 +30,7 @@
         "gradeDate": null,
         "latitude": 40.8312113868,
         "longitude": -73.9102056747,
-        "status": null,
+        "status": "sanitary",
         "comments": []
     },
     {
@@ -47,7 +47,7 @@
         "gradeDate": null,
         "latitude": 40.587895113,
         "longitude": -73.9558881247,
-        "status": null,
+        "status": "pending",
         "comments": []
     },
     {
@@ -64,7 +64,7 @@
         "gradeDate": "10/17/2024",
         "latitude": 40.6891099538,
         "longitude": -73.9302769348,
-        "status": null,
+        "status": "sanitary",
         "comments": []
     },
     {
@@ -81,7 +81,7 @@
         "gradeDate": "12/18/2025",
         "latitude": 40.6898065177,
         "longitude": -73.938825808,
-        "status": null,
+        "status": "inspecting",
         "comments": []
     },
     {
@@ -98,7 +98,7 @@
         "gradeDate": "12/29/2025",
         "latitude": 40.7268275222,
         "longitude": -73.9916260259,
-        "status": null,
+        "status": "sanitary",
         "comments": []
     },
     {
@@ -115,7 +115,7 @@
         "gradeDate": "01/29/2023",
         "latitude": 40.7621833714,
         "longitude": -73.9761317442,
-        "status": null,
+        "status": "pending",
         "comments": []
     },
     {
@@ -132,7 +132,7 @@
         "gradeDate": "05/10/2023",
         "latitude": 40.7012859535,
         "longitude": -73.8887710147,
-        "status": null,
+        "status": "unsanitary",
         "comments": []
     },
     {
@@ -149,7 +149,7 @@
         "gradeDate": "04/04/2023",
         "latitude": 40.8471037753,
         "longitude": -73.8321694347,
-        "status": null,
+        "status": "pending",
         "comments": []
     },
     {
@@ -166,7 +166,7 @@
         "gradeDate": "01/21/2023",
         "latitude": 40.7245164148,
         "longitude": -73.9914351046,
-        "status": null,
+        "status": "sanitary",
         "comments": []
     },
     {
@@ -183,7 +183,7 @@
         "gradeDate": "02/02/2026",
         "latitude": 40.8107768094,
         "longitude": -73.9581710374,
-        "status": null,
+        "status": "inspecting",
         "comments": []
     },
     {
@@ -200,7 +200,7 @@
         "gradeDate": null,
         "latitude": 40.6843858517,
         "longitude": -73.8320036508,
-        "status": null,
+        "status": "sanitary",
         "comments": []
     },
     {
@@ -217,7 +217,7 @@
         "gradeDate": null,
         "latitude": 40.7778865807,
         "longitude": -73.9784549913,
-        "status": null,
+        "status": "sanitary",
         "comments": []
     },
     {
@@ -234,7 +234,7 @@
         "gradeDate": "03/29/2023",
         "latitude": 40.7489926374,
         "longitude": -73.8914917348,
-        "status": null,
+        "status": "sanitary",
         "comments": []
     },
     {
@@ -251,7 +251,7 @@
         "gradeDate": "04/28/2025",
         "latitude": 40.6936013576,
         "longitude": -73.9318625156,
-        "status": null,
+        "status": "sanitary",
         "comments": []
     },
     {
@@ -268,7 +268,7 @@
         "gradeDate": "09/10/2024",
         "latitude": 40.6184989739,
         "longitude": -73.9323429035,
-        "status": null,
+        "status": "unsanitary",
         "comments": []
     },
     {
@@ -285,7 +285,7 @@
         "gradeDate": "09/24/2025",
         "latitude": 40.6688433209,
         "longitude": -73.8115714299,
-        "status": null,
+        "status": "pending",
         "comments": []
     },
     {
@@ -302,7 +302,7 @@
         "gradeDate": null,
         "latitude": 40.7303877889,
         "longitude": -74.0001659731,
-        "status": null,
+        "status": "sanitary",
         "comments": []
     },
     {
@@ -319,7 +319,7 @@
         "gradeDate": "04/30/2024",
         "latitude": 40.7262980045,
         "longitude": -74.0043763677,
-        "status": null,
+        "status": "sanitary",
         "comments": []
     },
     {
@@ -336,7 +336,7 @@
         "gradeDate": null,
         "latitude": 40.7685620885,
         "longitude": -73.9249478324,
-        "status": null,
+        "status": "sanitary",
         "comments": []
     }
 ]
