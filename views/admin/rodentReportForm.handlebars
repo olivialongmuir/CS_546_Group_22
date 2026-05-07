@@ -64,8 +64,12 @@
             </div>
 
             <div>
-                <label for="status">Status</label>
-                <select id="status" name="status" required>
+                <label for="reportStatus">Status</label>
+                <select 
+                    id="reportStatus" 
+                    name="reportStatus" 
+                    required
+                >
                     {{#each statuses}}
                         <option value="{{this}}" {{#if (eq this ../report.status)}}selected{{/if}}>{{this}}</option>
                     {{/each}}
@@ -88,41 +92,62 @@
             <div>
                 <label for="inspectionDate">Inspection Date</label>
                 <input
-                    type="number"
-                    step="any"
-                    id="longitude"
-                    name="longitude"
-                    value="{{ report.longitude }}"
-                    required
+                    type="text"
+                    id="inspectionDate"
+                    name="inspectionDate"
+                    value="{{ report.inspectionDate }}"
+                    placeholder="05/03/2026 02:30:00 PM"
+                    optional
                 />
                 <span class="tooltip">ⓘ
-                    <span class="tooltip-text">MM/DD/YYYY HH:MM:SS AM|PM.</span>
+                    <span class="tooltip-text">Optional: Must be in format MM/DD/YYYY HH:MM:SS AM|PM.</span>
                 </span>
             </div>
 
-            <label>
-                Inspection Date (MM/DD/YYYY HH:MM:SS AM|PM, optional)
-                <input type="text" name="inspectionDate" value="{{report.inspectionDate}}" placeholder="05/03/2026 02:30:00 PM">
-            </label>
+            <div>
+                <label for="approvedDate">Approved Date</label>
+                <input
+                    type="text"
+                    id="approvedDate"
+                    name="approvedDate"
+                    value="{{ report.approvedDate }}"
+                    placeholder="05/03/2026 02:30:00 PM"
+                    optional
+                />
+                <span class="tooltip">ⓘ
+                    <span class="tooltip-text">Optional: Must be in format MM/DD/YYYY HH:MM:SS AM|PM.</span>
+                </span>
+            </div>
 
-            <label>
-                Approved Date (MM/DD/YYYY HH:MM:SS AM|PM, optional)
-                <input type="text" name="approvedDate" value="{{report.approvedDate}}" placeholder="05/03/2026 02:30:00 PM">
-            </label>
+            <div>
+                <label for="restaurantId">Restaurant ID</label>
+                <input
+                    type="text"
+                    id="restaurantId"
+                    name="restaurantId"
+                    value="{{ report.restaurantId }}"
+                    optional
+                />
+                <span class="tooltip">ⓘ
+                    <span class="tooltip-text">Optional: Must be exactly 5 digits. Each digit is a number 0 to 9.</span>
+                </span>
+            </div>
 
-            <label>
-                Restaurant ID (optional)
-                <input type="text" name="restaurantId" value="{{report.restaurantId}}">
-            </label>
-
-            <label>
-                Verified By (optional)
-                <select name="verifiedBy">
+            <div>
+                <label for="verifiedBy">Verified By</label>
+                <select
+                    id="verifiedBy"
+                    name="verifiedBy"
+                    optional
+                >
                     {{#each verifierTypes}}
                         <option value="{{this}}" {{#if (eq this ../report.verifiedBy)}}selected{{/if}}>{{#if this}}{{this}}{{else}}— none —{{/if}}</option>
                     {{/each}}
                 </select>
-            </label>
+                <span class="tooltip">ⓘ
+                    <span class="tooltip-text">Optional: Must be exactly 5 digits. Each digit is a number 0 to 9.</span>
+                </span>
+            </div>
 
             <div class="formButtonRow">
                 <a class="pillButton" href="/admin/rodent-reports">Cancel</a>

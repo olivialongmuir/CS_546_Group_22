@@ -22,6 +22,7 @@ import {
     checkRestaurantName,
     checkRestaurantType
 } from '../public/js/helpers.js';
+
 import { validateId } from '../data/utility.js';
 
 // Error handling helper function
@@ -99,8 +100,8 @@ router.route('/').post(async (req, res) => {
 // Gets restaurant data by id
 router.route('/:id').get(async (req, res) => {
   try {
-    const id = req.params.id.trim();
-    const validatedId = validateId(id);
+    const errorSource = 'GET restaurant/:id';
+    const validatedId = validateId(req.params.id, 'restaurantId', errorSource);
 
     const restaurant = await getRestaurantById(validatedId);
 
@@ -118,8 +119,8 @@ router.route('/:id').get(async (req, res) => {
 // Updates a restaurant's information by id
 router.route('/:id').patch(async (req, res) => {
   try {
-    const id = req.params.id.trim();
-    const validatedId = validateId(id);
+    const errorSource = 'PATCH /restaurant/:id';
+    const validatedId = validateId(req.params.id, 'restaurantId', errorSource);
 
     let {
       name,
@@ -165,7 +166,8 @@ router.route('/:id').patch(async (req, res) => {
 // deletes a restaurant by id
 router.route('/:id').delete(async (req, res) => {
   try {
-    const validatedId = validateId(req.params.id.trim());
+    const errorSource = 'DELETE /restaurant/:id';
+    const validatedId = validateId(req.params.id, 'restaurantId', errorSource);
     await deleteRestaurant(validatedId);
 
     res.status(204).send();
@@ -178,7 +180,9 @@ router.route('/:id').delete(async (req, res) => {
 // Gets all restaurant comments by id
 router.get('/:id/comments', async (req, res) => {
   try {
-    const validatedId = validateId(req.params.id.trim());
+    const errorSource = 'GET /restaurant/:id/comments';
+    const validatedId = validateId(req.params.id, 'restaurantId', errorSource);
+
     const comments = await getRestaurantComments(validatedId);
 
     res.status(200).json(comments);
