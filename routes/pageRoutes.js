@@ -4,7 +4,7 @@ import { Router } from 'express';
 const router = Router();
 import { getAllRestaurants, getRestaurantById, getRestaurantComments } from '../data/restaurants.js';
 import { getAllReports, getReportById, getRodentReportComments} from '../data/rodentReports.js';
-import { getUserById, getUserActivity } from '../data/users.js';
+import { getUserById, getUserActivity, getUserRodentReports } from '../data/users.js';
 import { createComment, deleteComment, getCommentById} from '../data/comments.js';
 import { updateCommentReaction, updateRestaurantReaction } from "../data/reactions.js";
 import { checkId, getLocationFromZip, countToStatus, gradeToStatus, normalizeRestaurant, calculateRodentScore } from '../public/js/helpers.js';
@@ -506,14 +506,16 @@ router.route('/profile').get(async (req, res) => {
 
 
     const activity = await getUserActivity(req.session.userId);
+    const userReports = await getUserRodentReports(req.session.userId);
+    let reportsSubmitted = 0;
+    if (userReports) reportsSubmitted = userReports.length;
 
     const user = {
       avatar: '🐭',
       name: `${dbUser.firstName} ${dbUser.lastName}`,
       email: dbUser.emailAddress,
       userType: dbUser.type.charAt(0).toUpperCase() + dbUser.type.slice(1),
-      reportsSubmitted: 0,
-      savedRestaurants: 0,
+      reportsSubmitted: reportsSubmitted,
       notifications: 0,
       joinedDate,
       activity: activity
