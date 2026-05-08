@@ -13,8 +13,8 @@ SqueakPeek is designed to improve dining safety in New York City by mapping rest
 ## How To Run SqueakPeek:
 1. Clone the repository
 ```bash
-git clone <https://github.com/olivialongmuir/CS_546_Group_22.git>
-cd <CS_546_Group_22>
+git clone https://github.com/olivialongmuir/CS_546_Group_22.git
+cd CS_546_Group_22
 ```
 2. Install the dependencies
 ```bash
