@@ -129,7 +129,7 @@
                     optional
                 />
                 <span class="tooltip">ⓘ
-                    <span class="tooltip-text">Optional: Must be exactly 5 digits. Each digit is a number 0 to 9.</span>
+                    <span class="tooltip-text">Optional: Must be a valid objectId. Internal use.</span>
                 </span>
             </div>
 
@@ -144,9 +144,6 @@
                         <option value="{{this}}" {{#if (eq this ../report.verifiedBy)}}selected{{/if}}>{{#if this}}{{this}}{{else}}— none —{{/if}}</option>
                     {{/each}}
                 </select>
-                <span class="tooltip">ⓘ
-                    <span class="tooltip-text">Optional: Must be exactly 5 digits. Each digit is a number 0 to 9.</span>
-                </span>
             </div>
 
             <div class="formButtonRow">

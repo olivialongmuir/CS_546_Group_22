@@ -8,7 +8,7 @@
     <div class="restaurantRegisterCard">
         <section>
             <div class="reportCardHeader">
-            <h1><i data-lucide="utensils-crossed"class="restaurant-icon"></i>Register restaurant<i data-lucide="utensils-crossed"class="restaurant-icon"></i></h1>
+            <h1><i data-lucide="utensils-crossed"class="restaurant-icon"></i>Register Restaurant<i data-lucide="utensils-crossed"class="restaurant-icon"></i></h1>
 
                 {{!-- mini heatmap section --}}
                 <div>
@@ -70,7 +70,7 @@
                             id="website"
                             name="website"
                             value="{{ website }}"
-                            required
+                            optional
                         />
                     </div>
 
@@ -82,19 +82,7 @@
                             id="phone"
                             name="phone"
                             value="{{ phone }}"
-                            required
-                        />
-                    </div>
-
-                    {{!-- phone --}}
-                    <div>
-                        <label for="permit_number">Permit Number</label>
-                        <input
-                            type="text"
-                            id="permit_number"
-                            name="permit_number"
-                            value="{{ permit_number }}"
-                            required
+                            optional
                         />
                     </div>
 
@@ -112,7 +100,8 @@
                     </div>
 
                     <div class="formButtonRow">
-                        <button type="Submit" class="pillButton" style="background-color: rgb(71, 130, 239);">Submit</button>
+                        <button type="button" class="pillButton" id="restaurantCancelSubmit">Cancel</button>
+                        <button type="Submit" class="pillButton">Submit</button>
                     </div>
                 </form>
             </div>
