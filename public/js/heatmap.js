@@ -446,6 +446,19 @@ const hidePopUp=(popUp)=>{
     //remove the rat pin that had been added to the minimap
     removePins(popupMap);
 
+    //clears any existing error messages
+    const errorBox = document.getElementById("formErrors");
+    if(errorBox){
+        errorBox.hidden = true;
+    }
+
+
+    //Clears any old text in the forms description box
+    const formDesc = document.getElementById("description");
+    if(formDesc){
+        formDesc.value="";
+    }
+
     //Flys the user back to  map
     flyToLocation(lastLat, lastLng, 16);
 }

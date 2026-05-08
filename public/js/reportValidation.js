@@ -1,3 +1,6 @@
+
+//Used to validate a rodent report entry from the client side for heatmaps
+
 import * as helpers from "./helpers.js";
 
 document.addEventListener("DOMContentLoaded", () => {
