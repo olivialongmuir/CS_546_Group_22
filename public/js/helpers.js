@@ -249,6 +249,42 @@ export const normalizeRestaurant = (r) => ({
   },
 });
 
+// Haversine formula to calculate distance between two lat/lon points in meters
+// ref https://community.esri.com/t5/coordinate-reference-systems-blog/distance-on-a-sphere-the-haversine-formula/ba-p/902128
+const distanceMeters = (lat1, lon1, lat2, lon2) => {
+  // Earth radius in meters
+  const R = 6371000;
+  const toRad = deg => deg * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) *
+    Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) ** 2
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+};
+
+export const calculateRodentScore = (restaurant, rodents) => {
+  // Threshold distance in meters
+  const RADIUS = 500;
+  let score = 0;
+  rodents.forEach(rodent => {
+    const distance = distanceMeters(
+      restaurant.latitude,
+      restaurant.longitude,
+      rodent.latitude,
+      rodent.longitude
+    );
+    // add 10 points for each rodent sighting within the radius
+    if (distance <= RADIUS) {
+      score+= 10;
+    }
+  });
+  return score;
+}
+
 export const COLLECTION_IDS = Object.freeze({
     RESTAURANT: 'restaurantId',
     COMMENT: 'commentId',

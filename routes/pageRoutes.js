@@ -7,7 +7,7 @@ import { getAllReports, getReportById, getRodentReportComments} from '../data/ro
 import { getUserById, getUserActivity } from '../data/users.js';
 import { createComment, deleteComment, getCommentById} from '../data/comments.js';
 import { updateCommentReaction, updateRestaurantReaction } from "../data/reactions.js";
-import { checkId, getLocationFromZip, countToStatus, gradeToStatus, normalizeRestaurant } from '../public/js/helpers.js';
+import { checkId, getLocationFromZip, countToStatus, gradeToStatus, normalizeRestaurant, calculateRodentScore } from '../public/js/helpers.js';
 import NodeGeocoder from 'node-geocoder';
 import { countStats } from '../data/utility.js';
 
@@ -281,6 +281,13 @@ router.route('/restaurants/:id').get(async (req, res) => {
                 };
             })
         );
+
+        // calculate rodent score for restaurant
+        const rodents = await getAllReports();
+        let rodentScore = 0;
+        if (rodents) rodentScore = calculateRodentScore(restaurant, rodents);
+        restaurant.rodentScore = rodentScore;
+
         res.render("restaurant", {
             title: `${restaurant.name} - SqueakPeek`,
             restaurant,
