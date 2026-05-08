@@ -9,6 +9,13 @@ SqueakPeek is designed to improve dining safety in New York City by mapping rest
 * npm (Node Package Manager)
 * A running MongoDB instance
 
+## Libraries and Frameworks
+SqueakPeek is built in Node.js with Express.js as the backend and Handlebars as the server-side rendering engine.
+Several libraries were used to build out the unique features of SqueakPeek
+   -Leaflet used to render interactive maps and minimaps for displaying rodent report and restaurant locations throughout the city.
+   -node-geocoder handles geocoding functionality, including converting geographic coordinates to map zipcodes for location management.
+   -Lucide Icons orovides a modern and lightweight icon library used throughout the user interface to improve visual clarity and user experience.
+
 ## How To Run SqueakPeek:
 1. Clone the repository
 ```bash
@@ -38,11 +45,19 @@ Registered users can contribute by creating rodent reports through a right-click
 
 On the right side of the map, a hotspot feed provides real-time insights into reporting activity, highlighting areas with higher concentrations of rodent reports across New York City’s boroughs and neighborhoods.
 
+From the Rat Map, users can click on existing restaurant and report pins to display a popup containing a preview of the related details. From the popup, users can quickly navigate directly to the associated Rodent Report or Restaurant page for that item.
+
 ## Rodent Reports:
+
+Rodent Reports contain detailed information about user-submitted rodent sightings across the city. Users can quickly locate reports of interest using the filter options available in the left-side panel. These filters are handled entirely on the client side, providing a fast and smooth user experience.
+
+Users can select a report to view additional details, leave comments, and engage with other community reports. Each report also includes a graphical minimap displaying the exact location of the sighting.
 
 ## Restaurants:
 
 ## Login/Signup:
+
+## Security/Auth:
 
 ## Directory Structure
 
