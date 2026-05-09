@@ -37,6 +37,10 @@ npm run start
 
 ## Home Page:
 
+Landing page for SqueakPeek. Contains a title and small paragraph describing the website in its purpose and features. There are 3 buttons on this page: "Explore Heatmap", "Browse Restaurants", and "Browse Reports", each routing to their respective pages.
+
+Below the descriptor paragraph are a few analytics. These are queired from the database once on loading the page and then passively updated by an AJAX call in the background. The refresh rate is currently set to once per minute. Analytics include: "Total restaurants", "Total Reports", "Total Users", and "Verified Sightings". These elements are not directly interactable and are for display only.
+
 ## Rat Map:
 
 The Rat Map is a core feature that visualizes restaurant data from the database alongside user-submitted rodent reports in the form of a heat map. Users can customize the map’s appearance based on their preferences, including toggling between light and dark modes and selecting different heat map color schemes to improve accessibility.
