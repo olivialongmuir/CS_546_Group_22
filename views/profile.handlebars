@@ -18,7 +18,7 @@
           <!-- Avatar -->
           <div class="profile-avatar-section">
             <div class="profile-avatar">{{user.avatar}}</div>
-            <h2 class="profile-name">{{user.name}}</h2>
+            <h2 class="profile-name">{{user.firstName}} {{user.lastName}}</h2>
             <p class="profile-email">{{user.email}}</p>
           </div>
 
@@ -67,16 +67,31 @@
 
             <form id="profile-form" class="profile-form" novalidate>
 
-              <!-- Full Name -->
+              <!-- First Name -->
               <div class="form-group">
-                <label for="name">Full Name</label>
+                <label for="firstName">First Name</label>
                 <div class="input-wrapper">
                   <span class="input-icon">👤</span>
                   <input
                     type="text"
-                    id="name"
-                    name="name"
-                    value="{{user.name}}"
+                    id="firstName"
+                    name="firstName"
+                    value="{{user.firstName}}"
+                    class="form-input"
+                  />
+                </div>
+              </div>
+
+              <!-- Last Name -->
+              <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <div class="input-wrapper">
+                  <span class="input-icon">👤</span>
+                  <input
+                    type="text"
+                    id="lastName"
+                    name="lastName"
+                    value="{{user.lastName}}"
                     class="form-input"
                   />
                 </div>
@@ -90,8 +105,8 @@
                   <input
                     type="email"
                     id="email"
-                    name="email"
-                    value="{{user.email}}"
+                    name="emailAddress"
+                    value="{{user.emailAddress}}"
                     class="form-input"
                   />
                 </div>

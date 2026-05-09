@@ -4,7 +4,7 @@ import { Router } from 'express';
 const router = Router();
 import { getAllRestaurants, getRestaurantById, getRestaurantComments } from '../data/restaurants.js';
 import { getAllReports, getReportById, getRodentReportComments} from '../data/rodentReports.js';
-import { getUserById, getUserActivity, getUserRodentReports } from '../data/users.js';
+import { getUserById, getUserActivity, getUserRodentReports, updateUser } from '../data/users.js';
 import { createComment, deleteComment, getCommentById} from '../data/comments.js';
 import { updateCommentReaction, updateRestaurantReaction } from "../data/reactions.js";
 import { checkId, getLocationFromZip, countToStatus, gradeToStatus, normalizeRestaurant, calculateRodentScore } from '../public/js/helpers.js';
@@ -512,8 +512,9 @@ router.route('/profile').get(async (req, res) => {
 
     const user = {
       avatar: '🐭',
-      name: `${dbUser.firstName} ${dbUser.lastName}`,
-      email: dbUser.emailAddress,
+      firstName: dbUser.firstName,
+      lastName: dbUser.lastName,
+      emailAddress: dbUser.emailAddress,
       userType: dbUser.type.charAt(0).toUpperCase() + dbUser.type.slice(1),
       reportsSubmitted: reportsSubmitted,
       notifications: 0,
@@ -525,6 +526,33 @@ router.route('/profile').get(async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(400).render("error");
+  }
+});
+
+router.post('/profile/update', async (req, res) => {
+  try {
+    const { firstName, lastName, emailAddress } = req.body;
+
+    const updatedUser = await updateUser(
+      req.session.userId,
+      undefined,
+      firstName,
+      lastName,
+      emailAddress
+    );
+
+    return res.json({
+      success: true,
+      user: updatedUser
+    });
+
+  } catch (e) {
+    console.error(e);
+
+    return res.status(400).json({
+      success: false,
+      error: e.toString()
+    });
   }
 });
 
