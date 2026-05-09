@@ -57,7 +57,19 @@ Users can select a report to view additional details, leave comments, and engage
 
 ## Login/Signup:
 
+SqueakPeek supports four account types: Consumer, Health Inspector, Restaurant Owner, and Exterminator. Each type has a different level of access throughout the platform, allowing the experience to be tailored to the user's role. Consumer accounts are activated immediately upon registration, while inspector, restaurant owner, and exterminator accounts are submitted to administrators for review and approval before they can sign in. This keeps role-restricted features in the hands of users who actually represent those groups.
+
+The registration form is submitted asynchronously through an AJAX request, allowing inline error messages to be displayed without a full page reload, while the login form uses a standard POST submission. Both forms enforce the project's three-stage validation requirement, where the same checks are run on the client (for fast feedback), in the route handler (as the first line of server-side defense), and inside the data layer before anything is written to the database. After a successful login, users are redirected to their profile page, where they can view their account information and activity. Logging out destroys the session and returns the user to the home page.
+
+On the back end, registration and login live in routes/auth.js, and the actual user records are created through the data layer in data/users.js. Passwords are run through bcrypt before they ever touch the database, so we never store anything in plaintext. When someone logs in, their password is checked against the stored hash, and accounts still waiting on admin approval get a clear message explaining they can't sign in yet.
+
 ## Security/Auth:
+
+Authentication state in SqueakPeek is managed with express-session. When a user logs in, their user ID and account type are stored on the session, and the session cookie is configured as httpOnly with sameSite: lax and an eight-hour expiration to reduce exposure to common session-related attacks. Passwords are always hashed with bcrypt at rest, and login comparisons are done against the hash rather than any plaintext value.
+
+Access control is in middleware.js, which runs before route handlers and decides what each request is allowed to do based on the session. The admin section is restricted to users whose account type is "admin", and certain actions on restaurants and rodent reports (PATCH and DELETE) are also admin-only. Posting new rodent reports requires a logged-in user, and registering a new restaurant through, like through the map, is limited to restaurant owners and administrators. Comment actions like posting, liking, disliking, and deleting all require an active session as well. Unauthenticated users hitting protected routes are redirected to the login page, while authenticated users without the correct privileges are shown a Forbidden error page.
+
+The front end is set up to reflect these same rules, so users only see options they can actually use. For example, the "Register Restaurant" button in the map's right-click popup is hidden unless the user is signed in as a restaurant owner or admin, and clicking the map while logged out shows a sign-up prompt instead of the report form. The middleware still has the final say, even if someone tried to skip the UI and hit the route directly, the server would block it.
 
 ## Directory Structure
 

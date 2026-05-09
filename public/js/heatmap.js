@@ -332,13 +332,16 @@ function flyToLocation(lat,lng, zoom) {
 
 //Creates and returns a map HTML stub to use as a popup for pins
 const makePopUp=(lat,lng)=>{
+            const registerBtn = canRegisterRestaurant
+                ? `<button class="resgisterBtn btn popup-btn" style="background-color: grey";>Register Restaurant</button>`
+                : '';
             return`
              <div class="infoRow">
                 <span class="locationStat">Lat: ${lat}</span>
                 <span class="locationStat">Lng: ${lng}</span>
             </div>
             <div class="btn-stack">
-            <button class="resgisterBtn btn popup-btn" style="background-color: grey";>Register Restaurant</button>
+            ${registerBtn}
             <button class="createReportBtn btn popup-btn">Create Rodent Report</button>
             </div>`
 }

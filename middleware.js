@@ -86,6 +86,22 @@ const constructorMethod = (app) => {
   });
 
   /**
+   * Only restaurant owners and admins can register new restaurants
+   */
+  app.use('/api/restaurants', (req, res, next) => {
+    if (req.method === 'POST') {
+      if (!req.session.userId) {
+        return res.status(401).redirect('/login');
+      }
+      if (req.session.userType !== 'restaurant' && req.session.userType !== 'admin') {
+        return res.status(403).render('error', {title: 'Forbidden'});
+      }
+    }
+
+    next();
+  });
+
+  /**
    * Only logged users can react and delete comments
    */
   app.use([

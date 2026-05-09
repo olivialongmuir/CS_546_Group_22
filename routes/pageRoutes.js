@@ -110,13 +110,18 @@ router.route('/heatmap').get(async (req, res) => {
             userAuthenticated = true;
         }
 
+        //Only restaurant owners and admins can register a restaurant from the map popup
+        const userType = req.session.userType;
+        const canRegisterRestaurant = userType === 'restaurant' || userType === 'admin';
+
 
         res.render("heatmap", {
             title: 'Heatmap',
             restaurantMapData: restaurantData,
             rodentMapData: rodentData,
             hotspotFeed: hotspotFeed,
-            userAuthenticated: userAuthenticated
+            userAuthenticated: userAuthenticated,
+            canRegisterRestaurant: canRegisterRestaurant
         });
 
     } catch (error) {
