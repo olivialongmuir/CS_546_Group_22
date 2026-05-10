@@ -1,5 +1,3 @@
-//Place general page nav here ???? - Peter
-
 import { Router } from 'express';
 const router = Router();
 import { getAllRestaurants, getRestaurantById, getRestaurantComments } from '../data/restaurants.js';
