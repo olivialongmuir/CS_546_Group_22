@@ -17,7 +17,6 @@ window.addEventListener('load', () => {
     }
 
     //get the lat and long of the current pin drop
-    //TODO map rendering bugfix
     let temp = restaurantMapData[0];
     //If there is no restaurant then set to default NYC data location as a default.
     let lat = temp?.lat ?? 40.7128

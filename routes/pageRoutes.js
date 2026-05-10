@@ -14,7 +14,7 @@ import { countStats } from '../data/utility.js';
 /**
  * Homepage route
  */
-router.route(['/', '/home']).get(async (req, res) => { //Both of these routes will go to the homepage. Not sure if this is correct design or if should redirect - peter
+router.route(['/', '/home']).get(async (req, res) => {
     try {
         const {
             totalRestaurants,
@@ -168,11 +168,7 @@ router.route('/ratreports/:id').get(async (req, res) => {
         const id = req.params.id.trim();
         const validatedId = checkId(id);
 
-        console.log("hit here");
-
         let targetReport = await getReportById(validatedId);
-
-        //TODO if there is no report then raise error?
 
         //get all reports to be shown
         let reports = await getAllReports();

@@ -65,10 +65,6 @@ router.route('/').post(async (req, res) => {
     
     //Get the user Id from session
     let user = req.session.userId;
-    if(user == undefined){
-      //TODO - needs to route to errror pag e if someone tries to submit report when not logged in
-      console.log("TODO - error if not logged in when creating a report. Replace this by routing to error page since they tried to bypass")
-    }
     let userId = user
 
     //Get description
@@ -89,10 +85,8 @@ router.route('/').post(async (req, res) => {
     );
 
     //Posts the report status
-    // res.status(201).json(report);
     //Redirects user to that report
     res.redirect(`/ratreports/${report._id}`);
-    // res.redirect('/ratreports');
 
   } catch (error) {
     res.status(500).json({ error: error });
