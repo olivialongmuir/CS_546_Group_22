@@ -53,11 +53,17 @@ From the Rat Map, users can click on existing restaurant and report pins to disp
 
 ## Rodent Reports:
 
-Rodent Reports contain detailed information about user-submitted rodent sightings across the city. Users can quickly locate reports of interest using the filter options available in the left-side panel. These filters are handled entirely on the client side, providing a fast and smooth user experience.
+The Rodent Reports system allows users to browse and interact with user-submitted rodent sighting reports across the city. Reports can be filtered through a client-side filtering system located in the left-side panel, providing a fast and responsive user experience without requiring page reloads.
 
-Users can select a report to view additional details, leave comments, and engage with other community reports. Each report also includes a graphical minimap displaying the exact location of the sighting.
+Each report panel routes users to a dedicated report page containing additional details, comments, and community engagement features for logged-in users. Reports also include a Leaflet-based minimap with a custom rat pin marker displaying the exact sighting location.
 
 ## Restaurants:
+
+The Restaurants system allows users to browse registered restaurants using client-side search and filtering tools. Users can select restaurants from the results panel to navigate to dedicated restaurant pages containing additional details, comments, reactions, and engagement features.
+
+Each restaurant includes a dynamically updated Rodent Score metric representing rodent activity levels within the surrounding area.
+
+Restaurant and Rodent Report data can be managed through the administrative portal, allowing administrators to maintain and moderate website content.
 
 ## Login/Signup:
 
