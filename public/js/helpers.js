@@ -242,7 +242,7 @@ export const normalizeRestaurant = (r) => ({
   rodentScore: r.score,
   lastVerified: r.gradeDate,
   status: gradeToStatus(r.grade),
-  recentReports: 0, // TODO - count from rodentReports collection once linked
+  recentReports: 0,
   stats: r.stats || {
     likes: 0,
     dislikes: 0

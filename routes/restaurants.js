@@ -55,7 +55,6 @@ router.route('/').get(async (req, res) => {
 // Creates a restaurant
 router.route('/').post(async (req, res) => {
   
-  console.log("hit")
   console.log(req.body)
   
   try {
